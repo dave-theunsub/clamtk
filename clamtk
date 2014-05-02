@@ -1,0 +1,69 @@
+#!/usr/bin/perl
+#
+# ClamTk, copyright (C) 2004-2014 Dave M
+#
+# This file is part of ClamTk.
+# http://code.google.com/p/clamtk/
+#
+# ClamTk is free software; you can redistribute it and/or modify it
+# under the terms of either:
+#
+# a) the GNU General Public License as published by the Free Software
+# Foundation; either version 1, or (at your option) any later version, or
+#
+# b) the "Artistic License".
+#
+
+# use strict;
+# use warnings;
+use utf8;
+$| = 1;
+
+use ClamTk::Analysis;
+use ClamTk::App;
+use ClamTk::Assistant;
+use ClamTk::GUI;
+use ClamTk::History;
+use ClamTk::Network;
+use ClamTk::Prefs;
+use ClamTk::Results;
+use ClamTk::Scan;
+use ClamTk::Schedule;
+use ClamTk::Settings;
+use ClamTk::Shortcuts;
+use ClamTk::Startup;
+use ClamTk::Update;
+use ClamTk::Quarantine;
+use ClamTk::Whitelist;
+
+use Locale::gettext;
+use POSIX 'locale_h';
+textdomain( 'clamtk' );
+setlocale( LC_ALL, '' );
+bind_textdomain_codeset( 'clamtk', 'UTF-8' );
+
+# Normally this would work...
+# my $arg = $ARGV[0];
+# print "argv = >$_<\n" for(@ARGV);
+#
+# Unfortunately, I don't know how to make python keep a
+# URI with spaces intact.  So....
+my $arg = '';
+$arg = join( ' ', @ARGV );
+
+# Ensure all the normal directories are created
+ClamTk::Prefs->structure;
+
+# Ensure the preferences are normalized
+# Create defaults if they do not exist
+ClamTk::Prefs->custom_prefs;
+
+# If we get no arguments, bring up GUI;
+# otherwise, we're scanning
+if ( !$arg or !-e $arg ) {
+    ClamTk::GUI->start_gui();
+} else {
+    ClamTk::Scan->filter( $arg );
+}
+
+# End.

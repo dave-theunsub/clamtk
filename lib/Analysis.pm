@@ -1,0 +1,753 @@
+# ClamTk, copyright (C) 2004-2014 Dave M
+#
+# This file is part of ClamTk (http://code.google.com/p/clamtk/).
+#
+# ClamTk is free software; you can redistribute it and/or modify it
+# under the terms of either:
+#
+# a) the GNU General Public License as published by the Free Software
+# Foundation; either version 1, or (at your option) any later version, or
+#
+# b) the "Artistic License".
+package ClamTk::Analysis;
+
+use Glib 'TRUE', 'FALSE';
+
+# use strict;
+# use warnings;
+$| = 1;
+
+use LWP::UserAgent;
+use MIME::Base64 'decode_base64';
+use Digest::SHA 'sha256_hex';
+use File::Basename 'basename';
+use File::Copy 'move';
+use Text::CSV;
+use JSON;
+use Encode 'encode';
+
+use POSIX 'locale_h';
+use Locale::gettext;
+
+binmode STDIN, ":encoding(UTF-8)";
+
+my $store;       # Gtk2::ListStore for results
+my $model;       # Gtk2::ListStore for combobox
+my $combobox;    # Gtk2::ComboBox for previous analysis
+my $nb;          # Gtk2::Notebook
+my $filename = '';    # name of file analyzed
+my $bar;              # Gtk2::InfoBar
+my $window;           # Gtk2::Window; global for queue_draw;
+my $submitted = 0;    # Boolean value to keep track if file
+                      # has been submitted or not
+
+sub show_window {
+    $window = Gtk2::Window->new;
+    $window->signal_connect( destroy => sub { $window->destroy } );
+    $window->set_title( _( 'Analysis' ) );
+    $window->set_border_width( 5 );
+    $window->set_default_size( 450, 250 );
+    $window->set_position( 'mouse' );
+
+    my $box = Gtk2::VBox->new( FALSE, 5 );
+    $window->add( $box );
+
+    $nb = Gtk2::Notebook->new;
+    $box->pack_start( $nb, TRUE, TRUE, 0 );
+
+    #<<<
+    # Add initial page (select file, etc)
+    $nb->insert_page(
+        page_one(),
+        Gtk2::Label->new( _( 'File Analysis' ) ),
+        0,
+    );
+
+    # Add results page
+    $nb->insert_page(
+        page_two(),
+        Gtk2::Label->new( _( 'Results' ) ),
+        1,
+    );
+    #>>>
+
+    $bar = Gtk2::InfoBar->new;
+    $box->pack_start( $bar, FALSE, FALSE, 0 );
+    $bar->set_message_type( 'info' );
+    $bar->add_button( 'gtk-close', -7 );
+    $bar->signal_connect(
+        response => sub {
+            $submitted = 0;
+            $window->destroy;
+        }
+    );
+
+    $window->show_all;
+}
+
+sub page_one {
+    # Analysis page
+    my $box = Gtk2::VBox->new( FALSE, 5 );
+
+    my $separator = Gtk2::HSeparator->new;
+
+    $box->pack_start( analysis_frame_one(), FALSE, FALSE, 5 );
+    $box->pack_start( $separator,           FALSE, FALSE, 5 );
+    $box->pack_start( analysis_frame_two(), FALSE, FALSE, 5 );
+
+    return $box;
+}
+
+sub page_two {
+    # Results page
+    my $box = Gtk2::VBox->new( FALSE, 0 );
+
+    my $sw = Gtk2::ScrolledWindow->new;
+    $sw->set_policy( 'never', 'automatic' );
+    $box->pack_start( $sw, TRUE, TRUE, 0 );
+
+    use constant VENDOR => 0;
+    use constant RESULT => 1;
+    use constant DATE   => 2;
+
+    #<<<
+    $store = Gtk2::ListStore->new(
+            # VENDOR
+            'Glib::String',
+            # RESULT
+            'Glib::String',
+            # DATE
+            'Glib::String',
+    );
+
+    my $tree = Gtk2::TreeView->new_with_model( $store );
+    $tree->set_rules_hint( TRUE );
+    $sw->add( $tree );
+
+    my $renderer = Gtk2::CellRendererText->new;
+    my $column
+        = Gtk2::TreeViewColumn->new_with_attributes(
+                _( 'Vendor' ),
+                $renderer,
+                text => VENDOR,
+    );
+    $column->set_expand( TRUE );
+    $column->set_sort_column_id( VENDOR );
+    $tree->append_column( $column );
+
+    $column = Gtk2::TreeViewColumn->new_with_attributes(
+                _( 'Date' ),
+                $renderer,
+                text => DATE,
+    );
+    $column->set_sort_column_id( DATE );
+    $column->set_expand( TRUE );
+    $tree->append_column( $column );
+
+    $column = Gtk2::TreeViewColumn->new_with_attributes(
+                _( 'Result' ),
+                $renderer,
+                text => RESULT,
+    );
+    $column->set_expand( TRUE );
+    $column->set_sort_column_id( RESULT );
+    $tree->append_column( $column );
+    #>>>
+
+    my $toolbar = Gtk2::Toolbar->new;
+    $box->pack_start( $toolbar, FALSE, FALSE, 3 );
+    $toolbar->set_style( 'both-horiz' );
+
+    my $separator = Gtk2::SeparatorToolItem->new;
+    $separator->set_draw( FALSE );
+    $separator->set_expand( TRUE );
+    $toolbar->insert( $separator, -1 );
+
+    my $button = Gtk2::ToolButton->new_from_stock( 'gtk-save-as' );
+    $button->set_tooltip_text( _( 'Save results' ) );
+    $toolbar->insert( $button, -1 );
+    $button->signal_connect(
+        clicked => sub {
+            return unless ( $store->iter_n_children );
+            save_file();
+        }
+    );
+
+    return $box;
+}
+
+sub analysis_frame_one {
+    my $box = Gtk2::VBox->new( FALSE, 5 );
+
+    my $label
+        = Gtk2::Label->new( _( "Check or recheck a file's reputation" ) );
+    $label->set_alignment( 0.0, 0.5 );
+    $box->pack_start( $label, FALSE, FALSE, 5 );
+
+    my $grid = Gtk2::Table->new( 1, 3, FALSE );
+    $box->pack_start( $grid, TRUE, TRUE, 5 );
+    $grid->set_col_spacings( 10 );
+    $grid->set_row_spacings( 10 );
+    $grid->set_homogeneous( TRUE );
+
+    #<<<
+    # Declaring this now for setting sensitive/insensitive
+    my $button = Gtk2::ToolButton->new_from_stock( 'gtk-find' );
+    $button->set_sensitive( FALSE );
+
+    my $select_button
+        = Gtk2::FileChooserButton->new(
+                _( 'Select a file' ),
+                'open',
+    );
+    $select_button->signal_connect(
+            'file-set' => sub {
+                    # Ensure it does not become re-enabled
+                    # after submitting a file.  The stupid
+                    # FileChooserButton cannot be reliably
+                    # reset.
+                    if( ! $submitted ) {
+                            $button->set_sensitive( TRUE );
+                    }
+            }
+    );
+    $select_button->set_current_folder(
+        ClamTk::App->get_path( 'directory' )
+    );
+    #$grid->attach( $select_button, 0, 0, 1, 1 );
+    $grid->attach_defaults( $select_button, 0, 1, 0, 1 );
+    #>>>
+
+    my $separator = Gtk2::SeparatorToolItem->new;
+    $separator->set_draw( FALSE );
+    #$grid->attach( $separator, 1, 0, 1, 1 );
+    $grid->attach_defaults( $separator, 1, 2, 0, 1 );
+
+    #$grid->attach( $button, 2, 0, 1, 1 );
+    $grid->attach_defaults( $button, 2, 3, 0, 1 );
+    $button->set_tooltip_text( _( 'Submit file for analysis' ) );
+
+    $button->signal_connect(
+        clicked => sub {
+            $filename = $select_button->get_filename;
+            return unless -e $filename;
+
+            # Since FileChooserButton cannot reset itself,
+            # we'll just disable the submit button.
+            # Getting real tired of Gtk2.
+            $button->set_sensitive( FALSE );
+            $select_button->set_sensitive( FALSE );
+            # To be sure:
+            $submitted++;
+
+            # VT size limit is 64MB
+            my $size = -s $filename;
+            my $mb = $size / ( 1024 * 1024 );
+            if ( $mb > 64 ) {
+                warn "filesize too large\n";
+                return;
+            }
+
+            #<<<
+            Gtk2->main_iteration while ( Gtk2->events_pending );
+            my ( $vt_results, $new_window )
+                = check_for_existing( $filename );
+            #$results->set_text( $vt_results );
+            #>>>
+
+            # Information exists on this file; show results
+            if ( $new_window ) {
+                $nb->show_all;
+                $nb->set_current_page( 1 );
+            } else {
+                # No information exists; offer to submit file
+                my $confirm = popup(
+                    _(        'No information exists for this file.' . ' '
+                            . 'Press OK to submit this file for analysis.'
+                    ),
+                    1
+                );
+                if ( $confirm ) {
+                    $submitted++;
+                    submit_new();
+                    return;
+                }
+            }
+        }
+    );
+
+    return $box;
+}
+
+sub analysis_frame_two {
+    my $box = Gtk2::VBox->new( FALSE, 5 );
+
+    my $label = Gtk2::Label->new( _( 'View or delete previous results' ) );
+    $label->set_alignment( 0.0, 0.5 );
+    $box->pack_start( $label, FALSE, FALSE, 0 );
+
+    my $grid = Gtk2::Table->new( 1, 4, FALSE );
+    $box->pack_start( $grid, TRUE, TRUE, 5 );
+    $grid->set_col_spacings( 10 );
+    $grid->set_row_spacings( 10 );
+    $grid->set_homogeneous( FALSE );
+
+    $model = Gtk2::ListStore->new( 'Glib::String' );
+
+    $combobox = Gtk2::ComboBox->new_with_model( $model );
+    $grid->attach_defaults( $combobox, 0, 1, 0, 1 );
+    my $render = Gtk2::CellRendererText->new;
+    $combobox->pack_start( $render, TRUE );
+    $combobox->add_attribute( $render, text => 0 );
+    # $combobox->signal_connect( changed => \&read_files );
+    read_files();
+
+    my $separator = Gtk2::SeparatorToolItem->new;
+    $separator->set_draw( FALSE );
+    $grid->attach_defaults( $separator, 1, 2, 0, 1 );
+
+    my $button = Gtk2::ToolButton->new_from_stock( 'gtk-index' );
+    $grid->attach_defaults( $button, 2, 3, 0, 1 );
+    $button->set_tooltip_text( _( 'View file results' ) );
+    $button->signal_connect(
+        clicked => sub {
+            my $file = $combobox->get_active_text;
+            return unless ( $file );
+            my $file_to_use = '';
+            my $files       = read_files();
+
+            # Written so as to not choke older Perls
+            for my $key ( sort @$files ) {
+                if ( $key->{ basefilepath } eq $file ) {
+                    $file_to_use = $key->{ readpath };
+                }
+            }
+
+            # For some reason, we'll use csv files
+            my $csv = Text::CSV->new( { binary => 1, eol => "\n" } )
+                or do {
+                warn "unable to open csv file: $!\n";
+                popup( _( 'Error opening file' ) );
+                return;
+                };
+
+            open( my $f, '<:encoding(utf8)', $file_to_use ) or do {
+                warn "unable to retrieve file: $!\n";
+                popup( _( 'Error opening file' ) );
+                return;
+            };
+            # File, Hash, Date
+            my $fields;
+            my $counter = 0;
+            while ( my $row = <$f> ) {
+                chomp( $row );
+                next if ( $row =~ /^#/ );
+                next if ( $row =~ /^\s*$/ );
+                if ( $csv->parse( $row ) ) {
+                    $fields->[ $counter ] = [ $csv->fields() ];
+                    $counter++;
+                }
+            }
+            close( $f );
+            $store->clear;
+
+            #<<<
+            # Written so as to not choke older Perls
+            for my $v ( sort @{ $fields } ) {
+                my $iter = $store->append;
+                $store->set(
+                    $iter,
+                    VENDOR, $v->[0],
+                    RESULT, $v->[1],
+                    DATE, $v->[2],
+            );
+            #>>>
+            }
+            $nb->show_all;
+            $nb->set_current_page( 1 );
+        }
+    );
+
+    $button = Gtk2::ToolButton->new_from_stock( 'gtk-delete' );
+    $grid->attach_defaults( $button, 3, 4, 0, 1 );
+    $button->set_tooltip_text( _( 'Delete file results' ) );
+    $button->signal_connect(
+        clicked => sub {
+            my $file = $combobox->get_active_text;
+            return unless ( $file );
+            my $file_to_use = '';
+            my $active_text = $combobox->get_active_text;
+            my $active_iter = $combobox->get_active;
+            my $files       = read_files();
+
+            # This has to be written a certain way so
+            # that older Perls don't $choke
+            for my $key ( sort @{ $files } ) {
+                if ( $key->{ basefilepath } eq $file ) {
+                    $file_to_use = $key->{ readpath };
+                    if ( -e $file_to_use ) {
+                        unlink( $file_to_use ) or do {
+                            warn "unable to delete $file_to_use: $!\n";
+                            return;
+                        };
+                        $combobox->set_active( -1 );
+                    }
+                    read_files();
+                    # we're done!
+                    last;
+                }
+            }
+        }
+    );
+
+    return $box;
+}
+
+sub read_files {
+    my $submit_dir = ClamTk::App->get_path( 'submit' );
+    my $results;
+
+    $model->clear;
+
+    my $arr_count = 0;
+    # Grab all files
+    for my $f ( glob "$submit_dir/*" ) {
+        my $basename = basename( $f );
+        # Might be other garbage in the folder; just
+        # look for ones that look like hashes
+        next unless ( length $basename == 64 );
+        $results->[ $arr_count ]->{ readpath } = $f;
+        $results->[ $arr_count ]->{ hash }     = basename( $f );
+        open( my $t, '<:encoding(utf8)', $f ) or do {
+            warn "unable to open analysis file >$f<: $!\n";
+            next;
+        };
+        while ( <$t> ) {
+            chomp;
+            if ( /^# File (.*?)$/ ) {
+                $results->[ $arr_count ]->{ filepath } = $1;
+                $results->[ $arr_count ]->{ basefilepath }
+                    = basename( $1 );
+                $model->set( $model->append, 0,
+                    basename( $results->[ $arr_count ]->{ filepath } ) );
+                last;
+            }
+        }
+        close( $t );
+        $arr_count++;
+    }
+    return $results;
+}
+
+sub check_for_existing {
+    # First, set the infobar so the
+    # user knows something is happening:
+    Gtk2->main_iteration while ( Gtk2->events_pending );
+    for my $c ( $bar->get_content_area->get_children ) {
+        if ( $c->isa( 'Gtk2::Label' ) ) {
+            Gtk2->main_iteration while Gtk2->events_pending;
+            $c->set_text( _( 'Please wait...' ) );
+            $window->queue_draw;
+            Gtk2->main_iteration while Gtk2->events_pending;
+            return;
+        }
+    }
+    #set_infobar_mode( _( 'Please wait...' ) );
+    $window->queue_draw;
+    Gtk2->main_iteration while ( Gtk2->events_pending );
+
+    my $file = shift;
+    my $url  = 'https://www.virustotal.com/vtapi/v2/file/report';
+
+    my $ua               = LWP::UserAgent->new;
+    my $local_tk_version = ClamTk::App->get_TK_version();
+
+    $ua->agent( "ClamTk/$local_tk_version" );
+    $ua->timeout( 60 );
+
+    if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) ) {
+        if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 1 ) {
+            $ua->env_proxy;
+        } elsif ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 2 ) {
+            my $path = ClamTk::App->get_path( 'db' );
+            $path .= '/local.conf';
+            my ( $url, $port );
+            if ( -e $path ) {
+                if ( open( my $FH, '<', $path ) ) {
+                    while ( <$FH> ) {
+                        if ( /HTTPProxyServer\s+(.*?)$/ ) {
+                            $url = $1;
+                        }
+                        last if ( !$url );
+                        if ( /HTTPProxyPort\s+(\d+)$/ ) {
+                            $port = $1;
+                        }
+                    }
+                    close( $FH );
+                    $ua->proxy( http => "$url:$port" );
+                }
+            }
+        }
+    }
+
+    my $hash = get_hash( $file );
+
+    #<<<
+    my @req = (
+        $url,
+        [
+            resource => $hash,
+            apikey   => getapi(),
+        ]
+    );
+    #>>>
+
+    Gtk2->main_iteration while ( Gtk2->events_pending );
+    my $response = $ua->post( @req );
+    Gtk2->main_iteration while ( Gtk2->events_pending );
+
+    # $return = results we're returning
+    my $return;
+    # $new_window = switch to results tab
+    my $new_window = FALSE;
+    if ( $response->is_success ) {
+        $new_window = TRUE;
+        my $json = JSON->new->utf8->allow_nonref;
+        my $data = $json->decode( $response->decoded_content );
+        if ( $data->{ response_code } ) {
+            $return = $data->{ positives } . ' / ' . $data->{ total };
+            for my $mark ( $data->{ scans } ) {
+                while ( my ( $vendor, $v ) = each %$mark ) {
+                    my $iter = $store->append;
+                    #<<<
+                    $store->set(
+                        $iter,
+                        VENDOR, $vendor,
+                        RESULT,
+                        ( $v->{ detected } eq 'true' )
+                        ? $v->{ result }
+                        : '---',
+                        DATE, $v->{ update },
+                    );
+                    #>>>
+                }
+            }
+        } else {
+            $return     = _( 'No information on this file' );
+            $new_window = FALSE;
+        }
+    } else {
+        $return = '? / ?';
+        warn "Unable to connect: ", $response->status_line, "\n";
+    }
+    Gtk2->main_iteration while ( Gtk2->events_pending );
+    set_infobar_mode( ' ' );
+    Gtk2->main_iteration while ( Gtk2->events_pending );
+    return ( $return, $new_window );
+}
+
+sub submit_new {
+    # First, set the infobar so the user knows
+    # something is happening:
+    Gtk2->main_iteration while ( Gtk2->events_pending );
+    for my $c ( $bar->get_content_area->get_children ) {
+        Gtk2->main_iteration while Gtk2->events_pending;
+        if ( $c->isa( 'Gtk2::Label' ) ) {
+            $c->set_text( _( 'Please wait...' ) );
+            $window->queue_draw;
+        }
+    }
+    $window->queue_draw;
+    Gtk2->main_iteration while ( Gtk2->events_pending );
+    my $url = 'https://www.virustotal.com/vtapi/v2/file/scan';
+
+    my $ua               = LWP::UserAgent->new;
+    my $local_tk_version = ClamTk::App->get_TK_version();
+
+    $ua->agent( "ClamTk/$local_tk_version" );
+    $ua->timeout( 60 );
+    my $u_filename = encode( 'UTF-8', $filename );
+
+    if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) ) {
+        if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 1 ) {
+            $ua->env_proxy;
+        } elsif ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 2 ) {
+            my $path = ClamTk::App->get_path( 'db' );
+            $path .= '/local.conf';
+            my ( $url, $port );
+            if ( -e $path ) {
+                if ( open( my $FH, '<', $path ) ) {
+                    while ( <$FH> ) {
+                        if ( /HTTPProxyServer\s+(.*?)$/ ) {
+                            $url = $1;
+                        }
+                        last if ( !$url );
+                        if ( /HTTPProxyPort\s+(\d+)$/ ) {
+                            $port = $1;
+                        }
+                    }
+                    close( $FH );
+                    $ua->proxy( http => "$url:$port" );
+                }
+            }
+        }
+    }
+
+    #<<<
+    my $response = $ua->post(
+        $url,
+            Content_Type => 'multipart/form-data',
+            Content => [
+                    apikey   => getapi(),
+                    file     => [ $u_filename ]
+                    #file     => [ $filename ]
+            ],
+    );
+    #>>>
+
+    if ( $response->is_success ) {
+        # Save off the results; might use them later
+        my $file = ClamTk::App->get_path( 'virustotal_links' );
+        my $hash = get_hash( $filename );
+
+        my $json_text = $response->decoded_content;
+        my $data      = $response->as_string;
+        my $json_hash = decode_json( $json_text );
+
+        open( my $f, '>>:encoding(UTF-8)', $file );
+        # or warn "unable to save virustotal results: $!\n";
+        my $csv = Text::CSV->new( { binary => 1, eol => "\n" } );
+        my $ref;
+        $ref->[ 0 ] = [ $filename, $hash, $json_hash->{ permalink } ];
+        $csv->print( $f, $_ ) for ( @$ref );
+        close( $f );
+
+        popup( _( 'File successfully submitted for analysis.' ) );
+    } else {
+        warn "Problem submitting: $response->status_line\n";
+        warn "content = >$response->content<\n";
+        popup( _( 'Unable to submit file: try again later' ) );
+    }
+    Gtk2->main_iteration while ( Gtk2->events_pending );
+    set_infobar_mode( ' ' );
+    $window->queue_draw;
+    Gtk2->main_iteration while ( Gtk2->events_pending );
+}
+
+sub getapi {
+    #<<<
+    return decode_base64(
+              'MDMwNmU3MT'
+            . 'ZjYjQxNTMz'
+            . 'OWFkZDQ5ND'
+            . 'JkOTg4ZWVm'
+            . 'MDU3MjlmND'
+            . 'AxYmM0NjIw'
+            . 'MjZmNDQ2OD'
+            . 'gzYjcxNmIy'
+            . 'NTAxZg=='
+    );
+    #>>>
+}
+
+sub get_hash {
+    my ( $file ) = shift;
+
+    my $slurp = do {
+        local $/ = undef;
+        open( my $f, '<', $file ) or do {
+            warn "unable to open >$file< for hashing: $!\n";
+            return;
+        };
+        binmode( $f );
+        <$f>;
+    };
+    return sha256_hex( $slurp );
+}
+
+sub save_file {
+    # VENDOR, RESULT, DATE
+    # temporary filename
+    my $hash = get_hash( $filename );
+    my $file = ClamTk::App->get_path( 'submit' ) . '/' . $hash;
+
+    my $ref;
+    my $count = 0;
+
+    $store->foreach(
+        sub {
+            my ( $liststore, $path, $iter ) = @_;
+            my ( $vendor, $result, $date )
+                = $liststore->get( $iter, 0, 1, 2 );
+            $ref->[ $count ] = [ $vendor, $result, $date ];
+            $count++;
+            return FALSE;
+        }
+    );
+
+    # For some reason, we'll use csv files
+    my $csv = Text::CSV->new( { binary => 1, eol => "\n" } )
+        or do {
+        popup( _( 'Unable to save file' ) );
+        return;
+        };
+
+    open( my $f, '>:encoding(utf8)', $file ) or do {
+        popup( _( 'Unable to save file' ) );
+        return;
+    };
+    print $f '# File', ' ', $filename, "\n";
+    print $f '# Hash', ' ', $hash,     "\n";
+    print $f '# Date', ' ', scalar localtime, "\n\n";
+    $csv->print( $f, $_ ) for ( @$ref );
+    close( $f );
+
+    popup( _( 'File has been saved' ) );
+    read_files();
+
+    return TRUE;
+}
+
+sub popup {
+    my ( $message, $option ) = @_;
+
+    my $dialog = Gtk2::MessageDialog->new(
+        undef,    # no parent
+        [ qw(modal destroy-with-parent) ],
+        'info',
+        $option ? 'ok-cancel' : 'close',
+        $message,
+    );
+
+    if ( 'ok' eq $dialog->run ) {
+        $dialog->destroy;
+        return TRUE;
+    }
+    $dialog->destroy;
+
+    return FALSE;
+}
+
+sub set_infobar_mode {
+    my $text = shift;
+
+    for my $c ( $bar->get_content_area->get_children ) {
+        if ( $c->isa( 'Gtk2::Label' ) ) {
+            $c->set_text( $text );
+            $window->queue_draw;
+            Gtk2->main_iteration while Gtk2->events_pending;
+            return;
+        }
+    }
+
+    # We don't have a Label, so make one:
+    my $label = Gtk2::Label->new( $text );
+    $label->set_use_markup( TRUE );
+    $bar->get_content_area->add( $label );
+    $window->queue_draw;
+    Gtk2->main_iteration while Gtk2->events_pending;
+
+    return;
+}
+
+1;
