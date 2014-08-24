@@ -88,7 +88,7 @@ sub show_window {
             update  => 'gtk-dialog-error',
         },
         {
-            product => _( 'GUI' ),
+            product => _( 'Graphical interface' ),
             local   => $local_tk_version,
             remote  => _('Unknown'),
             update  => 'gtk-dialog-error',
@@ -225,7 +225,7 @@ sub update_store {
             $text .= "\n";
             #<<<
             $text
-             .= _( 'You are set to automatically receive updates' );
+             .= _( 'You are configured to automatically receive updates' );
             #>>>
             $update_pref = 'shared';
         } else {
@@ -286,19 +286,22 @@ sub update_store {
 sub get_web_info {
     # Get clamav.net info
     my $page = 'http://www.clamav.net/lang/en/';
-    my $ua   = LWP::UserAgent->new;
-    $ua->timeout( 10 );
+
+    my $ua = add_ua_proxy();
 
     # For testing:
     # return '', '';
 
+    Gtk2->main_iteration while Gtk2->events_pending;
     my $response = $ua->get( $page );
-    my $code     = '';
+    Gtk2->main_iteration while Gtk2->events_pending;
+    my $code = '';
 
     if ( $response->is_success ) {
         $code = $response->decoded_content;
     } else {
-        warn "problems getting remote AV: ", $response->status_line, "\n";
+        warn "problems getting ClamAV version: ", $response->status_line,
+            "\n";
         return '', '';
     }
     return '', '' if ( !$code );
@@ -315,34 +318,11 @@ sub get_web_info {
 
 sub get_remote_TK_version {
     my $url = 'https://bitbucket.org/dave_theunsub/clamtk/raw/master/latest';
+    # my $url = 'http://clamtk.googlecode.com/git/latest';
 
-    my $ua = LWP::UserAgent->new;
-    $ua->timeout( 10 );
+    $ENV{ HTTPS_DEBUG } = 1;
 
-    if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) ) {
-        if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 1 ) {
-            $ua->env_proxy;
-        } elsif ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 2 ) {
-            my $path = ClamTk::App->get_path( 'db' );
-            $path .= '/local.conf';
-            my ( $url, $port );
-            if ( -e $path ) {
-                if ( open( my $FH, '<', $path ) ) {
-                    while ( <$FH> ) {
-                        if ( /HTTPProxyServer\s+(.*?)$/ ) {
-                            $url = $1;
-                        }
-                        last if ( !$url );
-                        if ( /HTTPProxyPort\s+(\d+)$/ ) {
-                            $port = $1;
-                        }
-                    }
-                    close( $FH );
-                    $ua->proxy( http => "$url:$port" );
-                }
-            }
-        }
-    }
+    my $ua = add_ua_proxy();
 
     Gtk2->main_iteration while Gtk2->events_pending;
     my $response = $ua->get( $url );
@@ -355,6 +335,8 @@ sub get_remote_TK_version {
     } else {
         return '';
     }
+
+    return '';
 }
 
 sub update_signatures {
@@ -496,6 +478,44 @@ sub destroy_button {
             $child->destroy;
         }
     }
+}
+
+sub add_ua_proxy {
+    my $agent = LWP::UserAgent->new( ssl_opts => { verify_hostname => 1 } );
+    $agent->timeout( 20 );
+
+    $agent->protocols_allowed( [ 'http', 'https' ] );
+
+    if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) ) {
+        if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 1 ) {
+            $agent->env_proxy;
+        } elsif ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 2 ) {
+            my $path = ClamTk::App->get_path( 'db' );
+            $path .= '/local.conf';
+            my ( $url, $port );
+            if ( -e $path ) {
+                if ( open( my $FH, '<', $path ) ) {
+                    while ( <$FH> ) {
+                        if ( /HTTPProxyServer\s+(.*?)$/ ) {
+                            $url = $1;
+                        }
+                        last if ( !$url );
+                        if ( /HTTPProxyPort\s+(\d+)$/ ) {
+                            $port = $1;
+                        }
+                    }
+                    close( $FH );
+                    $ENV{ HTTPS_PROXY }                  = "$url:$port";
+                    $ENV{ HTTP_PROXY }                   = "$url:$port";
+                    $ENV{ PERL_LWP_SSL_VERIFY_HOSTNAME } = 0;
+                    $ENV{ HTTPS_DEBUG }                  = 1;
+                    $agent->proxy( http  => "$url:$port" );
+                    $agent->proxy( https => "$url:$port" );
+                }
+            }
+        }
+    }
+    return $agent;
 }
 
 1;

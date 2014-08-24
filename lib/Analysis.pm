@@ -18,6 +18,7 @@ use Glib 'TRUE', 'FALSE';
 $| = 1;
 
 use LWP::UserAgent;
+use LWP::Protocol::https;
 use MIME::Base64 'decode_base64';
 use Digest::SHA 'sha256_hex';
 use File::Basename 'basename';
@@ -40,8 +41,10 @@ my $bar;              # Gtk2::InfoBar
 my $window;           # Gtk2::Window; global for queue_draw;
 my $submitted = 0;    # Boolean value to keep track if file
                       # has been submitted or not
+my $from_scan;
 
 sub show_window {
+    ( undef, $from_scan ) = @_;
     $window = Gtk2::Window->new;
     $window->signal_connect( destroy => sub { $window->destroy } );
     $window->set_title( _( 'Analysis' ) );
@@ -193,13 +196,19 @@ sub analysis_frame_one {
     #<<<
     # Declaring this now for setting sensitive/insensitive
     my $button = Gtk2::ToolButton->new_from_stock( 'gtk-find' );
-    $button->set_sensitive( FALSE );
+    #$button->set_sensitive( FALSE );
 
     my $select_button
         = Gtk2::FileChooserButton->new(
                 _( 'Select a file' ),
                 'open',
     );
+
+    # If we've arrived from scanning results, set the file:
+    if( $from_scan ) {
+            $select_button->set_filename( $from_scan );
+    }
+    $button->set_sensitive( TRUE );
     $select_button->signal_connect(
             'file-set' => sub {
                     # Ensure it does not become re-enabled
@@ -250,8 +259,10 @@ sub analysis_frame_one {
 
             #<<<
             Gtk2->main_iteration while ( Gtk2->events_pending );
-            my ( $vt_results, $new_window )
+            my ( $vt_results, $new_window, $is_error )
                 = check_for_existing( $filename );
+            # warn "VT results = >$vt_results<, ",
+            # open new_win = >$new_window<, error = >$is_error<\n";
             #$results->set_text( $vt_results );
             #>>>
 
@@ -259,7 +270,7 @@ sub analysis_frame_one {
             if ( $new_window ) {
                 $nb->show_all;
                 $nb->set_current_page( 1 );
-            } else {
+            } elsif ( $new_window && !$is_error ) {
                 # No information exists; offer to submit file
                 my $confirm = popup(
                     _(        'No information exists for this file.' . ' '
@@ -272,6 +283,9 @@ sub analysis_frame_one {
                     submit_new();
                     return;
                 }
+            } else {
+                popup( _( 'Unable to submit file: try again later' ) );
+                return;
             }
         }
     );
@@ -326,14 +340,14 @@ sub analysis_frame_two {
             # For some reason, we'll use csv files
             my $csv = Text::CSV->new( { binary => 1, eol => "\n" } )
                 or do {
-                warn "unable to open csv file: $!\n";
-                popup( _( 'Error opening file' ) );
+                warn "unable to begin Text::CSV: $!\n";
+                popup( _( 'Error with Text::CSV file' ) );
                 return;
                 };
 
             open( my $f, '<:encoding(utf8)', $file_to_use ) or do {
-                warn "unable to retrieve file: $!\n";
-                popup( _( 'Error opening file' ) );
+                warn "unable to opening VT CSV file: $!\n";
+                popup( _( 'Error opening VT CSV file' ) );
                 return;
             };
             # File, Hash, Date
@@ -387,7 +401,7 @@ sub analysis_frame_two {
                     $file_to_use = $key->{ readpath };
                     if ( -e $file_to_use ) {
                         unlink( $file_to_use ) or do {
-                            warn "unable to delete $file_to_use: $!\n";
+                            warn "unable to delete VT $file_to_use: $!\n";
                             return;
                         };
                         $combobox->set_active( -1 );
@@ -459,38 +473,11 @@ sub check_for_existing {
     my $file = shift;
     my $url  = 'https://www.virustotal.com/vtapi/v2/file/report';
 
-    my $ua               = LWP::UserAgent->new;
     my $local_tk_version = ClamTk::App->get_TK_version();
 
-    $ua->agent( "ClamTk/$local_tk_version" );
-    $ua->timeout( 60 );
-
-    if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) ) {
-        if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 1 ) {
-            $ua->env_proxy;
-        } elsif ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 2 ) {
-            my $path = ClamTk::App->get_path( 'db' );
-            $path .= '/local.conf';
-            my ( $url, $port );
-            if ( -e $path ) {
-                if ( open( my $FH, '<', $path ) ) {
-                    while ( <$FH> ) {
-                        if ( /HTTPProxyServer\s+(.*?)$/ ) {
-                            $url = $1;
-                        }
-                        last if ( !$url );
-                        if ( /HTTPProxyPort\s+(\d+)$/ ) {
-                            $port = $1;
-                        }
-                    }
-                    close( $FH );
-                    $ua->proxy( http => "$url:$port" );
-                }
-            }
-        }
-    }
-
     my $hash = get_hash( $file );
+
+    my $ua = add_ua_proxy();
 
     #<<<
     my @req = (
@@ -502,19 +489,38 @@ sub check_for_existing {
     );
     #>>>
 
-    Gtk2->main_iteration while ( Gtk2->events_pending );
-    my $response = $ua->post( @req );
-    Gtk2->main_iteration while ( Gtk2->events_pending );
-
     # $return = results we're returning
     my $return;
     # $new_window = switch to results tab
-    my $new_window = FALSE;
+    my $new_window = TRUE;
+    # $is_error = connection (or other) issue
+    my $is_error = FALSE;
+
+    Gtk2->main_iteration while ( Gtk2->events_pending );
+    my $response = $ua->post( @req );
+    # warn "is_err = >", $response->is_error, "<\n";
+
+    Gtk2->main_iteration while ( Gtk2->events_pending );
+
     if ( $response->is_success ) {
-        $new_window = TRUE;
         my $json = JSON->new->utf8->allow_nonref;
-        my $data = $json->decode( $response->decoded_content );
-        if ( $data->{ response_code } ) {
+        my $data;
+        eval { $data = $json->decode( $response->decoded_content ); };
+        if ( $@ ) {
+            warn "error reading/decoding json: $@\n";
+            $return     = 'unknown error';
+            $new_window = FALSE;
+            $is_error   = TRUE;
+            return ( $return, $new_window, $is_error );
+            $data->{ response_code } = -4;
+        }
+        warn "response_code from submission >", $data->{ response_code },
+            "<\n";
+        # Response codes:
+        # 0 = not present in dataset
+        # -2 = queued for analysis
+        # 1 = present and can be retrieved
+        if ( $data->{ response_code } == 1 ) {
             $return = $data->{ positives } . ' / ' . $data->{ total };
             for my $mark ( $data->{ scans } ) {
                 while ( my ( $vendor, $v ) = each %$mark ) {
@@ -532,18 +538,30 @@ sub check_for_existing {
                     #>>>
                 }
             }
-        } else {
+        } elsif ( $data->{ response_code } == 0 ) {
             $return     = _( 'No information on this file' );
             $new_window = FALSE;
+            $is_error   = FALSE;
+        } elsif ( $data->{ response_code } == -2 ) {
+            $return     = _( 'File is pending analysis' );
+            $new_window = FALSE;
+            $is_error   = FALSE;
+        } else {
+            $return     = _( 'An unknown error occurred' );
+            $new_window = FALSE;
+            $is_error   = TRUE;
         }
     } else {
-        $return = '? / ?';
-        warn "Unable to connect: ", $response->status_line, "\n";
+        $return     = '? / ?';
+        $new_window = FALSE;
+        $is_error   = TRUE;
+        warn "Unable to connect in submission: ", $response->status_line,
+            "\n";
     }
     Gtk2->main_iteration while ( Gtk2->events_pending );
     set_infobar_mode( ' ' );
     Gtk2->main_iteration while ( Gtk2->events_pending );
-    return ( $return, $new_window );
+    return ( $return, $new_window, $is_error );
 }
 
 sub submit_new {
@@ -561,37 +579,10 @@ sub submit_new {
     Gtk2->main_iteration while ( Gtk2->events_pending );
     my $url = 'https://www.virustotal.com/vtapi/v2/file/scan';
 
-    my $ua               = LWP::UserAgent->new;
+    my $ua               = add_ua_proxy();
     my $local_tk_version = ClamTk::App->get_TK_version();
 
-    $ua->agent( "ClamTk/$local_tk_version" );
-    $ua->timeout( 60 );
     my $u_filename = encode( 'UTF-8', $filename );
-
-    if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) ) {
-        if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 1 ) {
-            $ua->env_proxy;
-        } elsif ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 2 ) {
-            my $path = ClamTk::App->get_path( 'db' );
-            $path .= '/local.conf';
-            my ( $url, $port );
-            if ( -e $path ) {
-                if ( open( my $FH, '<', $path ) ) {
-                    while ( <$FH> ) {
-                        if ( /HTTPProxyServer\s+(.*?)$/ ) {
-                            $url = $1;
-                        }
-                        last if ( !$url );
-                        if ( /HTTPProxyPort\s+(\d+)$/ ) {
-                            $port = $1;
-                        }
-                    }
-                    close( $FH );
-                    $ua->proxy( http => "$url:$port" );
-                }
-            }
-        }
-    }
 
     #<<<
     my $response = $ua->post(
@@ -748,6 +739,65 @@ sub set_infobar_mode {
     Gtk2->main_iteration while Gtk2->events_pending;
 
     return;
+}
+
+sub add_ua_proxy {
+    my $agent = LWP::UserAgent->new( ssl_opts => { verify_hostname => 1 } );
+
+    my $local_tk_version = ClamTk::App->get_TK_version();
+    $agent->agent( "ClamTk/$local_tk_version" );
+    $agent->timeout( 60 );
+
+    $agent->protocols_allowed( [ 'http', 'https' ] );
+
+    if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) ) {
+        if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 1 ) {
+            $agent->env_proxy;
+        } elsif ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 2 ) {
+            my $path = ClamTk::App->get_path( 'db' );
+            $path .= '/local.conf';
+            my ( $url, $port );
+            if ( -e $path ) {
+                if ( open( my $FH, '<', $path ) ) {
+                    while ( <$FH> ) {
+                        if ( /HTTPProxyServer\s+(.*?)$/ ) {
+                            $url = $1;
+                        }
+                        last if ( !$url );
+                        if ( /HTTPProxyPort\s+(\d+)$/ ) {
+                            $port = $1;
+                        }
+                    }
+                    close( $FH );
+                    $agent->proxy( http  => "$url:$port" );
+                    $agent->proxy( https => "$url:$port" );
+                    $ENV{ HTTPS_PROXY }                  = "$url:$port";
+                    $ENV{ HTTP_PROXY }                   = "$url:$port";
+                    $ENV{ PERL_LWP_SSL_VERIFY_HOSTNAME } = 0;
+                    $ENV{ HTTPS_DEBUG }                  = 1;
+                }
+            }
+        }
+    }
+
+    return $agent;
+}
+
+sub button_test {
+    # This is the worst thing ever.  The set_filename function
+    # only works with certain versions of gtk2.  So, this is a test
+    # to determine if it works, which is tested by seeing if we
+    # can get_filename.
+    # Return TRUE if it succeeds so we can add the Analysis button
+    # to the Results window.
+    # Otherwise return FALSE, and don't draw it.
+    my $fcb = Gtk2::FileChooserButton->new( 'just a test', 'open', );
+    $fcb->set_filename( '/usr/bin/clamtk' );
+    if ( $fcb->get_filename ) {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
 }
 
 1;

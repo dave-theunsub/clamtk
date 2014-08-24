@@ -95,6 +95,7 @@ sub start_gui {
     );
 
     $box = Gtk2::VBox->new( FALSE, 0 );
+    $box->set_border_width( 5 );
     $top_box->add( $box );
 
     $infobar = Gtk2::InfoBar->new;
@@ -666,13 +667,19 @@ sub add_default_view {
 
     $box->pack_start( add_config_panels(), TRUE, TRUE, 0 );
 
+    $box->pack_start( Gtk2::HSeparator->new, TRUE, TRUE, 2 );
+
     $box->pack_start( add_configuration( _( 'History' ) ), TRUE, TRUE, 0 );
 
     $box->pack_start( add_history_panels(), TRUE, TRUE, 0 );
 
+    $box->pack_start( Gtk2::HSeparator->new, TRUE, TRUE, 2 );
+
     $box->pack_start( add_configuration( _( 'Updates' ) ), TRUE, TRUE, 0 );
 
     $box->pack_start( add_update_panels(), TRUE, TRUE, 0 );
+
+    $box->pack_start( Gtk2::HSeparator->new, TRUE, TRUE, 2 );
 
     $box->pack_start( add_configuration( _( 'Analysis' ) ), TRUE, TRUE, 0 );
 
@@ -681,10 +688,10 @@ sub add_default_view {
     $box->show_all;
     swap_button( FALSE );
 
-    # Gtk2->main_iteration while Gtk2->events_pending;
+    Gtk2->main_iteration while Gtk2->events_pending;
     $window->resize( 340, 400 );
-    # $window->queue_draw;
-    # Gtk2->main_iteration while Gtk2->events_pending;
+    $window->queue_draw;
+    Gtk2->main_iteration while Gtk2->events_pending;
 }
 
 sub help {

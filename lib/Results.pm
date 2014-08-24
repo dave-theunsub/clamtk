@@ -135,6 +135,16 @@ sub show_window {
     $hbox->insert( $button, -1 );
     $button->signal_connect( clicked => \&action, $tree );
 
+    # Testing to see if we can add Analysis button.
+    # See ClamTk::Analysis->button_test for more
+    if ( ClamTk::Analysis->button_test ) {
+        $image = Gtk2::Image->new_from_stock( 'gtk-find', 'menu' );
+        $button = Gtk2::ToolButton->new( $image, _( 'Analysis' ) );
+        $button->set_is_important( TRUE );
+        $hbox->insert( $button, -1 );
+        $button->signal_connect( clicked => \&action, $tree );
+    }
+
     my $sep = Gtk2::SeparatorToolItem->new;
     $sep->set_draw( FALSE );
     $sep->set_expand( TRUE );
@@ -192,6 +202,9 @@ sub action {
             return TRUE;
         }
         return FALSE;
+    } elsif ( $button->get_label eq _( 'Analysis' ) ) {
+        ClamTk::Analysis->show_window( $first_col_value );
+        return TRUE;
     } else {
         warn 'unable to ' . $button->get_label . " file >$first_col_value<\n";
     }

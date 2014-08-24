@@ -57,8 +57,7 @@ sub show_window {
     $option = Gtk2::CheckButton->new_with_label(
         _( 'Scan files beginning with a dot (.*)' ) );
     $option->can_focus( FALSE );
-    $option->set_tooltip_text(
-        _( 'Scan all files and directories within a directory' ) );
+    $option->set_tooltip_text( _( 'Scan files typically hidden from view' ) );
     $option->set_active( TRUE ) if ( $prefs{ ScanHidden } );
     $grid->attach_defaults( $option, 0, 1, 1, 2 );
     $option->signal_connect(
@@ -105,7 +104,8 @@ sub show_window {
     $option = Gtk2::CheckButton->new_with_label(
         _( 'Check for updates to this program' ) );
     $option->can_focus( FALSE );
-    $option->set_tooltip_text( _( 'Check for updates to this program' ) );
+    $option->set_tooltip_text(
+        _( 'Check online for application and signature updates' ) );
     $option->set_active( TRUE ) if ( $prefs{ GUICheck } );
     $grid->attach_defaults( $option, 0, 1, 4, 5 );
     $option->signal_connect(
