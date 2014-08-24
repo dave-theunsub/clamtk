@@ -1,6 +1,6 @@
 README
 ------
-(Last updated  12 Apr 2014)
+(Last updated  18 August 2014)
 
 1. Important Links
 
@@ -15,7 +15,7 @@ Virustotal              : https://virustotal.com
 
 2. About
 
-ClamTk is a frontend for ClamAV using Perl and Gtk+ graphics libraries.
+ClamTk is a frontend for ClamAV (Clam Antivirus).
 It is intended to be an easy to use, light-weight, on-demand scanner
 for Linux systems. It has been ported to Fedora, Debian, RedHat,
 openSUSE, ALT Linux, Ubuntu, CentOS, Gentoo, Archlinux, Mandriva,
@@ -24,8 +24,8 @@ PCLinuxOS, Frugalware, FreeBSD, and others.
 Although its earliest incarnations date to 2003, ClamTk was first
 uploaded for distribution in 2004 to a rootshell.be account and
 finally to Sourceforge.net in 2005. At the end of 2013, we moved to a
-Google Code page and Bitbucket. It's now 2014 and for some reason,
-it's still going.  Technically, February 2014 will mark 10 years
+Google Code page and Bitbucket. It's now 2014 and for some reason
+it's still going.  Technically, February 2014 marked 10 years
 of activity (of being publically available, that is).
 
 3. GUI
@@ -125,7 +125,7 @@ Note that the Debian/Ubuntu builds are gpg-signed.
 	c. Information on items quarantined is available under the
 	   "Quarantine" option.  If you believe there is a false
            positive contained, you can easily move it back to
-           your home directory. You may also delete this files.
+           your home directory. You may also delete this file(s).
            Note that there is no recycle bin - once deleted, they are
            gone forever.
 
@@ -179,7 +179,9 @@ You also have a few options with the files displayed. Click on the file
 scanned to select it, then right-click: you should have four options there.
 
 	a. Quarantine this file: This drops the selected file into a
-	"quarantined" folder.
+	"quarantined" folder with the executable bit removed.  The
+        quarantine folder is held in the user's ClamTk folder
+        (~/.clamtk/viruses).
 	b. Delete this file: Be careful: There's no recycle bin!
 	d. Cancel: Cancels this menu.
 

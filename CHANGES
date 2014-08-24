@@ -1,16 +1,47 @@
 CHANGELOG for ClamTk:
 
-5.06 - May 2 2014
+5.08 - Aug 24 2014
+------------------
+        * Add missing proxy code (Google Issue #20). Thanks, Uri!
+        * Add the ability to submit files from the results
+          window to be analyzed by Virustotal. This only works
+          with more recent versions of Gtk2 - it does not
+          work with Debian/CentOS, but does with Fedora and
+          newer Ubuntu
+        * Add more information on the quarantine directory in
+          the README (Debian #689685). Thanks, Andreas!
+        * Minor tweak to improve redrawing of main window
+        * Updated language files: English (en_UK), German (de),
+          Chinese (zh_TW), Hebrew (he), Galician (gl), Russian (ru),
+          Finnish (fi), English (en_AU), Malay (ms), French (fr)
+
+5.07 - June 12 2014
+-------------------
+        * Fix to make ClamTk show up again in Dash and
+          other areas (clamtk.desktop);
+          the OnlyShowIn portion from 5.06 removed it
+        * Improve two tooltips in Settings panel
+        * Minor fix to wording in Update panel
+        * Standardize locale files permissions
+        * Updated language files: Arabic (ar), German (de),
+          Azerbaijani (az), English (en_AU), Galician (gl),
+          French (fr), Tamil (ta), Ukrainian (uk), Uzbek (uz),
+          Finnish (fi), Romanian (ro), Spanish (es), Hebrew (he),
+          Asturian (ast), Czech (cz), Dutch (nl), Malay (ms), Slovak (sk)
+
+5.06 - May 3 2014
 ------------------
         * Add some extra arguments to scan to avoid scanning accidents
         * Actually remove zenity from dependencies (i.e.,
           from the build files); it was already removed from code in 5.05
-        * Use ShowOnlyIn in .desktop file
+        * Use OnlyShowIn in .desktop file
         * Minor update for dpkg installation instructions in Help files
         * Minor display fix for the progressbar in the legacy version
           (Google Issue #17)
-        * Updated language files: Japanese (ja), Italian (it), German (de),
-          Russian (ru), English (en_GB), Slovak (sk), Chinese (zh_TW)
+        * Temporary fix for incorrect text in Settings panel
+        * Updated language files: Japanese (ja), Italian (it),
+          German (de), Russian (ru), English (en_GB), Slovak (sk),
+          Chinese (zh_TW)
 
 5.05 - Mar 14 2014
 ------------------
