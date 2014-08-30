@@ -138,7 +138,7 @@ sub show_window {
 }
 
 sub update_store {
-    my ( $web_version, $web_date ) = get_web_info();
+    my $web_version = get_web_info();
     my ( $remote_tk_version ) = get_remote_TK_version();
 
     # Reset the liststore
@@ -285,12 +285,10 @@ sub update_store {
 
 sub get_web_info {
     # Get clamav.net info
-    my $page = 'http://www.clamav.net/lang/en/';
+    # my $page = 'http://www.clamav.net/lang/en/';
+    my $page = 'http://lurker.clamav.net/list/clamav-virusdb.html';
 
     my $ua = add_ua_proxy();
-
-    # For testing:
-    # return '', '';
 
     Gtk2->main_iteration while Gtk2->events_pending;
     my $response = $ua->get( $page );
@@ -302,17 +300,14 @@ sub get_web_info {
     } else {
         warn "problems getting ClamAV version: ", $response->status_line,
             "\n";
-        return '', '';
+        return FALSE;
     }
-    return '', '' if ( !$code );
+    return FALSE if ( !$code );
 
-    my ( $import )
-        = ( $code =~ /daily.cvd<\/a> ver. (\d+) released on (.*? \d{4})/ );
-
-    if ( defined( $1 ) and defined( $2 ) ) {
-        return ( $1, $2 );
+    if ( $code =~ /daily: (\d{5,})/ ) {
+        return $1;
     } else {
-        return '', '';
+        return FALSE;
     }
 }
 

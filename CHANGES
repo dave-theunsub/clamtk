@@ -1,5 +1,13 @@
 CHANGELOG for ClamTk:
 
+5.09 - Aug 29 2014
+------------------
+        * Release proper version for Ubuntu legacy (Google Issue #25).
+          Thanks, Thom!
+        * Fix check for updates issue due to change of ClamAV
+          website
+        * Updated language files: Uzbek (uz)
+
 5.08 - Aug 24 2014
 ------------------
         * Add missing proxy code (Google Issue #20). Thanks, Uri!
