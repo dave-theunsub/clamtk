@@ -1,5 +1,14 @@
 CHANGELOG for ClamTk:
 
+5.10 - Oct 2 2014
+------------------
+        * Display total number of signatures properly. Thanks, Natalia!
+        * Main window opens centered, which seems to prevent some
+          display issues. Thanks, John!
+        * Updated language files: Dutch (nl), Slovak (sk),
+          Indonesian (id), French (fr), Polish (pl), Italian (it),
+          Romanian (ro)
+
 5.09 - Aug 29 2014
 ------------------
         * Release proper version for Ubuntu legacy (Google Issue #25).

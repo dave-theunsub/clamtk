@@ -32,6 +32,7 @@ sub start_gui {
     $window->set_title( _( 'Virus Scanner' ) );
     $window->set_border_width( 5 );
     $window->set_default_size( 320, 400 );
+    $window->set_position( 'center' );
 
     my $images_dir = ClamTk::App->get_path( 'images' );
     my $pixbuf

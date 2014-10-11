@@ -24,7 +24,7 @@ use Encode 'decode';
 
 sub get_TK_version {
     # Stick with %.2f format - 4.50 vice 4.5
-    return '5.09';
+    return '5.10';
 }
 
 sub get_path {
@@ -341,7 +341,7 @@ sub get_sigtool_info {
         }
     }
 
-    if ( $wanted eq 'sigcount' ) {
+    if ( $wanted eq 'count' ) {
         if ( -e $main_path ) {
             if ( open( my $main_db, '-|', "$sigtool -i $main_path" ) ) {
                 while ( <$main_db> ) {
