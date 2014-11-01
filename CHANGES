@@ -1,5 +1,16 @@
 CHANGELOG for ClamTk:
 
+5.11 - Oct 31 2014
+-----------------
+        * Fix for clamtk.py to right-click scan files with
+          special characters
+        * Minor improvements to the Update dialog; the new benefit
+          is one-click signature updating vice two
+        * Minor updates to help documentation (PUAs)
+        * Minor improvement in Update Assistant
+        * Updated language files: German (de), Brazilian
+          Portuguese (pt_BR), Bulgarian (bg)
+
 5.10 - Oct 2 2014
 ------------------
         * Display total number of signatures properly. Thanks, Natalia!
@@ -190,17 +201,17 @@ CHANGELOG for ClamTk:
 4.44 - Dec 22 2012
 ------------------
 	* Update gvfs directory location, which moved from
-	  /home/$user/.gvfs to /run/user/$user/gvfs.  This is
-	  standard now with Ubuntu 12.10 and Fedora 17
+          /home/$user/.gvfs to /run/user/$user/gvfs.  This is
+          standard now with Ubuntu 12.10 and Fedora 17
 	* Add missing ignore-gvfs-mounts option to scheduled
-	  scans. Thanks, Matthew!
+          scans. Thanks, Matthew!
 	* Copy bytecode.cld when changing to manual updates.
 	* Updated Finnish (fi) language file. Thanks, Jiri!
 
 4.43 - Dec 2 2012
 ------------------
 	* Begin using Keyword entry in .desktop file
-	  (Launchpad #1050803)
+          (Launchpad #1050803)
 	* Added Afrikaans (af) language file. Thanks, Dawid!
 	* Added Marathi (mr) language file. Thanks, Shashank!
 	* Updated Greek (el_GR) language file. Thanks, Sterios!

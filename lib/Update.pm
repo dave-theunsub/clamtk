@@ -24,16 +24,20 @@ use Locale::gettext;
 my $infobar;      # Gtk2::InfoBar for status
 my $pb;           # Gtk2::ProgressBar
 my $liststore;    # Information on current and remote versions
+my $iter_hash;    # Must be global to update sig area
 
 my $updated = 0;
 
 sub show_window {
     my $box = Gtk2::VBox->new( FALSE, 5 );
 
+    my $top_box = Gtk2::VBox->new( FALSE, 5 );
+    $box->pack_start( $top_box, TRUE, TRUE, 0 );
+
     my $scrolled = Gtk2::ScrolledWindow->new( undef, undef );
     $scrolled->set_policy( 'never', 'never' );
     $scrolled->set_shadow_type( 'etched-out' );
-    $box->pack_start( $scrolled, FALSE, TRUE, 2 );
+    $top_box->pack_start( $scrolled, FALSE, TRUE, 2 );
 
     # update available images:
     # gtk-yes = yes
@@ -43,10 +47,9 @@ sub show_window {
     $liststore = Gtk2::ListStore->new(
         # product, local version,
         'Glib::String', 'Glib::String',
-        # remote version, update available image
-        'Glib::String', 'Glib::String',
     );
 
+    # Product column
     my $view = Gtk2::TreeView->new_with_model( $liststore );
     $view->set_can_focus( FALSE );
     $scrolled->add( $view );
@@ -56,77 +59,66 @@ sub show_window {
         text => 0,
     );
     $view->append_column( $column );
+
+    # Installed version column
     $column = Gtk2::TreeViewColumn->new_with_attributes(
         _( 'Installed' ),
         Gtk2::CellRendererText->new,
         text => 1,
     );
     $view->append_column( $column );
-    $column = Gtk2::TreeViewColumn->new_with_attributes(
-        _( 'Available' ),
-        Gtk2::CellRendererText->new,
-        text => 2,
-    );
-    $view->append_column( $column );
-    $column = Gtk2::TreeViewColumn->new_with_attributes(
-        _( 'Update Available' ),
-        Gtk2::CellRendererPixbuf->new,
-        stock_id => 3,
-    );
-    $view->append_column( $column );
 
     # Get local information
     my $local_sig_version = ClamTk::App->get_local_sig_version();
-    my $local_tk_version  = ClamTk::App->get_TK_version();
 
     #<<<
     my @data = (
         {
             product => _( 'Antivirus signatures' ),
             local   => $local_sig_version,
-            remote  => _('Unknown'),
-            update  => 'gtk-dialog-error',
-        },
-        {
-            product => _( 'Graphical interface' ),
-            local   => $local_tk_version,
-            remote  => _('Unknown'),
-            update  => 'gtk-dialog-error',
-        },
-        {
-            product => ' ',
-            local   => ' ',
-            remote  => ' ',
-            update  => ' ',
         },
     );
 
     for my $item ( @data ) {
         my $iter = $liststore->append;
+
+        # make a copy for updating
+        $iter_hash = $iter;
+
         $liststore->set( $iter,
                 0, $item->{ product },
                 1, $item->{ local },
-                2, $item->{ remote },
-                3, $item->{ update },
         );
     }
     #>>>
 
     $infobar = Gtk2::InfoBar->new;
     $infobar->set_message_type( 'other' );
-    $infobar->add_button( 'gtk-ok', -5 );
+
+    my $text = '';
+    if ( ClamTk::Prefs->get_preference( 'Update' ) eq 'shared' ) {
+        $text = _( 'You are configured to automatically receive updates' );
+    } else {
+        $text = _( 'Check for updates' );
+        $infobar->add_button( 'gtk-ok', -5 );
+    }
 
     my $label = Gtk2::Label->new;
-    $label->set_text( _( 'Check for updates' ) );
+    $label->set_text( $text );
     $label->set_alignment( 0.0, 0.5 );
     $infobar->get_content_area()->add( $label );
     #<<<
     $infobar->signal_connect(
         response => sub {
-            update_store();
+                # update_store();
+                update_signatures();
         }
     );
     #>>>
+
+    $box->pack_start(
+            Gtk2::VBox->new, TRUE, TRUE, 5
+    );
 
     $pb = Gtk2::ProgressBar->new;
     $box->pack_start( $infobar, FALSE, FALSE, 0 );
@@ -135,180 +127,6 @@ sub show_window {
     $box->show_all;
     $pb->hide;
     return $box;
-}
-
-sub update_store {
-    my $web_version = get_web_info();
-    my ( $remote_tk_version ) = get_remote_TK_version();
-
-    # Reset the liststore
-    $liststore->clear;
-
-    # Get local information
-    my $local_sig_version ||= ClamTk::App->get_local_sig_version();
-    my $local_tk_version  ||= ClamTk::App->get_TK_version();
-
-    # Keep track if we have updates available
-    my @updates;
-
-    my $sig_update_available = 'gtk-dialog-error';
-    # Ensure we have info for both
-    if ( $web_version && $web_version ne _( 'Unknown' ) ) {
-        # The only thing we have to check is if
-        # the web version is more - then update is available
-        if ( $web_version > $local_sig_version ) {
-            $sig_update_available = 'gtk-yes';
-            push( @updates, 'sigs' );
-        } else {
-            # Everything else is 'gtk-no'.  I think.
-            $sig_update_available = 'gtk-no';
-        }
-    } else {
-        $web_version = _( 'Unknown' );
-    }
-
-    my $gui_update_available = 'gtk-dialog-error';
-    # We assume we can easily get the local version
-    if ( $remote_tk_version ) {
-        my ( $local_chopped, $remote_chopped );
-        ( $local_chopped  = $local_tk_version ) =~ s/[^0-9]//;
-        ( $remote_chopped = $remote_tk_version ) =~ s/[^0-9]//;
-        # The only thing we have to check is if
-        # the web version is more - then update is available
-        if ( $remote_chopped > $local_chopped ) {
-            $gui_update_available = 'gtk-yes';
-            push( @updates, 'gui' );
-        } else {
-            # Everything else is 'gtk-no'.  I think.
-            $gui_update_available = 'gtk-no';
-        }
-    } else {
-        # warn "unknown tk status\n";
-        $remote_tk_version = _( 'Unknown' );
-    }
-
-    #<<<
-    my @data = (
-        {
-            product => _( 'Antivirus signatures' ),
-            local   => $local_sig_version,
-            remote  => $web_version,
-            update  => $sig_update_available,
-        },
-        {
-            product => _( 'Graphical interface' ),
-            local   => $local_tk_version,
-            remote  => $remote_tk_version,
-            update  => $gui_update_available,
-        },
-    );
-
-    for my $item ( @data ) {
-        my $iter = $liststore->append;
-        $liststore->set( $iter,
-            0, $item->{ product },
-            1, $item->{ local },
-            2, $item->{ remote },
-            3, $item->{ update },
-        );
-    }
-    #>>>
-
-    # Can we update?  shared or single
-    my $update_pref = '';
-    # Return value to see if updates were applied.
-    # If so, refresh the store
-    my $updated = 0;
-    if ( @updates ) {
-        my $text = _( 'Updates are available' );
-        if ( ClamTk::Prefs->get_preference( 'Update' ) eq 'shared' ) {
-            $text .= "\n";
-            #<<<
-            $text
-             .= _( 'You are configured to automatically receive updates' );
-            #>>>
-            $update_pref = 'shared';
-        } else {
-            $update_pref = 'single';
-        }
-
-        set_infobar_text( 'warning', $text );
-
-        # We only show the update button if the update preference
-        # is "single" (user updates manually) or the user is root.
-        # Also, as Google Issue #4 showed, !only! when
-        # there is a sigs update and not when only a GUI update.
-        if ( @updates && grep ( /sigs/, @updates ) ) {
-            if ( $update_pref eq 'single' or $> == 0 ) {
-                #set_infobar_button( 'gtk-apply', -5 );
-                destroy_button();
-                my $button = Gtk2::Button->new( _( 'Update' ) );
-                $infobar->get_action_area->add( $button );
-                $button->show;
-                $button->signal_connect(
-                    clicked => sub {
-                        Gtk2->main_iteration while Gtk2->events_pending;
-                        set_infobar_text( 'info', _( 'Please wait...' ) );
-                        Gtk2->main_iteration while Gtk2->events_pending;
-                        $updated
-                            = update_signatures( $local_sig_version,
-                            $web_version );
-                        # Now we returned from updating signatures...
-                        # clear rows (liststore) and display updated info
-                        if ( $updated ) {
-                            $liststore->clear;
-                            # Wonder if this is bad?  Too recursive?
-                            update_store();
-                            Gtk2->main_iteration while Gtk2->events_pending;
-                            ClamTk::GUI->startup();
-                            Gtk2->main_iteration while Gtk2->events_pending;
-                        } else {
-                            set_infobar_text( 'error',
-                                _( 'Error updating: try again later' ) );
-                            destroy_button();
-                        }
-                    }
-                );
-            } else {
-                # Remove buttons if they exist, since this
-                # user cannot update signatures
-                # warn "removing button, cannot update\n";
-                destroy_button();
-            }
-        } else {
-            # warn "no updates available\n";
-            #set_infobar_text( 'info', _( 'No updates are available.' ) );
-            destroy_button();
-        }
-    }
-}
-
-sub get_web_info {
-    # Get clamav.net info
-    # my $page = 'http://www.clamav.net/lang/en/';
-    my $page = 'http://lurker.clamav.net/list/clamav-virusdb.html';
-
-    my $ua = add_ua_proxy();
-
-    Gtk2->main_iteration while Gtk2->events_pending;
-    my $response = $ua->get( $page );
-    Gtk2->main_iteration while Gtk2->events_pending;
-    my $code = '';
-
-    if ( $response->is_success ) {
-        $code = $response->decoded_content;
-    } else {
-        warn "problems getting ClamAV version: ", $response->status_line,
-            "\n";
-        return FALSE;
-    }
-    return FALSE if ( !$code );
-
-    if ( $code =~ /daily: (\d{5,})/ ) {
-        return $1;
-    } else {
-        return FALSE;
-    }
 }
 
 sub get_remote_TK_version {
@@ -335,13 +153,11 @@ sub get_remote_TK_version {
 }
 
 sub update_signatures {
-    my ( $local_version, $web_version ) = @_;
 
+    $pb->{ timer } = Glib::Timeout->add( 100, \&progress_timeout, $pb );
     $pb->show;
     #$pb->set_show_text( TRUE );
-    $pb->set_text( _( 'Downloading...' ) );
-
-    my $step = 1 / ( $web_version - $local_version );
+    $pb->set_text( _( 'Please wait...' ) );
 
     my $freshclam = get_freshclam_path();
 
@@ -378,19 +194,19 @@ sub update_signatures {
     # and try to sum it up.
 
     while ( defined( my $line = <$update> ) ) {
+        $pb->set_text( _( 'Downloading...' ) );
         Gtk2->main_iteration while Gtk2->events_pending;
         chomp( $line );
 
-        if ( $line =~ /^Downloading daily/ ) {
+        if ( $line =~ /^Downloading daily-(\d+)/ ) {
+            my $new_daily = $1;
             Gtk2->main_iteration while Gtk2->events_pending;
-            my $fraction = $pb->get_fraction;
-            $fraction += $step;
-            if ( $fraction < 1.0 ) {
-                $pb->set_fraction( $fraction );
-            } else {
-                $pb->set_fraction( 1.0 );
-            }
-            Gtk2->main_iteration while Gtk2->events_pending;
+
+                    $liststore->set( $iter_hash,
+                            0, _( 'Antivirus signatures' ),
+                            1, $new_daily,
+                    );
+
         } elsif ( $line =~ /Database updated/ ) {
             Gtk2->main_iteration while Gtk2->events_pending;
             $pb->set_fraction( 1.0 );
@@ -401,17 +217,25 @@ sub update_signatures {
         }
         Gtk2->main_iteration while Gtk2->events_pending;
     }
-    $updated++;
+    # Get local information. It would probably be okay to just
+    # keep the same number we saw during the update, but this
+    # gives the "for sure" sig version installed:
+    my $local_sig_version = ClamTk::App->get_local_sig_version();
+
+    $liststore->set( $iter_hash,
+            0, _( 'Antivirus signatures' ),
+            1, $local_sig_version,
+    );
+    Glib::Source->remove( $pb->{ timer } );
     $pb->set_fraction( 1.0 );
     $pb->set_text( _( 'Complete' ) );
 
     # Update infobar type and text; remove button
-    set_infobar_text( 'info', _( 'Signatures are current' ) );
-    $pb->hide;
-    destroy_button();
-
-    # Update frontpage infobar
-    ClamTk::GUI->startup();
+    Gtk2->main_iteration while Gtk2->events_pending;
+    set_infobar_text( 'info', _( '' ) );
+    ClamTk::GUI::set_infobar_mode( 'info', '' );
+    # $pb->hide;
+    # destroy_button();
 
     return TRUE;
 }
@@ -473,6 +297,14 @@ sub destroy_button {
             $child->destroy;
         }
     }
+}
+
+sub progress_timeout {
+        Gtk2->main_iteration while Gtk2->events_pending;
+        $pb->pulse;
+        Gtk2->main_iteration while Gtk2->events_pending;
+
+        return TRUE;
 }
 
 sub add_ua_proxy {

@@ -514,8 +514,8 @@ sub check_for_existing {
             return ( $return, $new_window, $is_error );
             $data->{ response_code } = -4;
         }
-        warn "response_code from submission >", $data->{ response_code },
-            "<\n";
+        # warn "response_code from submission >", $data->{ response_code },
+        #    "<\n";
         # Response codes:
         # 0 = not present in dataset
         # -2 = queued for analysis

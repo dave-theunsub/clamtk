@@ -150,11 +150,13 @@ sub startup {
     # are updates, we need to show it
     Gtk2->main_iteration while Gtk2->events_pending;
     set_infobar_mode( $message_type, $message );
+    $window->queue_draw;
 
     $window->resize( 340, 400 );
     $infobar->show;
     $window->queue_draw;
     Gtk2->main_iteration while Gtk2->events_pending;
+    $window->resize( 340, 400 );
 }
 
 sub set_infobar_mode {
@@ -518,7 +520,20 @@ sub swap_button {
     my $change_to = shift;
     if ( $change_to ) {
         $infobar->add_button( 'gtk-go-back', -5 );
-        $infobar->signal_connect( 'response' => \&add_default_view );
+        # $infobar->signal_connect( 'response' => \&add_default_view );
+        $infobar->signal_connect(
+            response => sub {
+                my ( $package, $filename, $line ) = caller;
+                add_default_view();
+                # Only do this if we're coming from
+                # Update.pm - this will show the user
+                # if the sigs were updated
+                if ( $package eq 'ClamTk::Update' ) {
+                    warn "caller; going to startup\n";
+                    startup();
+                }
+            }
+        );
     } else {
         for my $a ( $infobar->get_action_area ) {
             for my $b ( $a->get_children ) {
