@@ -17,6 +17,7 @@ package ClamTk::History;
 use File::Basename 'basename';
 use Locale::gettext;
 use Encode 'decode';
+use Gtk2::Gdk::Keysyms;
 
 use Glib 'TRUE', 'FALSE';
 
@@ -41,6 +42,27 @@ sub show_window {
     $column->set_sort_column_id( 0 );
     $view->append_column( $column );
     $swin->add( $view );
+
+    # Add delete signals
+    $box->signal_connect(
+        key_press_event => sub {
+            my ( $widget, $event ) = @_;
+            if ( $event->keyval == $Gtk2::Gdk::Keysyms{ Delete } ) {
+                del_history( undef, $view );
+            }
+            return TRUE;
+        }
+    );
+
+    # "Select" a row to make keyboard use easier
+    my $first_iter = $store->get_iter_first;
+    # Make sure they *have* a history
+    if ( $first_iter ) {
+        if ( $store->iter_is_valid( $first_iter ) ) {
+            my $viewpath = $store->get_path( $store->get_iter_first );
+            $view->set_cursor( $viewpath ) if ( $viewpath );
+        }
+    }
 
     $box->pack_start( Gtk2::VSeparator->new, FALSE, FALSE, 0 );
 
@@ -83,6 +105,10 @@ sub view_history {
     my ( $button, $view ) = @_;
     my $select = $view->get_selection;
     return unless ( $select );
+
+    my ( $model, $iter ) = $select->get_selected;
+    return unless $iter;
+
     my $basename = '';
     $select->selected_foreach(
         sub {
@@ -90,6 +116,22 @@ sub view_history {
             $basename = $model->get( $iter, 0 );
         }
     );
+
+    # Grab the next item so the user can just hit View or Enter
+    my $next_iter;
+    my $new_path;
+    if ( $model->iter_is_valid( $iter ) ) {
+        $next_iter = $model->iter_next( $iter );
+    } else {
+        # This does not work. And that's stupid.
+        # Or I am, for leaving it here.
+        $next_iter = $model->get_iter_first;
+    }
+    if ( $next_iter && $model->iter_is_valid( $next_iter ) ) {
+        $new_path = $model->get_path( $next_iter );
+        $select->select_path( $new_path );
+    }
+
     #<<<
     my $full_path
         = ClamTk::App->get_path( 'history' )
@@ -168,15 +210,20 @@ sub del_history {
     return unless $iter;
 
     my $row = $model->get( $iter, 0 );
+    my $first_iter = $model->get_iter_first;
+    # my $next_iter  = $model->iter_next($iter);
+    my $new_path = $model->get_path( $iter );
 
     my $paths     = ClamTk::App->get_path( 'history' );
     my $top_dir   = $paths . '/';
     my $full_path = $top_dir . $row . '.log';
-    $row = undef;
+    # $row = undef;
     return FALSE unless ( -e $full_path );
     unlink( $full_path ) or warn "couldn't delete $full_path: $!\n";
 
     $model->remove( $iter );
+    $sel->select_iter( $iter );
+    # $sel->select_path( $new_path );
     return TRUE;
 }
 

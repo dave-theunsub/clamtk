@@ -105,7 +105,6 @@ sub show_window {
 
     my $label = Gtk2::Label->new;
     $label->set_text( $text );
-    $label->set_alignment( 0.0, 0.5 );
     $infobar->get_content_area()->add( $label );
     #<<<
     $infobar->signal_connect(

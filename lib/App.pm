@@ -24,7 +24,7 @@ use Encode 'decode';
 
 sub get_TK_version {
     # Stick with %.2f format - 4.50 vice 4.5
-    return '5.11';
+    return '5.12';
 }
 
 sub get_path {
@@ -44,6 +44,16 @@ sub get_path {
 
     # Default personal clamtk directory
     $path->{ clamtk } = $path->{ directory } . '/.clamtk';
+
+    # Trash directory - main
+    $path->{ trash_dir } = $path->{ directory } . '/.local/share/Trash';
+
+    # Trash directory - where files are held
+    $path->{ trash_dir_files } = $path->{ trash_dir } . '/files';
+
+    # Trash directory - where associated files are held:
+    # e.g. trash.jpg.trashinfo
+    $path->{ trash_files_info } = $path->{ trash_dir } . '/info';
 
     # For storing quarantined files
     $path->{ viruses } = $path->{ clamtk } . '/viruses';

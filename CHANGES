@@ -1,5 +1,16 @@
 CHANGELOG for ClamTk:
 
+5.12 - Dec 24 2014
+-----------------
+        * Fix for mouse focus issue in history window
+          (Google Issue #29)
+        * Add delete keybinding to history window
+        * Fix error with analysis function where incorrect
+          results were given
+        * Add initial support for Trash. Thanks, Nikita!
+        * Fix formatting issue when quarantining or deleting
+          items in the Results panel
+
 5.11 - Oct 31 2014
 -----------------
         * Fix for clamtk.py to right-click scan files with

@@ -262,7 +262,7 @@ sub analysis_frame_one {
             my ( $vt_results, $new_window, $is_error )
                 = check_for_existing( $filename );
             # warn "VT results = >$vt_results<, ",
-            # open new_win = >$new_window<, error = >$is_error<\n";
+            # "open new_win = >$new_window<, error = >$is_error<\n";
             #$results->set_text( $vt_results );
             #>>>
 
@@ -270,7 +270,8 @@ sub analysis_frame_one {
             if ( $new_window ) {
                 $nb->show_all;
                 $nb->set_current_page( 1 );
-            } elsif ( $new_window && !$is_error ) {
+                #} elsif ( $new_window && !$is_error ) {
+            } elsif ( $vt_results == 0 ) {
                 # No information exists; offer to submit file
                 my $confirm = popup(
                     _(        'No information exists for this file.' . ' '
@@ -615,8 +616,8 @@ sub submit_new {
 
         popup( _( 'File successfully submitted for analysis.' ) );
     } else {
-        warn "Problem submitting: $response->status_line\n";
-        warn "content = >$response->content<\n";
+        # warn "Problem submitting: $response->status_line\n";
+        # warn "content = >$response->content<\n";
         popup( _( 'Unable to submit file: try again later' ) );
     }
     Gtk2->main_iteration while ( Gtk2->events_pending );

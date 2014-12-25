@@ -162,7 +162,6 @@ sub show_window {
     $hbox->insert( $button, -1 );
 
     $window->show_all;
-    Gtk2->main;
 }
 
 sub action {
@@ -245,26 +244,18 @@ sub quarantine {
 }
 
 sub delete_file {
-    my ( $file ) = shift;
+    my $file     = shift;
+    my $basename = basename( $file );
 
     # This is where threats go
     my $paths = ClamTk::App->get_path( 'viruses' );
 
-    #<<<
-    my $question = sprintf(
-            _( 'Really delete this file (%s) ?' ),
-            basename( $file ),
-    );
+    my $question
+        = sprintf( _( 'Really delete this file (%s) ?' ), $basename );
 
     my $message
-        = Gtk2::MessageDialog->new(
-                undef,
-                [ qw(modal destroy-with-parent) ],
-                'question',
-                'ok-cancel',
-                $question,
-    );
-    #>>>
+        = Gtk2::MessageDialog->new( undef, [ qw(modal destroy-with-parent) ],
+        'question', 'ok-cancel', $question, );
 
     if ( 'ok' eq $message->run ) {
         $message->destroy;
@@ -276,6 +267,16 @@ sub delete_file {
         warn "unable to delete >$file<: $!\n";
         return FALSE;
     };
+
+    # If it's in the trash, remove its associated information file
+    my $trash_info_path = ClamTk::App->get_path( 'trash_files_info' );
+    my $trash_info_file = $trash_info_path . '/' . $basename . '.trashinfo';
+    if ( $file =~ m#Trash# ) {
+        if ( -e $trash_info_file ) {
+            unlink( $trash_info_file )
+                or warn "Unable to delete trashinfo file for $file: $!\n";
+        }
+    }
     return TRUE;
 }
 
@@ -285,14 +286,14 @@ sub color_out {
     my ( $store, $iter, $third_value_change ) = @_;
 
     my $first_col_value
-        = "<span foreground='#CCCCCC'>"
+        = "<span foreground = '#CCCCCC'>"
         . $store->get_value( $iter, FILE )
-        . "</span>";
+        . " </span>";
     my $second_col_value
         = "<span foreground='#CCCCCC'>"
         . $store->get_value( $iter, STATUS )
-        . "</span>";
-    my $third_col_value = "<span foreground='#CCCCCC'>"
+        . "</span > ";
+    my $third_col_value = "<span foreground = '#CCCCCC'>"
         #. $store->get_value( $iter, ACTION_TAKEN )
         . $third_value_change . "</span>";
     #<<<
@@ -306,9 +307,12 @@ sub color_out {
 }
 
 sub get_maildirs {
-    return join( '|',
-        '.thunderbird', '.mozilla-thunderbird', 'evolution(?!/tmp)',
-        'Mail',         'kmail',                "\.pst" );
+    return join(
+        '|',
+        '.thunderbird', '.mozilla-thunderbird', 'evolution(?!/ tmp
+            ) ',
+        ' Mail ', ' kmail ', "\.pst"
+    );
 }
 
 sub get_hash {
@@ -316,7 +320,7 @@ sub get_hash {
 
     my $slurp = do {
         local $/ = undef;
-        open( my $f, '<', $file ) or do {
+        open( my $f, ' < ', $file ) or do {
             warn "unable to open >$file<: $!\n";
             return;
         };

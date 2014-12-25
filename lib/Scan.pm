@@ -62,9 +62,7 @@ sub filter {
         return;
     }
 
-    # Begin popup 'scanning' crap.
-    # We would normally use a statusicon, but GNOME
-    # does not support it??
+    # Begin popup 'scanning'
     $window = Gtk2::Window->new;
     $window->set_deletable( FALSE );
     $window->signal_connect(
@@ -166,6 +164,7 @@ sub filter {
             'smb4k',
             "/run/user/$ENV{USER}/gvfs",
             "$ENV{HOME}/.gvfs" ) {
+                # warn "excluding $m\n";
                 $directive .= " --exclude-dir=$m";
     }
     #>>>
@@ -179,6 +178,7 @@ sub filter {
         )
         )
     {
+        # warn "excluding $ignore\n";
         $directive .= " --exclude-dir=" . quotemeta( $ignore );
     }
 
@@ -192,12 +192,16 @@ sub filter {
         Mail	kmail   evolution
     );
     for my $mailbox ( @maildirs ) {
+        # warn "excluding mailbox directory $mailbox\n";
         $directive .= " --exclude-dir=$mailbox";
     }
 
     # remove the hidden files if chosen:
     if ( !$prefs{ ScanHidden } ) {
-        $directive .= ' --exclude="\/\."';
+        # But only if Trash directory is not being scanned
+        if ( $scanthis !~ m#/.local/share/Trash# ) {
+            $directive .= ' --exclude="\/\."';
+        }
     }
 
     # symlinks:
@@ -248,9 +252,12 @@ sub filter {
 
 sub scan {
     my ( $path_to_scan, $directive ) = @_;
+    chomp( $path_to_scan );
+    chomp( $directive );
     $pb->set_fraction( .50 );
     $spinner->start;
     my $quoted = quotemeta( $path_to_scan );
+    chomp( $quoted );
 
     # Leave if we have no real path
     if ( !$path_to_scan ) {

@@ -51,6 +51,20 @@ bind_textdomain_codeset( 'clamtk', 'UTF-8' );
 my $arg = '';
 $arg = join( ' ', @ARGV );
 
+# Might be in the Trash
+# // = entire directory
+my $trash_dir = ClamTk::App->get_path( 'trash_dir' );
+if ( $arg eq '//' ) {
+    # The whole "Trash" directory
+    $arg = $trash_dir;
+} elsif ( $arg =~ m#^//(.*?)$# ) {
+    # individual file
+    my $trash_dir_files = ClamTk::App->get_path( 'trash_dir_files' );
+    if ( -e "$trash_dir_files/$1" ) {
+        $arg = "$trash_dir_files/$1";
+    }
+}
+
 # Ensure all the normal directories are created
 ClamTk::Prefs->structure;
 
