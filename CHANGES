@@ -1,7 +1,16 @@
 CHANGELOG for ClamTk:
 
-5.12 - Dec 24 2014
+5.13 - Jan 3 2015
 -----------------
+        * Fix for submitting new files in Analysis
+        * Update for Virustotal API return results
+        * Fix closing Results window exits program
+        * Fix "extra" translation in Scan finish
+        * Fix Results window doesn't show in some situations
+        * Fix scan statistics not resetting after scan
+
+5.12 - Dec 24 2014
+------------------
         * Fix for mouse focus issue in history window
           (Google Issue #29)
         * Add delete keybinding to history window
@@ -12,7 +21,7 @@ CHANGELOG for ClamTk:
           items in the Results panel
 
 5.11 - Oct 31 2014
------------------
+------------------
         * Fix for clamtk.py to right-click scan files with
           special characters
         * Minor improvements to the Update dialog; the new benefit
@@ -23,7 +32,7 @@ CHANGELOG for ClamTk:
           Portuguese (pt_BR), Bulgarian (bg)
 
 5.10 - Oct 2 2014
-------------------
+-----------------
         * Display total number of signatures properly. Thanks, Natalia!
         * Main window opens centered, which seems to prevent some
           display issues. Thanks, John!
