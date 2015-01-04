@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2014 Dave M
+# ClamTk, copyright (C) 2004-2015 Dave M
 #
 # This file is part of ClamTk (http://code.google.com/p/clamtk/).
 #
@@ -11,6 +11,7 @@
 # b) the "Artistic License".
 package ClamTk::Results;
 
+use Gtk2 '-init';
 use Glib 'TRUE', 'FALSE';
 
 # use strict;
@@ -106,7 +107,7 @@ sub show_window {
     #<<<
     my $i = 0;
     while ( $i <= scalar keys %$hash ) {
-        #print 'name = ', $hash->{ $i }->{ name }, "\n";
+        # print 'name = ', $hash->{ $i }->{ name }, "\n";
         my $iter = $liststore->append;
         $liststore->set(
                 $iter,
@@ -155,13 +156,13 @@ sub show_window {
     $button->signal_connect(
         clicked => sub {
             $window->destroy;
-            Gtk2->main_quit;
         }
     );
     $button->set_is_important( TRUE );
     $hbox->insert( $button, -1 );
 
     $window->show_all;
+    Gtk2->main;
 }
 
 sub action {

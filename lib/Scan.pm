@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2014 Dave M
+# ClamTk, copyright (C) 2004-2015 Dave M
 #
 # This file is part of ClamTk (http://code.google.com/p/clamtk/).
 #
@@ -109,6 +109,9 @@ sub filter {
     $pb = Gtk2::ProgressBar->new;
     $box->pack_start( $pb, FALSE, FALSE, 5 );
     $pb->set_fraction( .25 );
+
+    # reset numbers
+    reset_stats();
 
     $files_scanned_label
         = Gtk2::Label->new( sprintf _( "Files scanned: %d" ), $num_scanned );
@@ -358,13 +361,11 @@ sub scan {
             $found->{ $found_count }->{ status } = $status;
             $found->{ $found_count }->{ action } = _( 'None' );
             $found_count++;
-            $threats_label->set_text( sprintf _( "Possible threats: %d" ),
-                $found_count );
+            $threats_label->set_text( sprintf _( "Possible threats: %d" ), $found_count );
         }
 
         $num_scanned++;
-        $files_scanned_label->set_text( sprintf _( "Files scanned: %d" ),
-            $num_scanned );
+        $files_scanned_label->set_text( sprintf _( "Files scanned: %d" ), $num_scanned );
 
         Gtk2->main_iteration while ( Gtk2->events_pending );
     }
@@ -400,7 +401,7 @@ sub clean_up {
     } else {
         $message = _( 'Possible threats found' );
     }
-    set_infobar_text( $topbar, _( $message ) );
+    set_infobar_text( $topbar, $message );
 
     # Save scan information
     logit();
@@ -413,6 +414,11 @@ sub clean_up {
         bad_popup();
     }
 
+    # reset numbers
+    reset_stats();
+}
+
+sub reset_stats {
     # reset things
     $num_scanned  = 0;
     $found_count  = 0;

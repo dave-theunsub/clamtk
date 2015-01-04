@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2014 Dave M
+# ClamTk, copyright (C) 2004-2015 Dave M
 #
 # This file is part of ClamTk (http://code.google.com/p/clamtk/).
 #
@@ -28,7 +28,18 @@ my $box;
 
 sub start_gui {
     $window = Gtk2::Window->new;
-    $window->signal_connect( destroy => sub { Gtk2->main_quit } );
+    $window->signal_connect(
+        destroy => sub {
+            $window->destroy;
+            Gtk2->main_quit;
+        }
+    );
+    $window->signal_connect(
+        delete_event => sub {
+            $window->destroy;
+            Gtk2->main_quit;
+        }
+    );
     $window->set_title( _( 'Virus Scanner' ) );
     $window->set_border_width( 5 );
     $window->set_default_size( 320, 400 );
@@ -104,6 +115,7 @@ sub start_gui {
     $infobar->add_button( 'gtk-go-back', -5 );
     $infobar->signal_connect( 'response' => \&add_default_view );
     my $label = Gtk2::Label->new( '' );
+    $label->modify_font( Pango::FontDescription->from_string( 'Monospace' ) );
     $label->set_use_markup( TRUE );
     $infobar->get_content_area()->add( $label );
     $infobar->grab_focus;
@@ -165,6 +177,8 @@ sub set_infobar_mode {
     $infobar->set_message_type( $type );
     for my $c ( $infobar->get_content_area->get_children ) {
         if ( $c->isa( 'Gtk2::Label' ) ) {
+            $c->modify_font(
+                Pango::FontDescription->from_string( 'Monospace' ) );
             $c->set_text( $text );
         }
     }
@@ -176,6 +190,8 @@ sub set_infobar_text_remote {
     $infobar->set_message_type( $type );
     for my $c ( $infobar->get_content_area->get_children ) {
         if ( $c->isa( 'Gtk2::Label' ) ) {
+            $c->modify_font(
+                Pango::FontDescription->from_string( 'Monospace' ) );
             $c->set_text( $text );
         }
     }
@@ -185,6 +201,7 @@ sub add_configuration {
     my $show_this = shift;
 
     my $label = Gtk2::Label->new;
+    $label->modify_font( Pango::FontDescription->from_string( 'Monospace' ) );
     $label->set_markup( "<b>$show_this</b>" );
     $label->set_alignment( 0.01, 0.5 );
 
@@ -206,6 +223,7 @@ sub add_config_panels {
     $view->set_tooltip_column( 2 );
     $view->set_selection_mode( 'single' );
     $view->set_can_focus( FALSE );
+    $view->modify_font( Pango::FontDescription->from_string( 'Monospace' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
     if ( $prefs == 2 ) {
@@ -289,6 +307,7 @@ sub add_update_panels {
     $view->set_selection_mode( 'single' );
     #$view->set_activate_on_single_click( TRUE );
     $view->set_can_focus( FALSE );
+    $view->modify_font( Pango::FontDescription->from_string( 'Monospace' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
 
@@ -363,6 +382,7 @@ sub add_history_panels {
     $view->set_selection_mode( 'single' );
     #$view->set_activate_on_single_click( TRUE );
     $view->set_can_focus( FALSE );
+    $view->modify_font( Pango::FontDescription->from_string( 'Monospace' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
 
@@ -436,6 +456,7 @@ sub add_analysis_panels {
     $view->set_tooltip_column( 2 );
     $view->set_selection_mode( 'single' );
     $view->set_can_focus( FALSE );
+    $view->modify_font( Pango::FontDescription->from_string( 'Monospace' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
 
@@ -529,7 +550,6 @@ sub swap_button {
                 # Update.pm - this will show the user
                 # if the sigs were updated
                 if ( $package eq 'ClamTk::Update' ) {
-                    warn "caller; going to startup\n";
                     startup();
                 }
             }
@@ -623,6 +643,9 @@ sub select_file {
         'gtk-ok'     => 'ok',
     );
     $dialog->set_select_multiple( FALSE );
+    if ( ClamTk::Prefs->get_preference( 'ScanHidden' ) ) {
+        $dialog->set_show_hidden( TRUE );
+    }
     $dialog->set_position( 'center-on-parent' );
     if ( 'ok' eq $dialog->run ) {
         $window->queue_draw;
@@ -649,6 +672,10 @@ sub select_directory {
         'gtk-ok'     => 'ok',
     );
     $dialog->set_position( 'center-on-parent' );
+    $dialog->set_current_folder( ClamTk::App->get_path( 'directory' ) );
+    if ( ClamTk::Prefs->get_preference( 'ScanHidden' ) ) {
+        $dialog->set_show_hidden( TRUE );
+    }
     if ( 'ok' eq $dialog->run ) {
         $directory = $dialog->get_filename;
         Gtk2->main_iteration while ( Gtk2->events_pending );
@@ -775,6 +802,8 @@ sub about {
         . ' b) the "Artistic License".';
     $dialog->set_wrap_license( TRUE );
     $dialog->set_position( 'mouse' );
+    $dialog->modify_font(
+        Pango::FontDescription->from_string( 'Monospace' ) );
 
     my $images_dir = ClamTk::App->get_path( 'images' );
     my $icon       = "$images_dir/clamtk.png";
@@ -789,7 +818,7 @@ sub about {
     $dialog->set_logo( $pixbuf );
     $dialog->set_translator_credits(
         'Please see the website for full listing' );
-    $dialog->set_copyright( "\x{a9} Dave M 2004 - 2014" );
+    $dialog->set_copyright( "\x{a9} Dave M 2004 - 2015" );
     $dialog->set_program_name( 'ClamTk' );
     #$dialog->set_authors( [ 'Dave M', 'dave.nerd@gmail.com' ] );
     $dialog->set_authors( 'Dave M <dave.nerd@gmail.com>' );

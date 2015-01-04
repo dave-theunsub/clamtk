@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2014 Dave M
+# ClamTk, copyright (C) 2004-2015 Dave M
 #
 # This file is part of ClamTk (http://code.google.com/p/clamtk/).
 #
@@ -257,14 +257,12 @@ sub analysis_frame_one {
                 return;
             }
 
-            #<<<
             Gtk2->main_iteration while ( Gtk2->events_pending );
             my ( $vt_results, $new_window, $is_error )
                 = check_for_existing( $filename );
             # warn "VT results = >$vt_results<, ",
             # "open new_win = >$new_window<, error = >$is_error<\n";
             #$results->set_text( $vt_results );
-            #>>>
 
             # Information exists on this file; show results
             if ( $new_window ) {
@@ -342,13 +340,13 @@ sub analysis_frame_two {
             my $csv = Text::CSV->new( { binary => 1, eol => "\n" } )
                 or do {
                 warn "unable to begin Text::CSV: $!\n";
-                popup( _( 'Error with Text::CSV file' ) );
+                # popup( _( 'Error with Text::CSV file' ) );
                 return;
                 };
 
             open( my $f, '<:encoding(utf8)', $file_to_use ) or do {
                 warn "unable to opening VT CSV file: $!\n";
-                popup( _( 'Error opening VT CSV file' ) );
+                # popup( _( 'Error opening VT CSV file' ) );
                 return;
             };
             # File, Hash, Date
@@ -458,16 +456,7 @@ sub check_for_existing {
     # First, set the infobar so the
     # user knows something is happening:
     Gtk2->main_iteration while ( Gtk2->events_pending );
-    for my $c ( $bar->get_content_area->get_children ) {
-        if ( $c->isa( 'Gtk2::Label' ) ) {
-            Gtk2->main_iteration while Gtk2->events_pending;
-            $c->set_text( _( 'Please wait...' ) );
-            $window->queue_draw;
-            Gtk2->main_iteration while Gtk2->events_pending;
-            return;
-        }
-    }
-    #set_infobar_mode( _( 'Please wait...' ) );
+    set_infobar_mode( _( 'Please wait...' ) );
     $window->queue_draw;
     Gtk2->main_iteration while ( Gtk2->events_pending );
 
@@ -490,8 +479,7 @@ sub check_for_existing {
     );
     #>>>
 
-    # $return = results we're returning
-    my $return;
+    set_infobar_mode( ' ' );
     # $new_window = switch to results tab
     my $new_window = TRUE;
     # $is_error = connection (or other) issue
@@ -503,17 +491,16 @@ sub check_for_existing {
 
     Gtk2->main_iteration while ( Gtk2->events_pending );
 
+    my $data;
     if ( $response->is_success ) {
         my $json = JSON->new->utf8->allow_nonref;
-        my $data;
         eval { $data = $json->decode( $response->decoded_content ); };
         if ( $@ ) {
             warn "error reading/decoding json: $@\n";
-            $return     = 'unknown error';
-            $new_window = FALSE;
-            $is_error   = TRUE;
-            return ( $return, $new_window, $is_error );
+            $new_window              = FALSE;
+            $is_error                = TRUE;
             $data->{ response_code } = -4;
+            return ( $data->{ response_code }, $new_window, $is_error );
         }
         # warn "response_code from submission >", $data->{ response_code },
         #    "<\n";
@@ -522,7 +509,7 @@ sub check_for_existing {
         # -2 = queued for analysis
         # 1 = present and can be retrieved
         if ( $data->{ response_code } == 1 ) {
-            $return = $data->{ positives } . ' / ' . $data->{ total };
+            # $return = $data->{ positives } . ' / ' . $data->{ total };
             for my $mark ( $data->{ scans } ) {
                 while ( my ( $vendor, $v ) = each %$mark ) {
                     my $iter = $store->append;
@@ -531,7 +518,7 @@ sub check_for_existing {
                         $iter,
                         VENDOR, $vendor,
                         RESULT,
-                        ( $v->{ detected } eq 'true' )
+                        ( $v->{ result } )
                         ? $v->{ result }
                         : '---',
                         DATE, $v->{ update },
@@ -540,44 +527,38 @@ sub check_for_existing {
                 }
             }
         } elsif ( $data->{ response_code } == 0 ) {
-            $return     = _( 'No information on this file' );
+            # $return     = _( 'No information on this file' );
             $new_window = FALSE;
             $is_error   = FALSE;
         } elsif ( $data->{ response_code } == -2 ) {
-            $return     = _( 'File is pending analysis' );
+            # $return     = _( 'File is pending analysis' );
             $new_window = FALSE;
             $is_error   = FALSE;
         } else {
-            $return     = _( 'An unknown error occurred' );
-            $new_window = FALSE;
-            $is_error   = TRUE;
+            # $return     = _( 'An unknown error occurred' );
+            $data->{ response_code } = -4;
+            $new_window              = FALSE;
+            $is_error                = TRUE;
         }
     } else {
-        $return     = '? / ?';
-        $new_window = FALSE;
-        $is_error   = TRUE;
+        $data->{ response_code } = -4;
+        $new_window              = FALSE;
+        $is_error                = TRUE;
         warn "Unable to connect in submission: ", $response->status_line,
             "\n";
     }
     Gtk2->main_iteration while ( Gtk2->events_pending );
     set_infobar_mode( ' ' );
     Gtk2->main_iteration while ( Gtk2->events_pending );
-    return ( $return, $new_window, $is_error );
+    return ( $data->{ response_code }, $new_window, $is_error );
 }
 
 sub submit_new {
     # First, set the infobar so the user knows
     # something is happening:
     Gtk2->main_iteration while ( Gtk2->events_pending );
-    for my $c ( $bar->get_content_area->get_children ) {
-        Gtk2->main_iteration while Gtk2->events_pending;
-        if ( $c->isa( 'Gtk2::Label' ) ) {
-            $c->set_text( _( 'Please wait...' ) );
-            $window->queue_draw;
-        }
-    }
+    set_infobar_mode( _( 'Please wait...' ) );
     $window->queue_draw;
-    Gtk2->main_iteration while ( Gtk2->events_pending );
     my $url = 'https://www.virustotal.com/vtapi/v2/file/scan';
 
     my $ua               = add_ua_proxy();
@@ -596,6 +577,12 @@ sub submit_new {
             ],
     );
     #>>>
+
+    Gtk2->main_iteration while ( Gtk2->events_pending );
+    set_infobar_mode( ' ' );
+    $bar->show_all;
+    $window->queue_draw;
+    Gtk2->main_iteration while ( Gtk2->events_pending );
 
     if ( $response->is_success ) {
         # Save off the results; might use them later
@@ -616,14 +603,8 @@ sub submit_new {
 
         popup( _( 'File successfully submitted for analysis.' ) );
     } else {
-        # warn "Problem submitting: $response->status_line\n";
-        # warn "content = >$response->content<\n";
         popup( _( 'Unable to submit file: try again later' ) );
     }
-    Gtk2->main_iteration while ( Gtk2->events_pending );
-    set_infobar_mode( ' ' );
-    $window->queue_draw;
-    Gtk2->main_iteration while ( Gtk2->events_pending );
 }
 
 sub getapi {
@@ -726,6 +707,7 @@ sub set_infobar_mode {
     for my $c ( $bar->get_content_area->get_children ) {
         if ( $c->isa( 'Gtk2::Label' ) ) {
             $c->set_text( $text );
+            $bar->show_all;
             $window->queue_draw;
             Gtk2->main_iteration while Gtk2->events_pending;
             return;
@@ -736,6 +718,7 @@ sub set_infobar_mode {
     my $label = Gtk2::Label->new( $text );
     $label->set_use_markup( TRUE );
     $bar->get_content_area->add( $label );
+    $bar->show_all;
     $window->queue_draw;
     Gtk2->main_iteration while Gtk2->events_pending;
 
