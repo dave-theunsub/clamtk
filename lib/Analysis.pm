@@ -249,11 +249,13 @@ sub analysis_frame_one {
             # To be sure:
             $submitted++;
 
-            # VT size limit is 64MB
+            # VT size limit using the API is 32MB
+            # https://www.virustotal.com/en/faq/
             my $size = -s $filename;
             my $mb = $size / ( 1024 * 1024 );
-            if ( $mb > 64 ) {
-                warn "filesize too large\n";
+            if ( $mb > 32 ) {
+                warn "filesize too large - must be smaller than 32MB\n";
+                popup( _( 'Uploaded files must be smaller than 32MB' ) );
                 return;
             }
 

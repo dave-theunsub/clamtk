@@ -12,6 +12,8 @@
 package ClamTk::Scan;
 
 use Glib 'TRUE', 'FALSE';
+use File::Find;
+use Cwd 'chdir';
 
 # use strict;
 # use warnings;
@@ -34,7 +36,10 @@ my $found;    # Holds information of bad stuff found
 my $found_count = 0;    # Scalar number of bad stuff found
 my $num_scanned = 0;    # Overall number of files scanned
 my %dirs_scanned;       # Directories scanned
-my $scan_pid;           # PID of scanner, for killing/cancelling scan
+
+my $pb_file_counter = 0;    # For progressbar
+my $pb_step;                # For progressbar
+my $scan_pid;               # PID of scanner, for killing/cancelling scan
 
 my $stopped = 1;            # Whether scanner is stopped (1) or running (0)
 my $directive;              # Options sent to scanner
@@ -49,8 +54,28 @@ my $dontshow;               # whether or not to show the preferences button
 my $window;
 
 sub filter {
-    my ( $pkg_name, $scanthis, $dontshow1 ) = @_;
+    # $pkg_name = drop this
+    # $scanthis = file or directory to be scanned
+    # $dontshow1 = whether or not to show the preferences button;
+    #   we do if it's a commandline or right-click scan; otherwise we don't
+    # $from = from the commandline?
+    my ( $pkg_name, $scanthis, $dontshow1, $from ) = @_;
     $dontshow = $dontshow1;
+
+    # Currently just to test permissions:
+    # If given a file/directory from the commandline
+    # AND we can't scan it, just die.
+    # However, if interface is running
+    # AND we can't scan it, just return to interface.
+    # "Before we even get started, before we even get started..."
+    # - Eddie Murphy
+    if ( !sanity_check( $scanthis ) ) {
+        if ( $from && $from eq 'startup' ) {
+            Gtk2->main_quit;
+        } else {
+            return;
+        }
+    }
 
     # We're gonna need these:
     my $paths = ClamTk::App->get_path( 'all' );
@@ -66,9 +91,11 @@ sub filter {
     $window = Gtk2::Window->new;
     $window->set_deletable( FALSE );
     $window->signal_connect(
-        'delete-event' => sub {
+        'destroy' => sub {
             if ( !$stopped ) {
                 return TRUE;
+            } else {
+                Gtk2->main_quit;
             }
         }
     );
@@ -108,7 +135,7 @@ sub filter {
 
     $pb = Gtk2::ProgressBar->new;
     $box->pack_start( $pb, FALSE, FALSE, 5 );
-    $pb->set_fraction( .25 );
+    # $pb->set_fraction( .25 );
 
     # reset numbers
     reset_stats();
@@ -257,8 +284,15 @@ sub scan {
     my ( $path_to_scan, $directive ) = @_;
     chomp( $path_to_scan );
     chomp( $directive );
-    $pb->set_fraction( .50 );
+
+    $pb_step = get_step( $path_to_scan );
+    $pb->set_pulse_step( $pb_step );
+
+    # $pb->set_fraction( .50 );
+    # $pb->{ timer } = Glib::Timeout->add( 100, \&progress_timeout, $pb );
+    $pb->show;
     $spinner->start;
+
     my $quoted = quotemeta( $path_to_scan );
     chomp( $quoted );
 
@@ -319,7 +353,8 @@ sub scan {
         #<<<
         # Display stuff in popup infobar
         set_infobar_text( $topbar,
-            sprintf( _( 'Scanning %s...' ), $dirname )
+                # sprintf( _( 'Scanning %s...' ), $dirname )
+                sprintf( _( 'Scanning %s...' ), $dirname )
         );
         #>>>
         $topbar->show_all;
@@ -361,13 +396,25 @@ sub scan {
             $found->{ $found_count }->{ status } = $status;
             $found->{ $found_count }->{ action } = _( 'None' );
             $found_count++;
-            $threats_label->set_text( sprintf _( "Possible threats: %d" ), $found_count );
+            $threats_label->set_text( sprintf _( "Possible threats: %d" ),
+                $found_count );
         }
 
-        $num_scanned++;
-        $files_scanned_label->set_text( sprintf _( "Files scanned: %d" ), $num_scanned );
-
         Gtk2->main_iteration while ( Gtk2->events_pending );
+        $num_scanned++;
+        $files_scanned_label->set_text( sprintf _( "Files scanned: %d" ),
+            $num_scanned );
+
+        my $pb_current = $pb->get_fraction;
+
+        if (   $pb_current + $pb_step <= 0
+            || $pb_current + $pb_step >= 1.0 )
+        {
+            $pb_current = .99;
+        } else {
+            $pb_current += $pb_step;
+        }
+        $pb->set_fraction( $pb_current );
     }
 
     Gtk2->main_iteration while ( Gtk2->events_pending );
@@ -389,9 +436,10 @@ sub cancel_scan {
 
 sub clean_up {
     set_infobar_text( $topbar, _( 'Cleaning up...' ) );
-    $pb->set_fraction( .75 );
+    $pb->set_fraction( 1.00 );
     $spinner->stop;
     $spinner->hide;
+
     destroy_buttons();
     add_closing_buttons();
 
@@ -420,11 +468,13 @@ sub clean_up {
 
 sub reset_stats {
     # reset things
-    $num_scanned  = 0;
-    $found_count  = 0;
-    %dirs_scanned = ();
-    $stopped      = 1;
-    $directive    = '';
+    $num_scanned     = 0;
+    $found_count     = 0;
+    $pb_file_counter = 0;
+    $pb_step         = 0;
+    %dirs_scanned    = ();
+    $stopped         = 1;
+    $directive       = '';
 }
 
 sub bad_popup {
@@ -596,6 +646,77 @@ sub destroy_buttons {
         }
     }
     return TRUE;
+}
+
+sub get_step {
+    my $dir = shift;
+
+    my $recur = ClamTk::Prefs->get_preference( 'Recursive' );
+
+    if ( $recur ) {
+        find( \&wanted, $dir );
+    } else {
+        find( { \&wanted, no_chdir => 1 }, $dir );
+    }
+
+    #find( { \&wanted, no_chdir => ( $recur ) ? 0 : 1 }, $dir );
+
+    return 1 / $pb_file_counter;
+}
+
+sub wanted {
+    my $file   = $_;
+    my $hidden = ClamTk::Prefs->get_preference( 'ScanHidden' );
+    next if ( !$hidden && $file =~ /^\./ );
+    $pb_file_counter++ if ( -f $file );
+}
+
+sub sanity_check {
+    my $check = shift;
+
+    if ( -d $check ) {
+        if ( !chdir( $check ) || $check =~ m#^(/proc|/sys|/dev)# ) {
+            popup(
+                _(  'You do not have permissions to scan that file or directory'
+                )
+            );
+            reset_stats();
+            return 0;
+        } else {
+            return 1;
+        }
+    } elsif ( -f $check ) {
+        if ( !-r $check || $check =~ m#^(/proc|/sys|/dev)# ) {
+            popup(
+                _(  'You do not have permissions to scan that file or directory'
+                )
+            );
+            reset_stats();
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+}
+
+sub popup {
+    my ( $message, $option ) = @_;
+
+    my $dialog = Gtk2::MessageDialog->new(
+        undef,    # no parent
+        [ qw(modal destroy-with-parent) ],
+        'info',
+        $option ? 'ok-cancel' : 'close',
+        $message,
+    );
+
+    if ( 'ok' eq $dialog->run ) {
+        $dialog->destroy;
+        return TRUE;
+    }
+    $dialog->destroy;
+
+    return FALSE;
 }
 
 1;

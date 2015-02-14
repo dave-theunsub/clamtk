@@ -100,7 +100,7 @@ sub show_window {
         response => sub {
             my ( $bar, $sig ) = @_;
             Gtk2->main_iteration while Gtk2->events_pending;
-            $label->set_text( _('Please wait...') );
+            $label->set_text( _( 'Please wait...' ) );
             Gtk2->main_iteration while Gtk2->events_pending;
             if ( save() ) {
                 set_infobar_text( TRUE, $bar );

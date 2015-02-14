@@ -1,5 +1,21 @@
 CHANGELOG for ClamTk:
 
+5.14 - Feb 13 2015
+-----------------
+        * Add more meaningful progressbar back; requires
+          File::Find (usually bundled, shouldn't add new requirements)
+        * Fix language file text gets inserted into Update process
+          for some ridiculous reason
+        * Add more obvious notice for files that are too big to upload
+          for Analysis (32MB limit through API)
+        * Add more meaningful messages when trying to scan
+          files/directories if user does not have permissions
+        * Fix for when quit button requires more than one click
+        * Minor font tweak to prevent words from being cut off
+        * Updated language files: Finnish (fi), German (de), Ukrainian (uk),
+          English (en_CA), English (en_AU), English (en_GB), Russian (ru),
+          Galician (gl), Malay (ms), Romanian (ro), Chinese (zh_TW)
+
 5.13 - Jan 3 2015
 -----------------
         * Fix for submitting new files in Analysis

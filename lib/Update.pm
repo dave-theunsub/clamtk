@@ -152,7 +152,6 @@ sub get_remote_TK_version {
 }
 
 sub update_signatures {
-
     $pb->{ timer } = Glib::Timeout->add( 100, \&progress_timeout, $pb );
     $pb->show;
     #$pb->set_show_text( TRUE );
@@ -231,7 +230,7 @@ sub update_signatures {
 
     # Update infobar type and text; remove button
     Gtk2->main_iteration while Gtk2->events_pending;
-    set_infobar_text( 'info', _( '' ) );
+    set_infobar_text( 'info', '' );
     ClamTk::GUI::set_infobar_mode( 'info', '' );
     # $pb->hide;
     # destroy_button();

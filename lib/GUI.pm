@@ -223,7 +223,7 @@ sub add_config_panels {
     $view->set_tooltip_column( 2 );
     $view->set_selection_mode( 'single' );
     $view->set_can_focus( FALSE );
-    $view->modify_font( Pango::FontDescription->from_string( 'Monospace' ) );
+    $view->modify_font( Pango::FontDescription->from_string( 'Monospace 9' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
     if ( $prefs == 2 ) {
@@ -307,7 +307,7 @@ sub add_update_panels {
     $view->set_selection_mode( 'single' );
     #$view->set_activate_on_single_click( TRUE );
     $view->set_can_focus( FALSE );
-    $view->modify_font( Pango::FontDescription->from_string( 'Monospace' ) );
+    $view->modify_font( Pango::FontDescription->from_string( 'Monospace 9' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
 
@@ -382,7 +382,7 @@ sub add_history_panels {
     $view->set_selection_mode( 'single' );
     #$view->set_activate_on_single_click( TRUE );
     $view->set_can_focus( FALSE );
-    $view->modify_font( Pango::FontDescription->from_string( 'Monospace' ) );
+    $view->modify_font( Pango::FontDescription->from_string( 'Monospace 9' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
 
@@ -456,7 +456,7 @@ sub add_analysis_panels {
     $view->set_tooltip_column( 2 );
     $view->set_selection_mode( 'single' );
     $view->set_can_focus( FALSE );
-    $view->modify_font( Pango::FontDescription->from_string( 'Monospace' ) );
+    $view->modify_font( Pango::FontDescription->from_string( 'Monospace 9' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
 
@@ -658,6 +658,14 @@ sub select_file {
         return FALSE;
     }
 
+    if ( $file =~ m#^(/proc|/sys|/dev)# ) {
+        ClamTk::Scan::popup(
+            _( 'You do not have permissions to scan that file or directory' )
+        );
+        undef $file;
+        select_file();
+    }
+
     if ( -e $file ) {
         ClamTk::Scan->filter( $file, TRUE );
     }
@@ -688,7 +696,13 @@ sub select_directory {
 
     # May want to enable these one day.  Lots of
     # rootkits hang out under /dev.
-    return FALSE if ( $directory =~ m#^(/proc|/sys|/dev)# );
+    if ( $directory =~ m#^(/proc|/sys|/dev)# ) {
+        ClamTk::Scan::popup(
+            _( 'You do not have permissions to scan that file or directory' )
+        );
+        undef $directory;
+        select_directory();
+    }
 
     if ( -e $directory ) {
         ClamTk::Scan->filter( $directory, TRUE );

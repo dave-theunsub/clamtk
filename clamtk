@@ -73,11 +73,13 @@ ClamTk::Prefs->structure;
 ClamTk::Prefs->custom_prefs;
 
 # If we get no arguments, bring up GUI;
-# otherwise, we're scanning
+# otherwise, we're scanning.
+# Let Scanner know this is a commandline scan, so
+# if we can't scan (e.g. due to permissions), exit
 if ( !$arg or !-e $arg ) {
     ClamTk::GUI->start_gui();
 } else {
-    ClamTk::Scan->filter( $arg );
+    ClamTk::Scan->filter( $arg, 'startup' );
 }
 
 # End.
