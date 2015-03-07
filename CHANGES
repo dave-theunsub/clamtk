@@ -1,7 +1,17 @@
 CHANGELOG for ClamTk:
 
-5.14 - Feb 13 2015
+5.15 - Mar 5 2015
 -----------------
+        * Speed up file count/progressbar when directory
+          chosen for scanning is root (/) by switching to
+          progressbar's activity mode (no % complete)
+        * Minor fix to keep window open after closing Results
+          when main window is open
+        * Fix window doesn't always show
+        * Updated language files: Sinhalese (si), Croatian (hr), Dutch (nl)
+
+5.14 - Feb 13 2015
+------------------
         * Add more meaningful progressbar back; requires
           File::Find (usually bundled, shouldn't add new requirements)
         * Fix language file text gets inserted into Update process

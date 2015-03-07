@@ -39,6 +39,7 @@ my %dirs_scanned;       # Directories scanned
 
 my $pb_file_counter = 0;    # For progressbar
 my $pb_step;                # For progressbar
+my $root_scan = FALSE;      # Scanning /
 my $scan_pid;               # PID of scanner, for killing/cancelling scan
 
 my $stopped = 1;            # Whether scanner is stopped (1) or running (0)
@@ -49,18 +50,17 @@ my $pb;                     # Gtk2::ProgressBar
 my $spinner;                # Gtk2::Spinner
 my $files_scanned_label;    # Gtk2::Label
 my $threats_label;          # Gtk2::Label
-my $dontshow;               # whether or not to show the preferences button
+my $show;                   # Whether or not to show the preferences button
 
-my $window;
+my $window;                 # Main window
 
 sub filter {
     # $pkg_name = drop this
     # $scanthis = file or directory to be scanned
-    # $dontshow1 = whether or not to show the preferences button;
+    # $show = whether or not to show the preferences button;
     #   we do if it's a commandline or right-click scan; otherwise we don't
     # $from = from the commandline?
-    my ( $pkg_name, $scanthis, $dontshow1, $from ) = @_;
-    $dontshow = $dontshow1;
+    my ( $pkg_name, $scanthis, $show, $from ) = @_;
 
     # Currently just to test permissions:
     # If given a file/directory from the commandline
@@ -95,7 +95,7 @@ sub filter {
             if ( !$stopped ) {
                 return TRUE;
             } else {
-                Gtk2->main_quit;
+                $window->destroy;
             }
         }
     );
@@ -135,6 +135,7 @@ sub filter {
 
     $pb = Gtk2::ProgressBar->new;
     $box->pack_start( $pb, FALSE, FALSE, 5 );
+    $window->{ pb } = $pb;
     # $pb->set_fraction( .25 );
 
     # reset numbers
@@ -159,7 +160,7 @@ sub filter {
 
     $bottombar->set_message_type( 'info' );
     $bottombar->add_button( 'gtk-cancel', HATE_GNOME_SHELL );
-    if ( !$dontshow ) {
+    if ( $show ) {
         $bottombar->add_button( 'gtk-preferences', DESTROY_GNOME_SHELL );
     }
     $bottombar->signal_connect(
@@ -286,10 +287,13 @@ sub scan {
     chomp( $directive );
 
     $pb_step = get_step( $path_to_scan );
-    $pb->set_pulse_step( $pb_step );
+    if ( $pb_step ) {
+        $pb->set_pulse_step( $pb_step );
+    } else {
+        $pb->{ timer } = Glib::Timeout->add( 300, \&progress_timeout, $pb );
+        $root_scan = TRUE;
+    }
 
-    # $pb->set_fraction( .50 );
-    # $pb->{ timer } = Glib::Timeout->add( 100, \&progress_timeout, $pb );
     $pb->show;
     $spinner->start;
 
@@ -405,16 +409,18 @@ sub scan {
         $files_scanned_label->set_text( sprintf _( "Files scanned: %d" ),
             $num_scanned );
 
-        my $pb_current = $pb->get_fraction;
+        if ( !$root_scan ) {
+            my $pb_current = $pb->get_fraction;
 
-        if (   $pb_current + $pb_step <= 0
-            || $pb_current + $pb_step >= 1.0 )
-        {
-            $pb_current = .99;
-        } else {
-            $pb_current += $pb_step;
+            if (   $pb_current + $pb_step <= 0
+                || $pb_current + $pb_step >= 1.0 )
+            {
+                $pb_current = .99;
+            } else {
+                $pb_current += $pb_step;
+            }
+            $pb->set_fraction( $pb_current );
         }
-        $pb->set_fraction( $pb_current );
     }
 
     Gtk2->main_iteration while ( Gtk2->events_pending );
@@ -437,6 +443,7 @@ sub cancel_scan {
 sub clean_up {
     set_infobar_text( $topbar, _( 'Cleaning up...' ) );
     $pb->set_fraction( 1.00 );
+    destroy_progress() if ( $root_scan );
     $spinner->stop;
     $spinner->hide;
 
@@ -454,8 +461,6 @@ sub clean_up {
     # Save scan information
     logit();
 
-    $pb->set_fraction( 1.00 );
-
     if ( $found_count ) {
         ClamTk::Results->show_window( $found );
     } else {
@@ -464,6 +469,12 @@ sub clean_up {
 
     # reset numbers
     reset_stats();
+}
+
+sub destroy_progress {
+    Glib::Source->remove( $window->{ pb }->{ timer } );
+
+    return FALSE;
 }
 
 sub reset_stats {
@@ -475,6 +486,7 @@ sub reset_stats {
     %dirs_scanned    = ();
     $stopped         = 1;
     $directive       = '';
+    $root_scan       = FALSE;
 }
 
 sub bad_popup {
@@ -621,7 +633,7 @@ sub add_default_buttons {
 
 sub add_closing_buttons {
     $bottombar->add_button( 'gtk-close', -7 );
-    if ( !$dontshow ) {
+    if ( $show ) {
         $bottombar->add_button( 'gtk-preferences', DESTROY_GNOME_SHELL, );
     }
 
@@ -653,15 +665,23 @@ sub get_step {
 
     my $recur = ClamTk::Prefs->get_preference( 'Recursive' );
 
+    return if ( $dir eq '/' );
+
     if ( $recur ) {
         find( \&wanted, $dir );
     } else {
-        find( { \&wanted, no_chdir => 1 }, $dir );
+        find( { wanted => \&wanted, no_chdir => 1 }, $dir );
     }
 
     #find( { \&wanted, no_chdir => ( $recur ) ? 0 : 1 }, $dir );
 
     return 1 / $pb_file_counter;
+}
+
+sub progress_timeout {
+    $pb->pulse;
+
+    return TRUE;
 }
 
 sub wanted {

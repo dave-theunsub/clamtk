@@ -79,7 +79,7 @@ ClamTk::Prefs->custom_prefs;
 if ( !$arg or !-e $arg ) {
     ClamTk::GUI->start_gui();
 } else {
-    ClamTk::Scan->filter( $arg, 'startup' );
+    ClamTk::Scan->filter( $arg, 1, 'startup' );
 }
 
 # End.
