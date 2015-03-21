@@ -1,13 +1,13 @@
 README
 ------
-(Last updated  8 February 2015)
+(Last updated 20 March 2015)
 
 1. Important Links
 
-ClamTk		        : http://code.google.com/p/clamtk/
+ClamTk		        : https://github.com/dave-theunsub/clamtk/
+                        : https://code.google.com/p/clamtk/
                         : https://bitbucket.org/dave_theunsub/clamtk/
-                        : http://freshmeat.net/projects/clamtk/
-                        : http://clamtk.sourceforge.net
+                        : http://clamtk.sourceforge.net (not used anymore)
 ClamAV			: http://www.clamav.net
 Gtk2-Perl		: http://gtk2-perl.sourceforge.net
 Launchpad ClamTk:       : https://launchpad.net/clamtk
@@ -24,9 +24,9 @@ PCLinuxOS, Frugalware, FreeBSD, and others.
 Although its earliest incarnations date to 2003, ClamTk was first
 uploaded for distribution in 2004 to a rootshell.be account and
 finally to Sourceforge.net in 2005. At the end of 2013, we moved to a
-Google Code page and Bitbucket. It's now 2015 and for some reason
-it's still going.  February 2015 marks 11 years of activity
-(of being publically available, that is).
+Google Code page (then to github) and Bitbucket. It's now 2015 and
+for some reason it's still going.  February 2015 marks 11 years
+of activity (of being publically available, that is).
 
 3. GUI
 
