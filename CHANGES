@@ -1,5 +1,12 @@
 CHANGELOG for ClamTk:
 
+5.16 - XXX X 2015
+-----------------
+        * Properly destroy Results window
+        * Fix incorrect version in legacy build
+        * Update website page to github
+        * Updated language files: French (fr), Polish (pl)
+
 5.15 - Mar 5 2015
 -----------------
         * Speed up file count/progressbar when directory
