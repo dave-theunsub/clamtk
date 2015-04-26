@@ -1,9 +1,21 @@
 CHANGELOG for ClamTk:
 
-5.16 - XXX X 2015
------------------
+5.18 - May XX 2015
+------------------
+        * Improvements with Results window
+
+5.17 - Apr 11 2015
+------------------
+        * Fix crash with Results window
+        * Remove freecode references from help files
+
+5.16 - Apr 10 2015
+------------------
         * Properly destroy Results window
         * Fix incorrect version in legacy build
+        * Fix progressbar count issue for when recursive is
+          not selected
+        * Improve hidden files scanning/counting
         * Update website page to github
         * Updated language files: French (fr), Polish (pl)
 

@@ -11,7 +11,6 @@
 # b) the "Artistic License".
 package ClamTk::Results;
 
-use Gtk2 '-init';
 use Glib 'TRUE', 'FALSE';
 
 # use strict;
@@ -161,8 +160,7 @@ sub show_window {
     $button->set_is_important( TRUE );
     $hbox->insert( $button, -1 );
 
-    $window->show_all;
-    Gtk2->main;
+    return $window;
 }
 
 sub action {

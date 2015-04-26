@@ -223,7 +223,8 @@ sub add_config_panels {
     $view->set_tooltip_column( 2 );
     $view->set_selection_mode( 'single' );
     $view->set_can_focus( FALSE );
-    $view->modify_font( Pango::FontDescription->from_string( 'Monospace 9' ) );
+    $view->modify_font(
+        Pango::FontDescription->from_string( 'Monospace 9' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
     if ( $prefs == 2 ) {
@@ -307,7 +308,8 @@ sub add_update_panels {
     $view->set_selection_mode( 'single' );
     #$view->set_activate_on_single_click( TRUE );
     $view->set_can_focus( FALSE );
-    $view->modify_font( Pango::FontDescription->from_string( 'Monospace 9' ) );
+    $view->modify_font(
+        Pango::FontDescription->from_string( 'Monospace 9' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
 
@@ -382,7 +384,8 @@ sub add_history_panels {
     $view->set_selection_mode( 'single' );
     #$view->set_activate_on_single_click( TRUE );
     $view->set_can_focus( FALSE );
-    $view->modify_font( Pango::FontDescription->from_string( 'Monospace 9' ) );
+    $view->modify_font(
+        Pango::FontDescription->from_string( 'Monospace 9' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
 
@@ -456,7 +459,8 @@ sub add_analysis_panels {
     $view->set_tooltip_column( 2 );
     $view->set_selection_mode( 'single' );
     $view->set_can_focus( FALSE );
-    $view->modify_font( Pango::FontDescription->from_string( 'Monospace 9' ) );
+    $view->modify_font(
+        Pango::FontDescription->from_string( 'Monospace 9' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
 
@@ -826,7 +830,6 @@ sub about {
     $dialog->set_logo( $pixbuf );
     $dialog->set_version( ClamTk::App->get_TK_version() );
     $dialog->set_license( $license );
-    $dialog->set_wrap_license( TRUE );
     $dialog->set_website_label( _( 'Homepage' ) );
     $dialog->set_website( 'http://code.google.com/p/clamtk/' );
     $dialog->set_logo( $pixbuf );
