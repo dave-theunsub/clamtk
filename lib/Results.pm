@@ -29,21 +29,20 @@ binmode( STDIN,  ':utf8' );
 binmode( STDOUT, ':utf8' );
 
 sub show_window {
-    my ( $pkg_name, $hash ) = @_;
+    my ( $pkg_name, $hash, $parent ) = @_;
 
-    my $window = Gtk2::Window->new;
-    $window->signal_connect( destroy => sub { $window->destroy } );
-    $window->set_title( _( 'Results' ) );
-    $window->set_border_width( 5 );
-    $window->set_default_size( 650, 250 );
-    $window->set_position( 'mouse' );
+    my $dialog = Gtk2::Dialog->new(
+        _( 'Results' ),
+        $parent,
+        'destroy-with-parent',
+    );
+    $dialog->set_size_request( 600, 200 );
 
-    my $box = Gtk2::VBox->new( FALSE, 5 );
-    $window->add( $box );
-
+    my $sbox = Gtk2::VBox->new( FALSE, 0 );
     # This scrolled window holds the slist
     my $sw = Gtk2::ScrolledWindow->new;
-    $box->pack_start( $sw, TRUE, TRUE, 0 );
+    $sbox->pack_start( $sw, TRUE, TRUE, 0 );
+    $dialog->get_content_area->add( $sbox );
     $sw->set_shadow_type( 'etched_in' );
     $sw->set_policy( 'never', 'automatic' );
 
@@ -121,7 +120,7 @@ sub show_window {
 
     my $hbox = Gtk2::Toolbar->new;
     $hbox->set_style( 'both-horiz' );
-    $box->pack_start( $hbox, FALSE, FALSE, 5 );
+    $sbox->pack_start( $hbox, FALSE, FALSE, 5 );
 
     my $image = Gtk2::Image->new_from_stock( 'gtk-refresh', 'menu' );
     my $button = Gtk2::ToolButton->new( $image, _( 'Quarantine' ) );
@@ -154,13 +153,15 @@ sub show_window {
     $button = Gtk2::ToolButton->new( $image, _( 'Close' ) );
     $button->signal_connect(
         clicked => sub {
-            $window->destroy;
+            $dialog->destroy;
         }
     );
     $button->set_is_important( TRUE );
     $hbox->insert( $button, -1 );
 
-    return $window;
+    $sbox->show_all;
+    $dialog->run;
+    $dialog->destroy;
 }
 
 sub action {
@@ -170,16 +171,26 @@ sub action {
     my ( $model, $iter ) = $selected->get_selected;
     return unless $iter;
 
-    # my $path = $model->get_path( $iter );
+    # These look like
+    # first_col_value = >/home/foo/mime.cache<
+    # second_col_value = >PUA.Win.Exploit.CVE_2012_0110<
+
     my $first_col_value  = $model->get_value( $iter, FILE );
     my $second_col_value = $model->get_value( $iter, STATUS );
     my $third_col_value  = $model->get_value( $iter, ACTION_TAKEN );
 
+    # Don't mess with inboxes and empty values (!)
     my $maildirs = get_maildirs();
-    my $value = $model->get_value( $iter, FILE );
-    if ( $value =~ /$maildirs/ || !-e $value ) {
+    if ( $first_col_value =~ /$maildirs/ || !-e $first_col_value ) {
         color_out( $model, $iter );
         return TRUE;
+    }
+    # Don't quarantine or delete PUAs outside of home directory
+    if ( $second_col_value =~ /^PUA/ ) {
+        if ( $first_col_value !~ m#^/home/# ) {
+            color_out( $model, $iter );
+            return TRUE;
+        }
     }
 
     # Return 1 or TRUE for successfully deleting
@@ -283,6 +294,9 @@ sub color_out {
     # We optionally take a value to set the third
     # column to (e.g., Quarantined, Deleted)
     my ( $store, $iter, $third_value_change ) = @_;
+    if( ! $third_value_change ) {
+        $third_value_change = ' - ';
+    }
 
     my $first_col_value
         = "<span foreground = '#CCCCCC'>"

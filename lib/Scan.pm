@@ -22,8 +22,8 @@ $| = 1;
 use constant HATE_GNOME_SHELL    => -6;
 use constant DESTROY_GNOME_SHELL => -11;
 
-use POSIX 'locale_h',          'strftime';
-use File::Basename 'basename', 'dirname';
+use POSIX 'locale_h', 'strftime';
+use File::Basename 'basename', 'dirname', 'fileparse';
 use Locale::gettext;
 use Encode 'decode';
 
@@ -37,6 +37,7 @@ my $found_count = 0;    # Scalar number of bad stuff found
 my $num_scanned = 0;    # Overall number of files scanned
 my %dirs_scanned;       # Directories scanned
 
+my $pb;                 # Gtk2::ProgressBar
 my $pb_file_counter = 0;    # For progressbar
 my $pb_step;                # For progressbar
 my $root_scan = FALSE;      # Scanning /
@@ -46,13 +47,12 @@ my $stopped = 1;            # Whether scanner is stopped (1) or running (0)
 my $directive;              # Options sent to scanner
 my $topbar;                 # Gtk2::InfoBar on top
 my $bottombar;              # Gtk2::InfoBar on bottom
-my $pb;                     # Gtk2::ProgressBar
-my $spinner;                # Gtk2::Spinner
 my $files_scanned_label;    # Gtk2::Label
 my $threats_label;          # Gtk2::Label
 my $show;                   # Whether or not to show the preferences button
 
 my $window;                 # Main window
+my $from_cli;               # from the commandline?
 
 sub filter {
     # $pkg_name = drop this
@@ -61,6 +61,7 @@ sub filter {
     #   we do if it's a commandline or right-click scan; otherwise we don't
     # $from = from the commandline?
     my ( $pkg_name, $scanthis, $show, $from ) = @_;
+    $from_cli = $from;
 
     # Currently just to test permissions:
     # If given a file/directory from the commandline
@@ -101,7 +102,8 @@ sub filter {
     );
     $window->set_title( _( 'Virus Scanner' ) );
     $window->set_border_width( 10 );
-    $window->set_default_size( 300, 80 );
+    $window->set_default_size( 450, 80 );
+    $window->set_position( 'center-on-parent' );
 
     my $images_dir = ClamTk::App->get_path( 'images' );
     if ( -e "$images_dir/clamtk.png" ) {
@@ -130,13 +132,9 @@ sub filter {
     set_infobar_text( $topbar, _( 'Preparing...' ) );
     Gtk2->main_iteration while ( Gtk2->events_pending );
 
-    $spinner = Gtk2::Spinner->new;
-    $hbox->pack_start( $spinner, FALSE, FALSE, 5 );
-
     $pb = Gtk2::ProgressBar->new;
     $box->pack_start( $pb, FALSE, FALSE, 5 );
     $window->{ pb } = $pb;
-    # $pb->set_fraction( .25 );
 
     # reset numbers
     reset_stats();
@@ -295,7 +293,6 @@ sub scan {
     }
 
     $pb->show;
-    $spinner->start;
 
     my $quoted = quotemeta( $path_to_scan );
     chomp( $quoted );
@@ -331,6 +328,7 @@ sub scan {
         Gtk2->main_iteration while ( Gtk2->events_pending );
         $window->queue_draw;
 
+        # Warning stuff we don't need
         next if ( /^LibClamAV/ );
         next if ( /^\s*$/ );
 
@@ -353,12 +351,25 @@ sub scan {
         chomp( $file )   if ( defined $file );
         chomp( $status ) if ( defined $status );
 
-        my $dirname = decode( 'UTF-8', dirname( $file ) );
+        my $dirname   = decode( 'UTF-8', dirname( $file ) );
+        my $fileparse = decode( 'UTF-8', fileparse( $file ) );
+
+        my $hidden = ClamTk::Prefs->get_preference( 'ScanHidden' );
+        next if ( !$hidden && basename( $fileparse ) =~ /^\./ );
+
+        my $dirparse;
+        if ( length( $dirname ) > 35 ) {
+            $dirparse = substr $dirname, 0, 35;
+        } else {
+            $dirparse = $dirname;
+        }
+
         #<<<
         # Display stuff in popup infobar
         set_infobar_text( $topbar,
                 # sprintf( _( 'Scanning %s...' ), $dirname )
-                sprintf( _( 'Scanning %s...' ), $dirname )
+                # sprintf( _( 'Scanning %s...' ), $dirname )
+                sprintf( _( 'Scanning %s...' ), $dirparse )
         );
         #>>>
         $topbar->show_all;
@@ -443,9 +454,7 @@ sub cancel_scan {
 sub clean_up {
     set_infobar_text( $topbar, _( 'Cleaning up...' ) );
     $pb->set_fraction( 1.00 );
-    destroy_progress() if ( $root_scan );
-    $spinner->stop;
-    $spinner->hide;
+    destroy_progress();
 
     destroy_buttons();
     add_closing_buttons();
@@ -462,7 +471,10 @@ sub clean_up {
     logit();
 
     if ( $found_count ) {
-        ClamTk::Results->show_window( $found );
+        ClamTk::Results->show_window( $found, $window );
+        if ( $from_cli ) {
+            Gtk2->main_quit;
+        }
     } else {
         bad_popup();
     }
@@ -472,7 +484,8 @@ sub clean_up {
 }
 
 sub destroy_progress {
-    Glib::Source->remove( $window->{ pb }->{ timer } );
+    Glib::Source->remove( $window->{ pb }->{ timer } )
+        if ( $root_scan );
 
     return FALSE;
 }
@@ -598,7 +611,7 @@ sub set_infobar_text {
     my $label = Gtk2::Label->new;
     $label->set_text( _( $text ) );
     $label->set_alignment( 0.0, 0.5 );
-    $label->set_ellipsize( 'middle' );
+    # $label->set_ellipsize( 'middle' );
     $bar->get_content_area->add(
             #Gtk2::Label->new( _( $text ) )
             $label
@@ -606,7 +619,6 @@ sub set_infobar_text {
     #>>>
     $window->queue_draw;
     Gtk2->main_iteration while ( Gtk2->events_pending );
-
 }
 
 sub add_default_buttons {
@@ -670,25 +682,34 @@ sub get_step {
     if ( $recur ) {
         find( \&wanted, $dir );
     } else {
-        find( { wanted => \&wanted, no_chdir => 1 }, $dir );
+        find( { wanted => \&wanted, preprocess => \&nodirs }, $dir );
     }
 
     #find( { \&wanted, no_chdir => ( $recur ) ? 0 : 1 }, $dir );
 
+    if ( !$pb_file_counter ) {
+        return;
+    }
+
     return 1 / $pb_file_counter;
 }
 
+sub nodirs {
+    grep !-d, @_;
+}
+
 sub progress_timeout {
-    $pb->pulse;
+    $pb->pulse if ( !$root_scan );
 
     return TRUE;
 }
 
 sub wanted {
-    my $file   = $_;
+    my $file = $_;
+    return unless ( -f $file );
     my $hidden = ClamTk::Prefs->get_preference( 'ScanHidden' );
     next if ( !$hidden && $file =~ /^\./ );
-    $pb_file_counter++ if ( -f $file );
+    $pb_file_counter++;
 }
 
 sub sanity_check {

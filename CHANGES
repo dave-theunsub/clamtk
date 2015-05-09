@@ -1,8 +1,13 @@
 CHANGELOG for ClamTk:
 
-5.18 - May XX 2015
-------------------
+5.18 - May 9 2015
+-----------------
         * Improvements with Results window
+        * Minor tweak on PUA-identified files
+        * Add github bug reporting page to help documentation
+        * Updated language files: Indonesian (id), Uzbek (uz), Finnish (fi),
+          Ukrainian (uk), Galician (gl), German (de), Hebrew (he),
+          English (en_UK), Chinese (zh_TW), Korean (ko_KR), Dutch (nl)
 
 5.17 - Apr 11 2015
 ------------------

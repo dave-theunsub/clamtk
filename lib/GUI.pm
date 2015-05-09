@@ -149,7 +149,7 @@ sub startup {
         $message      = _( 'Updates are available' );
         $message_type = 'warning';
     } elsif ( $startup_check eq 'sigs' ) {
-        $message      = _( 'The antivirus signatures are out-of-date' );
+        $message      = _( 'The antivirus signatures are outdated' );
         $message_type = 'warning';
     } elsif ( $startup_check eq 'gui' ) {
         $message      = _( 'An update is available' );
