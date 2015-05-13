@@ -1,5 +1,9 @@
 CHANGELOG for ClamTk:
 
+5.19 - XXX XX 2015
+------------------
+        * Minor fix for History view and row selection (iter)
+
 5.18 - May 9 2015
 -----------------
         * Improvements with Results window

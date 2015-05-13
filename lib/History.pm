@@ -140,9 +140,12 @@ sub view_history {
         . '.log';
     #>>>
 
-    my $win = Gtk2::Window->new;
-    $win->set_title( sprintf( _( 'Viewing %s' ), $basename ) );
-    $win->signal_connect( destroy => sub { $win->destroy } );
+    my $win = Gtk2::Dialog->new(
+        sprintf( _( 'Viewing %s' ), $basename ),
+        undef,
+        [ qw| modal destroy-with-parent no-separator | ],
+    );
+    $win->signal_connect( destroy => sub { $win->destroy; 1 } );
     $win->set_default_size( 800, 350 );
 
     my $textview = Gtk2::TextView->new;
@@ -179,7 +182,7 @@ sub view_history {
     $scroll_win->set_policy( 'automatic', 'automatic' );
 
     my $scrollbox = Gtk2::VBox->new( FALSE, 5 );
-    $win->add( $scrollbox );
+    $win->get_content_area->add( $scrollbox );
 
     $scrollbox->pack_start( $scroll_win, TRUE, TRUE, 0 );
     $scroll_win->add( $textview );
@@ -199,6 +202,8 @@ sub view_history {
     $close_btn->signal_connect( clicked => sub { $win->destroy } );
 
     $win->show_all();
+    $win->run;
+    $win->destroy;
     return;
 }
 
@@ -222,7 +227,11 @@ sub del_history {
     unlink( $full_path ) or warn "couldn't delete $full_path: $!\n";
 
     $model->remove( $iter );
-    $sel->select_iter( $iter );
+    if( $model->iter_is_valid( $iter ) ) {
+        $sel->select_iter( $iter );
+    } else {
+        return;
+    }
     # $sel->select_path( $new_path );
     return TRUE;
 }
