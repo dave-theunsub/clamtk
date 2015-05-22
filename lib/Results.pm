@@ -25,13 +25,14 @@ use Digest::SHA 'sha256_hex';
 use Encode 'decode';
 
 my $liststore;
+my $dialog;
 binmode( STDIN,  ':utf8' );
 binmode( STDOUT, ':utf8' );
 
 sub show_window {
     my ( $pkg_name, $hash, $parent ) = @_;
 
-    my $dialog = Gtk2::Dialog->new(
+    $dialog = Gtk2::Dialog->new(
         _( 'Results' ),
         $parent,
         'destroy-with-parent',
@@ -212,7 +213,7 @@ sub action {
         }
         return FALSE;
     } elsif ( $button->get_label eq _( 'Analysis' ) ) {
-        ClamTk::Analysis->show_window( $first_col_value );
+        ClamTk::Analysis->show_window( $first_col_value, $dialog );
         return TRUE;
     } else {
         warn 'unable to ' . $button->get_label . " file >$first_col_value<\n";
@@ -263,9 +264,13 @@ sub delete_file {
     my $question
         = sprintf( _( 'Really delete this file (%s) ?' ), $basename );
 
-    my $message
-        = Gtk2::MessageDialog->new( undef, [ qw(modal destroy-with-parent) ],
-        'question', 'ok-cancel', $question, );
+    my $message = Gtk2::MessageDialog->new(
+        undef,
+        [ qw| modal destroy-with-parent no-separator | ],
+        'question',
+        'ok-cancel',
+        $question,
+    );
 
     if ( 'ok' eq $message->run ) {
         $message->destroy;

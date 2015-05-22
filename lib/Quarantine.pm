@@ -114,7 +114,7 @@ sub delete {
     my $message
         = Gtk2::MessageDialog->new(
                 undef,
-                [ qw(modal destroy-with-parent) ],
+                [ qw| modal destroy-with-parent no-separator | ],
                 'question',
                 'ok-cancel',
                 $question,

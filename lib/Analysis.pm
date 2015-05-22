@@ -38,22 +38,30 @@ my $combobox;    # Gtk2::ComboBox for previous analysis
 my $nb;          # Gtk2::Notebook
 my $filename = '';    # name of file analyzed
 my $bar;              # Gtk2::InfoBar
-my $window;           # Gtk2::Window; global for queue_draw;
+my $window;           # Gtk2::Dialog; global for queue_draw;
 my $submitted = 0;    # Boolean value to keep track if file
                       # has been submitted or not
 my $from_scan;
 
 sub show_window {
-    ( undef, $from_scan ) = @_;
-    $window = Gtk2::Window->new;
-    $window->signal_connect( destroy => sub { $window->destroy } );
-    $window->set_title( _( 'Analysis' ) );
+    ( undef, $from_scan, $parent ) = @_;
+    $window = Gtk2::Dialog->new(
+        _( 'Analysis' ),
+        $parent,
+        [ qw| modal destroy-with-parent no-separator | ],
+    );
+    $window->signal_connect(
+        destroy => sub {
+            $window->destroy;
+            1;
+        }
+    );
     $window->set_border_width( 5 );
     $window->set_default_size( 450, 250 );
     $window->set_position( 'mouse' );
 
     my $box = Gtk2::VBox->new( FALSE, 5 );
-    $window->add( $box );
+    $window->get_content_area->add( $box );
 
     $nb = Gtk2::Notebook->new;
     $box->pack_start( $nb, TRUE, TRUE, 0 );
@@ -86,6 +94,9 @@ sub show_window {
     );
 
     $window->show_all;
+    $window->run;
+    $window->destroy;
+    1;
 }
 
 sub page_one {
@@ -688,7 +699,7 @@ sub popup {
 
     my $dialog = Gtk2::MessageDialog->new(
         undef,    # no parent
-        [ qw(modal destroy-with-parent) ],
+        [ qw| modal destroy-with-parent no-separator | ],
         'info',
         $option ? 'ok-cancel' : 'close',
         $message,

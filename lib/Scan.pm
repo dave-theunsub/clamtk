@@ -97,6 +97,7 @@ sub filter {
                 return TRUE;
             } else {
                 $window->destroy;
+                1;
             }
         }
     );
@@ -315,8 +316,10 @@ sub scan {
     # kill it if the user hits the Stop button
     #<<<
     Gtk2->main_iteration while ( Gtk2->events_pending );
+    # Using the verbose (-v) switch gives us the next file
+    # for the display "Scanning $1..."
     $scan_pid
-        = open( $SCAN, '-|', "$command $directive $quoted 2>&1" );
+        = open( $SCAN, '-|', "$command $directive -v $quoted 2>&1" );
     defined( $scan_pid ) or die "couldn't fork: $!\n";
     $window->queue_draw;
     Gtk2->main_iteration while ( Gtk2->events_pending );
@@ -325,6 +328,7 @@ sub scan {
 
     Gtk2->main_iteration while ( Gtk2->events_pending );
     while ( <$SCAN> ) {
+        chomp;
         Gtk2->main_iteration while ( Gtk2->events_pending );
         $window->queue_draw;
 
@@ -339,9 +343,21 @@ sub scan {
         } elsif ( /(.*?): (OK)$/ ) {
             $file   = $1;
             $status = $2;
-        }    #else {
-             #warn "something else: file = <$file>, stat = <$status>\n";
-             #}
+        } elsif ( /^Scanning (.*?)$/ ) {
+            my $base = decode( 'UTF-8', basename( $1 ) );
+             #<<<
+             # Display stuff in popup infobar
+             set_infobar_text( $topbar,
+                 # sprintf( _( 'Scanning %s...' ), $dirname )
+                 # sprintf( _( 'Scanning %s...' ), $dirname )
+                 sprintf( _( 'Scanning %s...' ), $base )
+             );
+             #>>>
+            $topbar->show_all;
+            Gtk2->main_iteration while ( Gtk2->events_pending );
+            $window->queue_draw;
+            next;
+        }
 
         # Ensure the file is still there (things get moved)
         # and that it got scanned
@@ -363,18 +379,6 @@ sub scan {
         } else {
             $dirparse = $dirname;
         }
-
-        #<<<
-        # Display stuff in popup infobar
-        set_infobar_text( $topbar,
-                # sprintf( _( 'Scanning %s...' ), $dirname )
-                # sprintf( _( 'Scanning %s...' ), $dirname )
-                sprintf( _( 'Scanning %s...' ), $dirparse )
-        );
-        #>>>
-        $topbar->show_all;
-        Gtk2->main_iteration while ( Gtk2->events_pending );
-        $window->queue_draw;
 
         # Lots of temporary things under /tmp/clamav;
         # we'll just ignore them.
@@ -504,7 +508,7 @@ sub reset_stats {
 
 sub bad_popup {
     my $dialog = Gtk2::MessageDialog->new(
-        $window, [ qw| modal destroy-with-parent | ],
+        $window, [ qw| modal destroy-with-parent no-separator | ],
         'info', 'close', _( 'No threats found' ),
     );
     $dialog->run;
@@ -745,7 +749,7 @@ sub popup {
 
     my $dialog = Gtk2::MessageDialog->new(
         undef,    # no parent
-        [ qw(modal destroy-with-parent) ],
+        [ qw| modal destroy-with-parent no-separator | ],
         'info',
         $option ? 'ok-cancel' : 'close',
         $message,
