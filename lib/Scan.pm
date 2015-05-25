@@ -51,7 +51,7 @@ my $files_scanned_label;    # Gtk2::Label
 my $threats_label;          # Gtk2::Label
 my $show;                   # Whether or not to show the preferences button
 
-my $window;                 # Main window
+my $window;                 # Main window/dialog
 my $from_cli;               # from the commandline?
 
 sub filter {
@@ -88,8 +88,11 @@ sub filter {
         return;
     }
 
-    # Begin popup 'scanning'
-    $window = Gtk2::Window->new;
+    # Begin popup scanning
+    $window
+        = Gtk2::Dialog->new( undef, undef,
+        [ qw| modal destroy-with-parent no-separator | ],
+        );
     $window->set_deletable( FALSE );
     $window->signal_connect(
         'destroy' => sub {
@@ -101,7 +104,6 @@ sub filter {
             }
         }
     );
-    $window->set_title( _( 'Virus Scanner' ) );
     $window->set_border_width( 10 );
     $window->set_default_size( 450, 80 );
     $window->set_position( 'center-on-parent' );
@@ -115,7 +117,7 @@ sub filter {
     }
 
     my $eb = Gtk2::EventBox->new;
-    $window->add( $eb );
+    $window->get_content_area->add( $eb );
     my $white = Gtk2::Gdk::Color->new( 0xFFFF, 0xFFFF, 0xFFFF );
     $eb->modify_bg( 'normal', $white );
 
