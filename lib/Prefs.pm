@@ -57,7 +57,7 @@ sub structure {
     # The path /home/user/.clamtk/db stores signatures
     if ( !-d $paths->{ db } ) {
         eval { mkpath( $paths->{ db }, { mode => oct( $mask ) } ) };
-        warn $@  if $@;
+        warn $@  if ( $@ );
         return 0 if ( $@ );
     } else {
         # Ensure the permissions are correct

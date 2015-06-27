@@ -32,11 +32,8 @@ binmode( STDOUT, ':utf8' );
 sub show_window {
     my ( $pkg_name, $hash, $parent ) = @_;
 
-    $dialog = Gtk2::Dialog->new(
-        _( 'Results' ),
-        $parent,
-        'destroy-with-parent',
-    );
+    $dialog = Gtk2::Dialog->new( _( 'Results' ), $parent,
+        'destroy-with-parent', );
     $dialog->set_size_request( 600, 200 );
 
     my $sbox = Gtk2::VBox->new( FALSE, 0 );
@@ -72,7 +69,6 @@ sub show_window {
                 $renderer,
                 markup => FILE,
     );
-    $column->set_expand( TRUE );
     $column->set_sort_column_id( FILE );
     $column->set_resizable( TRUE );
     $column->set_sizing( 'fixed' );
@@ -84,7 +80,6 @@ sub show_window {
                 $renderer,
                 markup => STATUS,
     );
-    $column->set_expand( TRUE );
     $column->set_sort_column_id( STATUS );
     $column->set_resizable( TRUE );
     $column->set_sizing( 'fixed' );
@@ -96,7 +91,6 @@ sub show_window {
             $renderer,
             markup => ACTION_TAKEN,
     );
-    $column->set_expand( TRUE );
     $column->set_sort_column_id( ACTION_TAKEN );
     $column->set_resizable( TRUE );
     $column->set_sizing( 'fixed' );
@@ -264,13 +258,10 @@ sub delete_file {
     my $question
         = sprintf( _( 'Really delete this file (%s) ?' ), $basename );
 
-    my $message = Gtk2::MessageDialog->new(
-        undef,
-        [ qw| modal destroy-with-parent no-separator | ],
-        'question',
-        'ok-cancel',
-        $question,
-    );
+    my $message
+        = Gtk2::MessageDialog->new( undef,
+        [ qw| modal destroy-with-parent | ],
+        'question', 'ok-cancel', $question, );
 
     if ( 'ok' eq $message->run ) {
         $message->destroy;
@@ -299,7 +290,7 @@ sub color_out {
     # We optionally take a value to set the third
     # column to (e.g., Quarantined, Deleted)
     my ( $store, $iter, $third_value_change ) = @_;
-    if( ! $third_value_change ) {
+    if ( !$third_value_change ) {
         $third_value_change = ' - ';
     }
 

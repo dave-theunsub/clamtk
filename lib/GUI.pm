@@ -32,7 +32,7 @@ sub start_gui {
         destroy => sub {
             $window->destroy;
             Gtk2->main_quit;
-            1;
+            TRUE;
         }
     );
     $window->signal_connect(
@@ -804,7 +804,7 @@ sub help {
 
     my $dialog
         = Gtk2::MessageDialog->new( undef,
-        [ qw| modal destroy-with-parent no-separator | ],
+        [ qw| modal destroy-with-parent | ],
         'info', 'close', _( 'Please install yelp to view documentation' ) );
     $dialog->run;
     $dialog->destroy;

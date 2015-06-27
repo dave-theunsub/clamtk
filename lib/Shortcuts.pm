@@ -11,7 +11,7 @@
 # b) the "Artistic License".
 package ClamTk::Shortcuts;
 
-use Glib 'TRUE', 'FALSE';
+use Glib 'FALSE';
 
 # use strict;
 # use warnings;

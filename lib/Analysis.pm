@@ -47,8 +47,7 @@ sub show_window {
     ( undef, $from_scan, $parent ) = @_;
     $window = Gtk2::Dialog->new(
         _( 'Analysis' ),
-        $parent,
-        [ qw| modal destroy-with-parent no-separator | ],
+        $parent, [ qw| modal destroy-with-parent no-separator | ],
     );
     $window->signal_connect(
         destroy => sub {
@@ -699,7 +698,7 @@ sub popup {
 
     my $dialog = Gtk2::MessageDialog->new(
         undef,    # no parent
-        [ qw| modal destroy-with-parent no-separator | ],
+        [ qw| modal destroy-with-parent | ],
         'info',
         $option ? 'ok-cancel' : 'close',
         $message,

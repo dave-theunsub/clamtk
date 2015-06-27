@@ -115,9 +115,7 @@ sub show_window {
     );
     #>>>
 
-    $box->pack_start(
-            Gtk2::VBox->new, TRUE, TRUE, 5
-    );
+    $box->pack_start( Gtk2::VBox->new, TRUE, TRUE, 5 );
 
     $pb = Gtk2::ProgressBar->new;
     $box->pack_start( $infobar, FALSE, FALSE, 0 );
@@ -200,10 +198,8 @@ sub update_signatures {
             my $new_daily = $1;
             Gtk2->main_iteration while Gtk2->events_pending;
 
-                    $liststore->set( $iter_hash,
-                            0, _( 'Antivirus signatures' ),
-                            1, $new_daily,
-                    );
+            $liststore->set( $iter_hash, 0, _( 'Antivirus signatures' ),
+                1, $new_daily, );
 
         } elsif ( $line =~ /Database updated/ ) {
             Gtk2->main_iteration while Gtk2->events_pending;
@@ -220,10 +216,8 @@ sub update_signatures {
     # gives the "for sure" sig version installed:
     my $local_sig_version = ClamTk::App->get_local_sig_version();
 
-    $liststore->set( $iter_hash,
-            0, _( 'Antivirus signatures' ),
-            1, $local_sig_version,
-    );
+    $liststore->set( $iter_hash, 0, _( 'Antivirus signatures' ),
+        1, $local_sig_version, );
     Glib::Source->remove( $pb->{ timer } );
     $pb->set_fraction( 1.0 );
     $pb->set_text( _( 'Complete' ) );
@@ -298,11 +292,11 @@ sub destroy_button {
 }
 
 sub progress_timeout {
-        Gtk2->main_iteration while Gtk2->events_pending;
-        $pb->pulse;
-        Gtk2->main_iteration while Gtk2->events_pending;
+    Gtk2->main_iteration while Gtk2->events_pending;
+    $pb->pulse;
+    Gtk2->main_iteration while Gtk2->events_pending;
 
-        return TRUE;
+    return TRUE;
 }
 
 sub add_ua_proxy {

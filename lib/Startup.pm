@@ -11,7 +11,7 @@
 # b) the "Artistic License".
 package ClamTk::Startup;
 
-use Glib 'TRUE', 'FALSE';
+use Glib 'FALSE';
 
 use Time::Piece;
 

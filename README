@@ -1,12 +1,12 @@
 README
 ------
-(Last updated 20 March 2015)
+(Last updated 17 April 2015)
 
 1. Important Links
 
 ClamTk		        : https://github.com/dave-theunsub/clamtk/
-                        : https://code.google.com/p/clamtk/
                         : https://bitbucket.org/dave_theunsub/clamtk/
+                        : https://code.google.com/p/clamtk/
                         : http://clamtk.sourceforge.net (not used anymore)
 ClamAV			: http://www.clamav.net
 Gtk2-Perl		: http://gtk2-perl.sourceforge.net
@@ -204,16 +204,7 @@ A polite email to the respective maintainer may fix this.
 
 Probably a lot. Let me know, please. Ranting on some bulletin board
 somewhere on one of dozens of Linux sites will not improve things.
-Let me know what you like and dislike!
-
-One of the current issues that hopefully will be resolved is that
-ClamAV rpms are not standardized. This isn't my fault (that I'm aware of),
-but I feel it adds unnecessary confusion (as opposed to necessary
-confusion :). Because of this, multiple builds are needed as opposed to
-just one. Fortunately, Debian does not appear to suffer from this.
-
-Also, some distributions require you to manually delete certain
-malware - such as the (un)popular right-to-left override stuff.
+Let me know!
 
 12. Contact
 

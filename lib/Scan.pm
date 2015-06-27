@@ -68,8 +68,6 @@ sub filter {
     # AND we can't scan it, just die.
     # However, if interface is running
     # AND we can't scan it, just return to interface.
-    # "Before we even get started, before we even get started..."
-    # - Eddie Murphy
     if ( !sanity_check( $scanthis ) ) {
         if ( $from && $from eq 'startup' ) {
             Gtk2->main_quit;
@@ -94,6 +92,8 @@ sub filter {
         [ qw| modal destroy-with-parent no-separator | ],
         );
     $window->set_deletable( FALSE );
+    $window->set_default_size( 450, 80 );
+
     $window->signal_connect(
         'destroy' => sub {
             if ( !$stopped ) {
@@ -104,8 +104,7 @@ sub filter {
             }
         }
     );
-    $window->set_border_width( 10 );
-    $window->set_default_size( 450, 80 );
+    $window->set_border_width( 5 );
     $window->set_position( 'center-on-parent' );
 
     my $images_dir = ClamTk::App->get_path( 'images' );
@@ -291,7 +290,7 @@ sub scan {
     if ( $pb_step ) {
         $pb->set_pulse_step( $pb_step );
     } else {
-        $pb->{ timer } = Glib::Timeout->add( 300, \&progress_timeout, $pb );
+        $pb->{ timer } = Glib::Timeout->add( 200, \&progress_timeout, $pb );
         $root_scan = TRUE;
     }
 
@@ -338,27 +337,42 @@ sub scan {
         next if ( /^LibClamAV/ );
         next if ( /^\s*$/ );
 
-        my ( $file, $status );
-        if ( /(.*?): ([^:]+) FOUND/ ) {
-            $file   = $1;
-            $status = $2;
-        } elsif ( /(.*?): (OK)$/ ) {
-            $file   = $1;
-            $status = $2;
-        } elsif ( /^Scanning (.*?)$/ ) {
+        if ( /^Scanning (.*?)$/ ) {
             my $base = decode( 'UTF-8', basename( $1 ) );
-             #<<<
-             # Display stuff in popup infobar
-             set_infobar_text( $topbar,
-                 # sprintf( _( 'Scanning %s...' ), $dirname )
-                 # sprintf( _( 'Scanning %s...' ), $dirname )
-                 sprintf( _( 'Scanning %s...' ), $base )
-             );
-             #>>>
+            # Display stuff in popup infobar
+            set_infobar_text(
+                $topbar,
+                # sprintf( _( 'Scanning %s...' ), $dirname )
+                # sprintf( _( 'Scanning %s...' ), $dirname )
+                sprintf( _( 'Scanning %s...' ), $base )
+            );
+            $num_scanned++;
+            if ( !$root_scan ) {
+                my $pb_current = $pb->get_fraction;
+
+                if (   $pb_current + $pb_step <= 0
+                    || $pb_current + $pb_step >= 1.0 )
+                {
+                    $pb_current = .99;
+                } else {
+                    $pb_current += $pb_step;
+                }
+                $pb->set_fraction( $pb_current );
+            }
+
+            Gtk2->main_iteration while ( Gtk2->events_pending );
+            $files_scanned_label->set_text( sprintf _( "Files scanned: %d" ),
+                $num_scanned );
             $topbar->show_all;
             Gtk2->main_iteration while ( Gtk2->events_pending );
             $window->queue_draw;
             next;
+        }
+
+        my ( $file, $status );
+        if ( /(.*?): ([^:]+) FOUND/ ) {
+            $file   = $1;
+            $status = $2;
         }
 
         # Ensure the file is still there (things get moved)
@@ -421,23 +435,6 @@ sub scan {
                 $found_count );
         }
 
-        Gtk2->main_iteration while ( Gtk2->events_pending );
-        $num_scanned++;
-        $files_scanned_label->set_text( sprintf _( "Files scanned: %d" ),
-            $num_scanned );
-
-        if ( !$root_scan ) {
-            my $pb_current = $pb->get_fraction;
-
-            if (   $pb_current + $pb_step <= 0
-                || $pb_current + $pb_step >= 1.0 )
-            {
-                $pb_current = .99;
-            } else {
-                $pb_current += $pb_step;
-            }
-            $pb->set_fraction( $pb_current );
-        }
     }
 
     Gtk2->main_iteration while ( Gtk2->events_pending );
@@ -510,7 +507,7 @@ sub reset_stats {
 
 sub bad_popup {
     my $dialog = Gtk2::MessageDialog->new(
-        $window, [ qw| modal destroy-with-parent no-separator | ],
+        $window, [ qw| modal destroy-with-parent | ],
         'info', 'close', _( 'No threats found' ),
     );
     $dialog->run;
@@ -617,7 +614,7 @@ sub set_infobar_text {
     my $label = Gtk2::Label->new;
     $label->set_text( _( $text ) );
     $label->set_alignment( 0.0, 0.5 );
-    # $label->set_ellipsize( 'middle' );
+    $label->set_ellipsize( 'middle' );
     $bar->get_content_area->add(
             #Gtk2::Label->new( _( $text ) )
             $label
@@ -705,7 +702,7 @@ sub nodirs {
 }
 
 sub progress_timeout {
-    $pb->pulse if ( !$root_scan );
+    $pb->pulse;
 
     return TRUE;
 }
@@ -751,7 +748,7 @@ sub popup {
 
     my $dialog = Gtk2::MessageDialog->new(
         undef,    # no parent
-        [ qw| modal destroy-with-parent no-separator | ],
+        [ qw| modal destroy-with-parent | ],
         'info',
         $option ? 'ok-cancel' : 'close',
         $message,

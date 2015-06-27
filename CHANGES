@@ -1,11 +1,11 @@
 CHANGELOG for ClamTk:
 
-5.19 - June XX 2015
-------------------
+5.19 - June 26 2015
+-------------------
         * Minor fix for History view and row selection (iter)
         * Minor tweak to improve display of objects scanned
-        * Continue replacing Windows
-        * Updated language files: Korean (ko_KR)
+        * Continue replacing Windows -> boxes
+        * Updated language files: Korean (ko_KR), Italian (it)
 
 5.18 - May 9 2015
 -----------------

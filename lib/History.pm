@@ -142,8 +142,7 @@ sub view_history {
 
     my $win = Gtk2::Dialog->new(
         sprintf( _( 'Viewing %s' ), $basename ),
-        undef,
-        [ qw| modal destroy-with-parent no-separator | ],
+        undef, [ qw| modal destroy-with-parent no-separator | ],
     );
     $win->signal_connect( destroy => sub { $win->destroy; 1 } );
     $win->set_default_size( 800, 350 );
@@ -227,7 +226,7 @@ sub del_history {
     unlink( $full_path ) or warn "couldn't delete $full_path: $!\n";
 
     $model->remove( $iter );
-    if( $model->iter_is_valid( $iter ) ) {
+    if ( $model->iter_is_valid( $iter ) ) {
         $sel->select_iter( $iter );
     } else {
         return;
