@@ -1,5 +1,11 @@
 CHANGELOG for ClamTk:
 
+5.20 - Sep 6 2015
+-----------------
+        * Remove nautilus as dependence for clamtk (BZ #1260284)
+        * Updated language files: Khmer (km), Thai (th), Lao (lo),
+          French (fr)
+
 5.19 - June 26 2015
 -------------------
         * Minor fix for History view and row selection (iter)
