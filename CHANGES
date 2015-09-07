@@ -2,7 +2,7 @@ CHANGELOG for ClamTk:
 
 5.20 - Sep 6 2015
 -----------------
-        * Remove nautilus as dependence for clamtk (BZ #1260284)
+        * Remove nautilus as dependency for clamtk (BZ #1260284)
         * Updated language files: Khmer (km), Thai (th), Lao (lo),
           French (fr)
 
