@@ -1,12 +1,12 @@
 README
 ------
-(Last updated 17 April 2015)
+(Last updated 12 September 2015)
 
 1. Important Links
 
 ClamTk		        : https://github.com/dave-theunsub/clamtk/
                         : https://bitbucket.org/dave_theunsub/clamtk/
-                        : https://code.google.com/p/clamtk/
+                        : https://code.google.com/p/clamtk/ (not used anymore)
                         : http://clamtk.sourceforge.net (not used anymore)
 ClamAV			: http://www.clamav.net
 Gtk2-Perl		: http://gtk2-perl.sourceforge.net
@@ -130,7 +130,8 @@ Note that the Debian/Ubuntu builds are gpg-signed.
            gone forever.
 
 	d. Scan a file or directory by right-clicking on it within
-           the file manager (e.g., Nautilus).
+           the file manager (e.g., Nautilus).  This functionality
+           requires an extra package (clamtk-gnome).
 
 	e. You can STOP the scan by clicking the Cancel button.
            Note that due to the speed of the scanning,
@@ -254,6 +255,12 @@ Can't locate Foo/Bar.pm in @INC... (etc, etc).
   first. It's more than likely your distribution already packages these
   for easy installation. Depending on your distro, you will likely
   use "yum" or "apt" or some "Update Manager" and the like.
+
+* I can't right click on files/directories to scan anymore!
+
+  That's because we no longer bundle this functionality.  Not everyone
+  uses Gnome.  There are add-ons for XFCE, KDE, Mate, and Gnome - they're
+  small packages, easy to install, and will bring that functionality back.
 
 15. Thanks to...
 
