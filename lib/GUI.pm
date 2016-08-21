@@ -1,6 +1,6 @@
-# ClamTk, copyright (C) 2004-2015 Dave M
+# ClamTk, copyright (C) 2004-2016 Dave M
 #
-# This file is part of ClamTk (http://code.google.com/p/clamtk/).
+# This file is part of ClamTk (https://github.com/dave-theunsub/clamtk/wiki).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -43,7 +43,7 @@ sub start_gui {
     );
     $window->set_title( _( 'Virus Scanner' ) );
     $window->set_border_width( 5 );
-    $window->set_default_size( 320, 400 );
+    #$window->set_default_size( 340, 400 );
     $window->set_position( 'center' );
 
     my $images_dir = ClamTk::App->get_path( 'images' );
@@ -165,11 +165,10 @@ sub startup {
     set_infobar_mode( $message_type, $message );
     $window->queue_draw;
 
-    $window->resize( 340, 400 );
+    # $window->resize( 340, 400 );
     $infobar->show;
     $window->queue_draw;
     Gtk2->main_iteration while Gtk2->events_pending;
-    $window->resize( 340, 400 );
 }
 
 sub set_infobar_mode {
@@ -202,7 +201,7 @@ sub add_configuration {
     my $show_this = shift;
 
     my $label = Gtk2::Label->new;
-    $label->modify_font( Pango::FontDescription->from_string( 'Monospace' ) );
+    # $label->modify_font( Pango::FontDescription->from_string( 'Monospace' ) );
     $label->set_markup( "<b>$show_this</b>" );
     $label->set_alignment( 0.01, 0.5 );
 
@@ -212,20 +211,18 @@ sub add_configuration {
 sub add_config_panels {
     my $liststore = Gtk2::ListStore->new(
         # Link, Description, Tooltip
-        'Gtk2::Gdk::Pixbuf', 'Glib::String',
-        'Glib::String',
+        'Gtk2::Gdk::Pixbuf', 'Glib::String', 'Glib::String',
     );
 
     my $view = Gtk2::IconView->new_with_model( $liststore );
-    $view->set_columns( -1 );
+    $view->set_columns( 4 );
     $view->set_column_spacing( 10 );
+    $view->set_row_spacing( 10 );
     $view->set_pixbuf_column( 0 );
     $view->set_text_column( 1 );
     $view->set_tooltip_column( 2 );
     $view->set_selection_mode( 'single' );
     $view->set_can_focus( FALSE );
-    $view->modify_font(
-        Pango::FontDescription->from_string( 'Monospace 9' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
     if ( $prefs == 2 ) {
@@ -277,6 +274,7 @@ sub add_config_panels {
     );
 
     #<<<
+    my $theme = Gtk2::IconTheme->new;
     for my $item ( @data ) {
         my $iter = $liststore->append;
         my $pix = Gtk2::IconTheme->get_default->load_icon(
@@ -303,14 +301,12 @@ sub add_update_panels {
     my $view = Gtk2::IconView->new_with_model( $liststore );
     $view->set_columns( 3 );
     $view->set_column_spacing( 10 );
+    $view->set_row_spacing( 10 );
     $view->set_pixbuf_column( 0 );
     $view->set_text_column( 1 );
     $view->set_tooltip_column( 2 );
     $view->set_selection_mode( 'single' );
-    #$view->set_activate_on_single_click( TRUE );
     $view->set_can_focus( FALSE );
-    $view->modify_font(
-        Pango::FontDescription->from_string( 'Monospace 9' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
 
@@ -379,14 +375,12 @@ sub add_history_panels {
     my $view = Gtk2::IconView->new_with_model( $liststore );
     $view->set_columns( 3 );
     $view->set_column_spacing( 10 );
+    $view->set_row_spacing( 10 );
     $view->set_pixbuf_column( 0 );
     $view->set_text_column( 1 );
     $view->set_tooltip_column( 2 );
     $view->set_selection_mode( 'single' );
-    #$view->set_activate_on_single_click( TRUE );
     $view->set_can_focus( FALSE );
-    $view->modify_font(
-        Pango::FontDescription->from_string( 'Monospace 9' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
 
@@ -455,13 +449,12 @@ sub add_analysis_panels {
     my $view = Gtk2::IconView->new_with_model( $liststore );
     $view->set_columns( 3 );
     $view->set_column_spacing( 10 );
+    $view->set_row_spacing( 10 );
     $view->set_pixbuf_column( 0 );
     $view->set_text_column( 1 );
     $view->set_tooltip_column( 2 );
     $view->set_selection_mode( 'single' );
     $view->set_can_focus( FALSE );
-    $view->modify_font(
-        Pango::FontDescription->from_string( 'Monospace 9' ) );
 
     my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
 
@@ -832,11 +825,11 @@ sub about {
     $dialog->set_version( ClamTk::App->get_TK_version() );
     $dialog->set_license( $license );
     $dialog->set_website_label( _( 'Homepage' ) );
-    $dialog->set_website( 'http://code.google.com/p/clamtk/' );
+    $dialog->set_website( 'https://github.com/dave-theunsub/clamtk/wiki' );
     $dialog->set_logo( $pixbuf );
     $dialog->set_translator_credits(
         'Please see the website for full listing' );
-    $dialog->set_copyright( "\x{a9} Dave M 2004 - 2015" );
+    $dialog->set_copyright( "\x{a9} Dave M 2004 - 2016" );
     $dialog->set_program_name( 'ClamTk' );
     #$dialog->set_authors( [ 'Dave M', 'dave.nerd@gmail.com' ] );
     $dialog->set_authors( 'Dave M <dave.nerd@gmail.com>' );

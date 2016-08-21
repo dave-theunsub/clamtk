@@ -1,8 +1,13 @@
 CHANGELOG for ClamTk:
 
-5.21 - XXX XX 201X
------------------
-        * Update man pages to include new URL for bug reporting
+5.21 - Aug 21 2016
+------------------
+        * Update man pages to include updated URLs for bug reporting
+        * Explicitly add archive scanning (Github #59)
+        * Removed most monospacing as requested
+        * Improved text layout
+        * Updated language files (ja), Indonesian (id), Polish (pl),
+          Esperanto (eo), Spanish (es), Danish (da), Malay (ms)
 
 5.20 - Sep 6 2015
 -----------------
