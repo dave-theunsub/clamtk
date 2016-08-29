@@ -1,5 +1,13 @@
 CHANGELOG for ClamTk:
 
+5.22 - Sep XX 2016
+------------------
+        * Directories not scanning if users home includes
+          /sys or /dev (Github #61). Thanks majorbob!
+        * Fix to names of whitelisted directories with extra ";"
+        * Begin digitally signing rpms again, like debs
+        * Updated language files
+
 5.21 - Aug 21 2016
 ------------------
         * Update man pages to include updated URLs for bug reporting
