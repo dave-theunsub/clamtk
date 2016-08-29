@@ -1,16 +1,17 @@
 README
 ------
-(Last updated 12 September 2015)
+(Last updated 29 August 2016)
 
 1. Important Links
 
-ClamTk		        : https://github.com/dave-theunsub/clamtk/
+ClamTk		        : https://dave-theunsub.github.io/clamtk/
+                        : https://github.com/dave-theunsub/clamtk/
                         : https://bitbucket.org/dave_theunsub/clamtk/
                         : https://code.google.com/p/clamtk/ (not used anymore)
                         : http://clamtk.sourceforge.net (not used anymore)
+Launchpad ClamTk:       : https://launchpad.net/clamtk
 ClamAV			: http://www.clamav.net
 Gtk2-Perl		: http://gtk2-perl.sourceforge.net
-Launchpad ClamTk:       : https://launchpad.net/clamtk
 Virustotal              : https://virustotal.com
 
 2. About
@@ -24,9 +25,9 @@ PCLinuxOS, Frugalware, FreeBSD, and others.
 Although its earliest incarnations date to 2003, ClamTk was first
 uploaded for distribution in 2004 to a rootshell.be account and
 finally to Sourceforge.net in 2005. At the end of 2013, we moved to a
-Google Code page (then to github) and Bitbucket. It's now 2015 and
-for some reason it's still going.  February 2015 marks 11 years
-of activity (of being publically available, that is).
+Google Code page (then to github), gitlab, and Bitbucket. It's 
+now 2015 and for some reason it's still going.  February 2016 marks 12 
+years of activity (of being publically available, that is).
 
 3. GUI
 
@@ -226,7 +227,8 @@ significantly, but that was just to keep them separate.
 The version 3.xx series became 4.xx when there was a major change in
 the packaging and processes.  As stated, 5.xx was supposed to be
 the jump from Gtk2 -> Gtk3.  Still, enough changed that it warranted
-the 5.xx series.
+the 5.xx series.  Version 6.xx, still in development, will likely
+use the Gtk3 libraries.
 Just pointing it out.
 
 14. Troubleshooting
@@ -281,4 +283,4 @@ Can't locate Foo/Bar.pm in @INC... (etc, etc).
 
 17. Direct contact
 
-email : dave.nerd AT gmail DOT com
+dave.nerd AT gmail DOT com (0x6ADA59DE)
