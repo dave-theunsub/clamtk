@@ -24,7 +24,7 @@ use Encode 'decode';
 
 sub get_TK_version {
     # Stick with %.2f format - 4.50 vice 4.5
-    return '5.21';
+    return '5.22';
 }
 
 sub get_path {
@@ -82,7 +82,7 @@ sub get_path {
 
     # Default variables
     $path->{ whitelist_dir }
-        = join( ';', $path->{ viruses }, '/sys', '/dev', '/proc;' );
+        = join( ';', $path->{ viruses }, '/sys/', '/dev/', '/proc/' );
 
     # Most times freshclam is under /usr/bin
     $path->{ freshclam }
