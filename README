@@ -40,16 +40,16 @@ some time now and should not be used.
 The plan for the 5.xx series was to use Gtk3.  Unfortunately, Debian
 and Ubuntu do not have a recent version of libgtk3-perl, and CentOS
 does not have perl-Gtk3 at all and reportedly never will.
-So, at the last second, I rewrote the 5.00 version to use Gtk2.  Again.
+So, at the last second, the 5.00 version was rewritten to use Gtk2.  Again.
 
 4. Integrity
 
-I always recommend you install ClamTk from official repositories.
+It is recommended you install ClamTk from official repositories.
 Check your distribution first, and always install from trusted sources.
 
 While the Debian/Ubuntu .debs have always been digitally signed,
 the rpms have not.  Beginning with 5.22, you can check the rpm's
-signature to verify its integrity.   Here's one way:
+signature to verify its integrity.  Here's one way:
 
   a. Get and import the key in one step
   rpm --import https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-10-Sept-2016
@@ -58,10 +58,10 @@ signature to verify its integrity.   Here's one way:
   rpm -q gpg-pubkey --qf '%{name}-%{version}-%{release} --> %{summary}\n'
 
   c. Check the signature of the rpm.  For this example, we'll use version 5.22
-  rpm --checksig clamtk-5.21-1.fc.noarch.rpm
+  rpm --checksig clamtk-5.22-1.fc.noarch.rpm
 
   d. You should see something like this:
-  /home/you/clamtk-5.21-1.fc.noarch.rpm: rsa sha1 (md5) pgp md5 OK
+  /home/you/clamtk-5.22-1.fc.noarch.rpm: rsa sha1 (md5) pgp md5 OK
 
 5. Installation
 
