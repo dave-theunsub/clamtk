@@ -48,8 +48,8 @@ It is recommended you install ClamTk from official repositories.
 Check your distribution first, and always install from trusted sources.
 
 While the Debian/Ubuntu .debs have always been digitally signed,
-the rpms have not.  Beginning with 5.22, you can check the rpm's
-signature to verify its integrity.  Here's one way:
+the rpms have not.  Beginning with 5.22, you can once again
+check the rpm's signature to verify its integrity.  Here's one way:
 
   a. Get and import the key in one step
   rpm --import https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-10-Sept-2016
@@ -110,7 +110,7 @@ By the commandline, you can do this:
 To remove clamtk:
 # dpkg --purge clamtk
 
-Note that the Debian/Ubuntu builds are gpg-signed.
+Note that the Debian/Ubuntu builds are and have always been gpg-signed.
 
 6. Running ClamTk
 
@@ -223,14 +223,13 @@ A polite email to the respective maintainer may fix this.
 
 Probably a lot. Let me know, please. Ranting on some bulletin board
 somewhere on one of dozens of Linux sites will not improve things.
-Let me know!  See #12 below for contact.
+See #12 below for contact.
 
 12. Contact
 
-For feature requests or bugs, it's best to email me. You can also go
-to the Launchpad project page listed above and submit requests/problems there.
-You can email me if you like, and even use GPG.  Or file one here:
+For feature requests or bugs, it's best to use one of the following:
 https://github.com/dave-theunsub/clamtk/issues
+https://launchpad.net/clamtk
 
 13. Plugins
 
@@ -239,7 +238,7 @@ directories to the scanner, install the appropriate plugin.
 Links to the latest versions are available here:
 http://dave-theunsub.github.io/clamtk/
 
-Project specific pages are listed here:
+Here are the specific pages:
 
 For Gnome (Files file manager):
 https://github.com/dave-theunsub/clamtk-gnome
@@ -257,19 +256,12 @@ https://github.com/dave-theunsub/nemo-sendto-clamtk
 
 As of version 3.10, ClamTk will not scan standard mail directories,
 such as .evolution, .mozilla or .thunderbird. This is due to parsing
-problems.  If I come up with a smart way of doing that, it will be added.
+problems.  If a smart way of doing that comes up, it will be added.
 
 Also, please note that version numbers mean absolutely nothing. There
-is no rhyme or reason to odd or even numbers, so an odd number does not
-mean "unstable".  A new version means it goes up 1 (or, rather, .01).
-Because I changed from Tk to Gtk2 I did move the major version number up
-significantly, but that was just to keep them separate.
-The version 3.xx series became 4.xx when there was a major change in
-the packaging and processes.  As stated, 5.xx was supposed to be
-the jump from Gtk2 -> Gtk3.  Still, enough changed that it warranted
-the 5.xx series.  Version 6.xx, still in development, will likely
-use the Gtk3 libraries.
-Just pointing it out.
+is no rhyme or reason to odd or even numbers (i.e., an odd number does not
+mean "unstable").  A new version means it goes up 1 (or, rather, .01).
+Version 6.xx, still in development, will likely use the Gtk3 libraries.
 
 14. Troubleshooting
 
@@ -282,7 +274,7 @@ Just pointing it out.
 
   ClamTk is trying to find its virus definitions. Typically these are
   held under /var/lib/clamav or /var/clamav or ... If you are sure these
-  files exist, please find their location and send it to me.
+  files exist, please find their location and send it.
   Try the following to determine their location:
 
   1. find /var -name "daily.cvd" -print
@@ -293,7 +285,7 @@ Can't locate Foo/Bar.pm in @INC... (etc, etc).
 
   This means you are missing some of the dependencies. Try to find
   the dependency through your distribution's repositories, or simply
-  go to http://search.cpan.org. I recommend trying your distro's repo
+  go to http://search.cpan.org. Always try your distribution's repo
   first. It's more than likely your distribution already packages these
   for easy installation. Depending on your distro, you will likely
   use "yum" or "apt" or some "Update Manager" and the like.
