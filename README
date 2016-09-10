@@ -1,10 +1,11 @@
 README
 ------
-(Last updated 29 August 2016)
+(Last updated 10 September 2016)
 
 1. Important Links
 
 ClamTk		        : https://dave-theunsub.github.io/clamtk/
+                          https://gitlab.com/dave_m/clamtk
                         : https://github.com/dave-theunsub/clamtk/
                         : https://bitbucket.org/dave_theunsub/clamtk/
                         : https://code.google.com/p/clamtk/ (not used anymore)
@@ -41,10 +42,26 @@ and Ubuntu do not have a recent version of libgtk3-perl, and CentOS
 does not have perl-Gtk3 at all and reportedly never will.
 So, at the last second, I rewrote the 5.00 version to use Gtk2.  Again.
 
-4. Availability
+4. Integrity
 
 I always recommend you install ClamTk from official repositories.
 Check your distribution first, and always install from trusted sources.
+
+While the Debian/Ubuntu .debs have always been digitally signed,
+the rpms have not.  Beginning with 5.22, you can check the rpm's
+signature to verify its integrity.   Here's one way:
+
+  a. Get and import the key in one step
+  rpm --import https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-10-Sept-2016
+
+  b. Verify the list of gpg keys installed in RPM DB
+  rpm -q gpg-pubkey --qf '%{name}-%{version}-%{release} --> %{summary}\n'
+
+  c. Check the signature of the rpm.  For this example, we'll use version 5.22
+  rpm --checksig clamtk-5.21-1.fc.noarch.rpm
+
+  d. You should see something like this:
+  /home/you/clamtk-5.21-1.fc.noarch.rpm: rsa sha1 (md5) pgp md5 OK
 
 5. Installation
 
@@ -206,14 +223,37 @@ A polite email to the respective maintainer may fix this.
 
 Probably a lot. Let me know, please. Ranting on some bulletin board
 somewhere on one of dozens of Linux sites will not improve things.
-Let me know!
+Let me know!  See #12 below for contact.
 
 12. Contact
 
 For feature requests or bugs, it's best to email me. You can also go
 to the Launchpad project page listed above and submit requests/problems there.
+You can email me if you like, and even use GPG.  Or file one here:
+https://github.com/dave-theunsub/clamtk/issues
 
-13. Other
+13. Plugins
+
+To add a right-click, context menu ability to send files and
+directories to the scanner, install the appropriate plugin.
+Links to the latest versions are available here:
+http://dave-theunsub.github.io/clamtk/
+
+Project specific pages are listed here:
+
+For Gnome (Files file manager):
+https://github.com/dave-theunsub/clamtk-gnome
+
+For KDE (Dolphin file manager):
+https://github.com/dave-theunsub/clamtk-kde
+
+For XFCE (Thunar file manager):
+https://github.com/dave-theunsub/thunar-sendto-clamtk
+
+For MATE (Nemo file manager):
+https://github.com/dave-theunsub/nemo-sendto-clamtk
+
+14. Other
 
 As of version 3.10, ClamTk will not scan standard mail directories,
 such as .evolution, .mozilla or .thunderbird. This is due to parsing
@@ -283,4 +323,8 @@ Can't locate Foo/Bar.pm in @INC... (etc, etc).
 
 17. Direct contact
 
-dave.nerd AT gmail DOT com (0x6ADA59DE)
+While we recommend opening an official bug on the appropriate page,
+we'll also accept emails:
+
+Dave M, dave.nerd AT gmail DOT com (0x6ADA59DE)
+Tord D, tord.dellsen AT gmail DOT com
