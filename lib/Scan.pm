@@ -214,7 +214,12 @@ sub filter {
         )
     {
         # warn "excluding $ignore\n";
-        $directive .= " --exclude-dir=" . quotemeta( $ignore );
+        # --exclude-dir=REGEX  Don't scan directories matching REGEX
+        # Using REGEX is important because users could have some
+        # of the whitelisted domains as part of a directory that
+        # should be scanned.
+        # Github #61 - https://github.com/dave-theunsub/clamtk/issues/61
+        $directive .= " --exclude-dir=^" . quotemeta( $ignore );
     }
 
     # Remove mail directories for now -
