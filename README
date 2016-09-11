@@ -63,6 +63,25 @@ check the rpm's signature to verify its integrity.  Here's one way:
   d. You should see something like this:
   /home/you/clamtk-5.22-1.fc.noarch.rpm: rsa sha1 (md5) pgp md5 OK
 
+You can also verify the tarball.  Using 5.22 as the example version, ensure
+you have downloaded the tarball, its detached signature (.asc), and the key
+in step "a" above.
+
+  a. Get the key (skip if you already have it)
+  wget https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-10-Sept-2016
+
+  b. Import it (skip if you have done it already)
+  gpg --import RPM-GPG-KEY-DaveM-10-Sept-2016
+
+  c. Verify
+  gpg2 --verify clamtk-5.22.tar.gz.asc clamtk-5.22.tar.gz
+  or
+  gpg --verify clamtk-5.22.tar.gz.asc clamtk-5.22.tar.gz
+
+  d. You should see something like this:
+  gpg: Signature made Sun 11 Sep 2016 06:29:41 AM CDT using RSA key ID
+  (snipped for brevity)
+
 5. Installation
 
 RPMs:
