@@ -195,7 +195,7 @@ sub filter {
     # Increase maximum amount of data to scan for each container file;
     # goes hand in hand with the $directive above
     # https://github.com/dave-theunsub/clamtk/issues/59
-    $directive .= ' -max-scansize=500M';
+    $directive .= ' --max-scansize=500M';
 
     # By default, we ignore .gvfs directories.
     # Once we figure out KDE's process, we'll exclude that too.
