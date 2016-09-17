@@ -201,7 +201,7 @@ sub add_configuration {
     my $show_this = shift;
 
     my $label = Gtk2::Label->new;
-    # $label->modify_font( Pango::FontDescription->from_string( 'Monospace' ) );
+  # $label->modify_font( Pango::FontDescription->from_string( 'Monospace' ) );
     $label->set_markup( "<b>$show_this</b>" );
     $label->set_alignment( 0.01, 0.5 );
 
@@ -825,7 +825,7 @@ sub about {
     $dialog->set_version( ClamTk::App->get_TK_version() );
     $dialog->set_license( $license );
     $dialog->set_website_label( _( 'Homepage' ) );
-    $dialog->set_website( 'https://github.com/dave-theunsub/clamtk/wiki' );
+    $dialog->set_website( 'https://dave-theunsub.github.io/clamtk/' );
     $dialog->set_logo( $pixbuf );
     $dialog->set_translator_credits(
         'Please see the website for full listing' );
