@@ -6,9 +6,9 @@ CHANGELOG for ClamTk:
           /sys or /dev (Github #61).
         * Fix all of Github #59 (max-scansize)
         * Fix to names of whitelisted directories with extra ";"
-        * Update website as github.io
+        * Update website in About dialog as github.io
         * Begin digitally signing rpms again, like debs
-        * Updated language files: (pt_BR)
+        * Updated language files: pt_BR, en_AU, sv
 
 5.21 - Aug 21 2016
 ------------------
