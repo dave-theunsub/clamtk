@@ -1,5 +1,9 @@
 CHANGELOG for ClamTk:
 
+5.23 - XXX XX 2016
+------------------
+        * Add missing language string from About dialog
+
 5.22 - Sep 17 2016
 ------------------
         * Directories not scanning if users home includes

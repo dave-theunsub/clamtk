@@ -1,6 +1,6 @@
 # ClamTk, copyright (C) 2004-2016 Dave M
 #
-# This file is part of ClamTk (https://github.com/dave-theunsub/clamtk/wiki).
+# This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -24,7 +24,7 @@ use Encode 'decode';
 
 sub get_TK_version {
     # Stick with %.2f format - 4.50 vice 4.5
-    return '5.22';
+    return '5.23';
 }
 
 sub get_path {
@@ -455,6 +455,8 @@ sub translate {
     $a = _( 'Advanced' );
     $a = _( 'Scan a file' );
     $a = _( 'Scan a directory' );
+    # From the About dialog
+    $a = _( 'ClamTk is a graphical front-end for Clam Antivirus' );
 
     return $a;
 }
