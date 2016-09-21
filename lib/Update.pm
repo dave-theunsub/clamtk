@@ -1,6 +1,6 @@
 # ClamTk, copyright (C) 2004-2016 Dave M
 #
-# This file is part of ClamTk (https://github.com/dave-theunsub/clamtk/wiki).
+# This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:

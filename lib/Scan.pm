@@ -1,6 +1,6 @@
 # ClamTk, copyright (C) 2004-2016 Dave M
 #
-# This file is part of ClamTk (https://github.com/dave-theunsub/clamtk/wiki).
+# This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -195,7 +195,7 @@ sub filter {
     # Increase maximum amount of data to scan for each container file;
     # goes hand in hand with the $directive above
     # https://github.com/dave-theunsub/clamtk/issues/59
-    $directive .= ' -max-scansize=500M';
+    $directive .= ' --max-scansize=500M';
 
     # By default, we ignore .gvfs directories.
     # Once we figure out KDE's process, we'll exclude that too.
