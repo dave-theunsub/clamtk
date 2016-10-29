@@ -183,7 +183,9 @@ sub filter {
     Gtk2->main_iteration while ( Gtk2->events_pending );
 
     # Try to avoid MS Windows file systems...
-    $directive .= ' --cross-fs=no';
+    # This fubars Live ISOs: see
+    # https://github.com/dave-theunsub/clamtk/issues/67
+    # $directive .= ' --cross-fs=no';
 
     # Try to avoid scanning emails...
     $directive .= ' --scan-mail=no';

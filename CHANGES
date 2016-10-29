@@ -1,8 +1,9 @@
 CHANGELOG for ClamTk:
 
-5.23 - XXX XX 2016
+5.23 - Oct 29 2016
 ------------------
-        * Add missing language string from About dialog
+        * Fix Github #67 (Directories not scanning under Linux Mint 18
+          KDE [LiveUSB])
 
 5.22 - Sep 17 2016
 ------------------
