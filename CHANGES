@@ -1,5 +1,10 @@
 CHANGELOG for ClamTk:
 
+5.24 - Nov XX 2016
+------------------
+        * Fix startup crash when icon theme lacks 'gtk-new' or other
+          icon. Closes BZ #1386370
+
 5.23 - Oct 29 2016
 ------------------
         * Fix Github #67 (Directories not scanning under Linux Mint 18

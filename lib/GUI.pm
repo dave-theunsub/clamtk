@@ -27,6 +27,16 @@ my $top_box;
 my $box;
 
 sub start_gui {
+    # Some themes don't have all the "standard" gnome icons, so
+    # clamtk will crash if they're not there.  This is a patch from
+    # Arch Linux, which may solve the issue - or at least stop dying
+    # because it's missing an icon :|
+    # https://aur.archlinux.org/packages/clamtk/
+    my $theme = Gtk2::IconTheme->get_default;
+    $theme->append_search_path( '/usr/share/icons/gnome/24x24/actions' );
+    $theme->append_search_path( '/usr/share/icons/gnome/24x24/places' );
+    $theme->append_search_path( '/usr/share/icons/gnome/24x24/mimetypes' );
+
     $window = Gtk2::Window->new;
     $window->signal_connect(
         destroy => sub {
