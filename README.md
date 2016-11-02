@@ -84,14 +84,14 @@ Warning: Don't do this.  It's much easier to just double-click a .deb or .rpm.  
 Examples:
 
     $ perl clamtk
+
 or
+
     $ chmod +x /path/to/clamtk
     $ /path/to/clamtk
 
-* Note: If you have installed this program as an rpm or .deb, you
-do not need to take these steps.
-* Note: Did you get errors with this? Check the TROUBLESHOOTING section
-at the end.
+* Note: If you have installed this program as an rpm or .deb, you do not need to take these steps.
+* Note: Did you get errors with this? Check the TROUBLESHOOTING section at the end.
 
 ### DEBs
 You should be able to just double-click the .deb file to install it. This assumes you have permissions to install programs, of course. Your package manager should grab any necessary dependencies.
@@ -129,7 +129,9 @@ Note that the Debian/Ubuntu builds are and have always been gpg-signed.
 ClamTk can run from the commandline, too:
 
     $ clamtk file_to_be_scanned
+
 or
+
     $ clamtk directory_to_be_scanned
 
 However, the main reason for the commandline option (however basic) is to allow for right-click scanning within your file manager (e.g., Nautilus or Dolphin).  If you want more extensive commandline options, it is recommended that you use the clamscan binary itself. (Type `man clamscan` at the commandline.) Or, if you know of something useful, let me know and I can add it as an option.
