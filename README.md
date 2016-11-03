@@ -1,6 +1,18 @@
-This readme file was last updated on 02 November 2016
+This readme file was last updated on 03 November 2016
 
 # Readme for ClamTk
+
+**Table of contents:**
+
+1. [About](#about)
+2. [Installation](#installation)
+3. [Usage](#usage)
+4. [Contributing](#contributing)
+5. [Plugins](#plugins)
+6. [Troubleshooting](#troubleshooting)
+7. [Other](#other)
+8. [Thank you](#thank-you)
+9. [Contact](#contact)
 
 
 ## About
