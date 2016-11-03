@@ -7,9 +7,9 @@ This readme file was last updated on 03 November 2016
 1. [About](#about)
 2. [Installation](#installation)
 3. [Usage](#usage)
-4. [Contributing](#contributing)
-5. [Plugins](#plugins)
-6. [Troubleshooting](#troubleshooting)
+4. [Plugins](#plugins)
+5. [Troubleshooting](#troubleshooting)
+6. [Contributing](#contributing)
 7. [Other](#other)
 8. [Thank you](#thank-you)
 9. [Contact](#contact)
@@ -160,15 +160,6 @@ You also have a few options with the files displayed. Click on the file scanned 
 If you've quarantined files for later examination, you have the option to restore them to their previous location (if known), or delete them.
 
 
-## Contributing
-
-### Locale/Internationalization
-
-Version 2.20 is the first ClamTk version to offer this. Have time on your hands and want to contribute? See the Launchpad page at https://launchpad.net/clamtk
-
-Note that some builds do not account for other than English languages because they have not yet updated their build/spec files. A polite email to the respective maintainer may fix this.
-
-
 ## Plugins
 
 To add a right-click, context menu ability to send files and directories to the scanner, install the appropriate plugin. Links to the latest versions are available here: http://dave-theunsub.github.io/clamtk/
@@ -204,6 +195,15 @@ Here are the specific pages:
 ### Limitations/Bugs
 
 Probably a lot. Let me know, please. Ranting on some bulletin board somewhere on one of dozens of Linux sites will not improve things. See the section below for contact info.
+
+
+## Contributing
+
+### Locale/Internationalization
+
+Version 2.20 is the first ClamTk version to offer this. Have time on your hands and want to contribute? See the Launchpad page at https://launchpad.net/clamtk
+
+Note that some builds do not account for other than English languages because they have not yet updated their build/spec files. A polite email to the respective maintainer may fix this.
 
 
 ## Other
