@@ -230,5 +230,5 @@ Many people have contributed their time, energy, opinions, recommendations, and 
 
 While we recommend opening an official bug on the appropriate page, we'll also accept emails:
 
-Dave M, dave.nerd AT gmail DOT com (0x6ADA59DE)
-Tord D, tord.dellsen AT gmail DOT com
+* Dave M, dave.nerd AT gmail DOT com (0x6ADA59DE)
+* Tord D, tord.dellsen AT gmail DOT com (0xF40F0D93)
