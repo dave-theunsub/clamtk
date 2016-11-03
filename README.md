@@ -62,14 +62,15 @@ You can also verify the tarball. Using 5.22 as the example version, ensure you h
 ## Installation
 
 ### RPMs
-The easiest way to install ClamTk is to use the rpms. Note: The `dnf` (which is now used by Fedora) command instructions are the same as the `yum` instructions below (just switch out `yum` for `dnf`if that's what your system is using)
-
+The easiest way to install ClamTk is to use the rpms. Note: The `dnf` (which is now used by Fedora) command instructions are the same as the `yum` instructions below (just switch out `yum` for `dnf` if that's what your system is using):  
+  
 First, try `yum install clamtk`. If this does not work,
-download it and try:
+download it and try:  
 
 `# yum install clamtk*.rpm`
 
-To remove clamtk:
+To remove clamtk:  
+  
 `# yum erase clamtk`
 
 ### Source
@@ -96,10 +97,12 @@ or
 ### DEBs
 You should be able to just double-click the .deb file to install it. This assumes you have permissions to install programs, of course. Your package manager should grab any necessary dependencies.
 
-By the commandline, you can do this:
+By the commandline, you can do this:  
+
     # dpkg -i clamtk-*.deb
 
-To remove clamtk:
+To remove clamtk:  
+
     # dpkg --purge clamtk
 
 Note that the Debian/Ubuntu builds are and have always been gpg-signed.
