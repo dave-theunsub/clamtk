@@ -3,7 +3,14 @@ This readme file was last updated on 02 November 2016
 # Readme for ClamTk
 
 
-## Important Links
+## About
+
+ClamTk is a frontend for ClamAV (Clam Antivirus). It is intended to be an easy to use, light-weight, on-demand scanner for Linux systems. It has been ported to Fedora, Debian, RedHat, openSUSE, ALT Linux, Ubuntu, CentOS, Gentoo, Archlinux, Mandriva, PCLinuxOS, Frugalware, FreeBSD, and others.
+
+Although its earliest incarnations date to 2003, ClamTk was first uploaded for distribution in 2004 to a rootshell.be account and finally to Sourceforge.net in 2005. At the end of 2013, we moved to a Google Code page (then to github), gitlab, and Bitbucket. It's  now 2015 and for some reason it's still going.  February 2016 marks 12 years of activity (of being publically available, that is).
+
+
+### Important Links
 
 ClamTk:
 * https://dave-theunsub.github.io/clamtk/
@@ -26,39 +33,6 @@ Virustotal:
 * https://virustotal.com
 
 
-## About
-
-ClamTk is a frontend for ClamAV (Clam Antivirus). It is intended to be an easy to use, light-weight, on-demand scanner for Linux systems. It has been ported to Fedora, Debian, RedHat, openSUSE, ALT Linux, Ubuntu, CentOS, Gentoo, Archlinux, Mandriva, PCLinuxOS, Frugalware, FreeBSD, and others.
-
-Although its earliest incarnations date to 2003, ClamTk was first uploaded for distribution in 2004 to a rootshell.be account and finally to Sourceforge.net in 2005. At the end of 2013, we moved to a Google Code page (then to github), gitlab, and Bitbucket. It's  now 2015 and for some reason it's still going.  February 2016 marks 12 years of activity (of being publically available, that is).
-
-
-## GUI
-
-ClamTk started out using the Tk libraries (thus its name). In 2005, this was changed to perl-Gtk2 (or Gtk2-perl, whatever). The Tk version is still available on sourceforge.net but has not been updated for some time now and should not be used.
-
-The plan for the 5.xx series was to use Gtk3. Unfortunately, Debian and Ubuntu do not have a recent version of libgtk3-perl, and CentOS does not have perl-Gtk3 at all and reportedly never will. So, at the last second, the 5.00 version was rewritten to use Gtk2. Again.
-
-
-## Integrity
-
-It is recommended you install ClamTk from official repositories. Check your distribution first, and always install from trusted sources.
-
-While the Debian/Ubuntu .debs have always been digitally signed, the rpms have not. Beginning with 5.22, you can once again check the rpm's signature to verify its integrity. Here's one way:
-
-1. Get and import the key in one step: `rpm --import https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-10-Sept-2016`
-2. Verify the list of gpg keys installed in RPM DB: `rpm -q gpg-pubkey --qf '%{name}-%{version}-%{release} --> %{summary}\n'`
-3. Check the signature of the rpm. For this example, we'll use version 5.22: `rpm --checksig clamtk-5.22-1.fc.noarch.rpm`
-4. You should see something like this: `/home/you/clamtk-5.22-1.fc.noarch.rpm: rsa sha1 (md5) pgp md5 OK`
-
-You can also verify the tarball. Using 5.22 as the example version, ensure you have downloaded the tarball, its detached signature (.asc), and the key in step 1 above.
-
-1. Get the key (skip if you already have it): `wget https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-10-Sept-2016`
-2. Import it (skip if you have done it already): `gpg --import RPM-GPG-KEY-DaveM-10-Sept-2016`
-3. Verify `gpg2 --verify clamtk-5.22.tar.gz.asc clamtk-5.22.tar.gz` or `gpg --verify clamtk-5.22.tar.gz.asc clamtk-5.22.tar.gz`
-4. You should see something like this: `gpg: Signature made Sun 11 Sep 2016 06:29:41 AM CDT using RSA key ID` (snipped for brevity)
-
-
 ## Installation
 
 ### RPMs
@@ -74,7 +48,7 @@ To remove clamtk:
 `# yum erase clamtk`
 
 ### Source
-Warning: Don't do this.  It's much easier to just double-click a .deb or .rpm.  Really, put down the source. The tarball contains all the sources. One way to do this on Fedora:
+Warning: Don't do this. It's much easier to just double-click a .deb or .rpm. Really, put down the source. The tarball contains all the sources. One way to do this on Fedora:
 ```
 # mkdir -p /usr/share/perl5/vendor_perl/ClamTk
 # cp lib/*.pm /usr/share/perl5/vendor_perl/ClamTk
@@ -95,6 +69,7 @@ or
 * Note: Did you get errors with this? Check the TROUBLESHOOTING section at the end.
 
 ### DEBs
+
 You should be able to just double-click the .deb file to install it. This assumes you have permissions to install programs, of course. Your package manager should grab any necessary dependencies.
 
 By the commandline, you can do this:  
@@ -107,8 +82,28 @@ To remove clamtk:
 
 Note that the Debian/Ubuntu builds are and have always been gpg-signed.
 
+### Integrity
 
-## Running ClamTk
+It is recommended you install ClamTk from official repositories. Check your distribution first, and always install from trusted sources.
+
+While the Debian/Ubuntu .debs have always been digitally signed, the rpms have not. Beginning with 5.22, you can once again check the rpm's signature to verify its integrity. Here's one way:
+
+1. Get and import the key in one step: `rpm --import https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-10-Sept-2016`
+2. Verify the list of gpg keys installed in RPM DB: `rpm -q gpg-pubkey --qf '%{name}-%{version}-%{release} --> %{summary}\n'`
+3. Check the signature of the rpm. For this example, we'll use version 5.22: `rpm --checksig clamtk-5.22-1.fc.noarch.rpm`
+4. You should see something like this: `/home/you/clamtk-5.22-1.fc.noarch.rpm: rsa sha1 (md5) pgp md5 OK`
+
+You can also verify the tarball. Using 5.22 as the example version, ensure you have downloaded the tarball, its detached signature (.asc), and the key in step 1 above.
+
+1. Get the key (skip if you already have it): `wget https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-10-Sept-2016`
+2. Import it (skip if you have done it already): `gpg --import RPM-GPG-KEY-DaveM-10-Sept-2016`
+3. Verify `gpg2 --verify clamtk-5.22.tar.gz.asc clamtk-5.22.tar.gz` or `gpg --verify clamtk-5.22.tar.gz.asc clamtk-5.22.tar.gz`
+4. You should see something like this: `gpg: Signature made Sun 11 Sep 2016 06:29:41 AM CDT using RSA key ID` (snipped for brevity)
+
+
+## Usage
+
+### Running ClamTk
 
 * Beginning with version 4.23, ClamTk will automatically search for signatures if you do not have them set already. This way ClamTk should work right out of the box, with no prompting.
 * Consider the extra scanning options in Settings.
@@ -126,8 +121,7 @@ Note that the Debian/Ubuntu builds are and have always been gpg-signed.
 * As of version 5.xx, you can use the "Analysis" button to see if a particular file is considered malicious by other antivirus products. This uses results from Virustotal. If you desire, you can submit a file for further review. Please do *not* submit personal files.
 * The "Whitelist" option provides the ability to skip specific directories during scan time. For example, you may wish to skip directories containing music or videos.
 
-
-## Commandline
+### Commandline
 
 ClamTk can run from the commandline, too:
 
@@ -139,8 +133,7 @@ or
 
 However, the main reason for the commandline option (however basic) is to allow for right-click scanning within your file manager (e.g., Nautilus or Dolphin).  If you want more extensive commandline options, it is recommended that you use the clamscan binary itself. (Type `man clamscan` at the commandline.) Or, if you know of something useful, let me know and I can add it as an option.
 
-
-## Afterwards
+### Afterwards
 
 You can view and delete scan logs by selecting the "History" option.
 
@@ -150,29 +143,18 @@ You also have a few options with the files displayed. Click on the file scanned 
 * Delete this file: Be careful: There's no recycle bin!
 * Cancel: Cancels this menu.
 
-
-## Quarantine/Maintenance
+### Quarantine/Maintenance
 
 If you've quarantined files for later examination, you have the option to restore them to their previous location (if known), or delete them.
 
 
-## Locale/Internationalization
+## Contributing
+
+### Locale/Internationalization
 
 Version 2.20 is the first ClamTk version to offer this. Have time on your hands and want to contribute? See the Launchpad page at https://launchpad.net/clamtk
 
 Note that some builds do not account for other than English languages because they have not yet updated their build/spec files. A polite email to the respective maintainer may fix this.
-
-
-## Limitations/Bugs
-
-Probably a lot. Let me know, please. Ranting on some bulletin board somewhere on one of dozens of Linux sites will not improve things. See the section below for contact info.
-
-
-## Contact
-
-For feature requests or bugs, it's best to use one of the following:
-* https://github.com/dave-theunsub/clamtk/issues
-* https://launchpad.net/clamtk
 
 
 ## Plugins
@@ -184,13 +166,6 @@ Here are the specific pages:
 * For KDE (Dolphin file manager): https://github.com/dave-theunsub/clamtk-kde
 * For XFCE (Thunar file manager): https://github.com/dave-theunsub/thunar-sendto-clamtk
 * For MATE (Nemo file manager): https://github.com/dave-theunsub/nemo-sendto-clamtk
-
-
-## Other
-
-As of version 3.10, ClamTk will not scan standard mail directories, such as .evolution, .mozilla or .thunderbird. This is due to parsing problems. If a smart way of doing that comes up, it will be added.
-
-Also, please note that version numbers mean absolutely nothing. There is no rhyme or reason to odd or even numbers (i.e., an odd number does not mean "unstable"). A new version means it goes up 1 (or, rather, .01). Version 6.xx, still in development, will likely use the Gtk3 libraries.
 
 
 ## Troubleshooting
@@ -214,9 +189,29 @@ Also, please note that version numbers mean absolutely nothing. There is no rhym
 
   That's because we no longer bundle this functionality.  Not everyone uses Gnome.  There are add-ons for XFCE, KDE, Mate, and Gnome - they're small packages, easy to install, and will bring that functionality back.
 
+### Limitations/Bugs
 
-## Thanks to...
+Probably a lot. Let me know, please. Ranting on some bulletin board somewhere on one of dozens of Linux sites will not improve things. See the section below for contact info.
 
+
+## Other
+
+As of version 3.10, ClamTk will not scan standard mail directories, such as .evolution, .mozilla or .thunderbird. This is due to parsing problems. If a smart way of doing that comes up, it will be added.
+
+Also, please note that version numbers mean absolutely nothing. There is no rhyme or reason to odd or even numbers (i.e., an odd number does not mean "unstable"). A new version means it goes up 1 (or, rather, .01). Version 6.xx, still in development, will likely use the Gtk3 libraries.
+
+### GUI
+
+ClamTk started out using the Tk libraries (thus its name). In 2005, this was changed to perl-Gtk2 (or Gtk2-perl, whatever). The Tk version is still available on sourceforge.net but has not been updated for some time now and should not be used.
+
+The plan for the 5.xx series was to use Gtk3. Unfortunately, Debian and Ubuntu do not have a recent version of libgtk3-perl, and CentOS does not have perl-Gtk3 at all and reportedly never will. So, at the last second, the 5.00 version was rewritten to use Gtk2. Again.
+
+
+## Thank you
+
+Many people have contributed their time, energy, opinions, recommendations, and expertise to this software. I cannot thank them enough. Their names are listed on the ClamTk website.
+
+Also a big thank you to:
 * Everyone who has contributed in one way or another to ClamTk - including language files, bug notifications, and feature requests
 * Dag, without whom rpms would likely not exist
 * All the gtk2-perl and gtk3-perl folks for their time and effort
@@ -224,12 +219,11 @@ Also, please note that version numbers mean absolutely nothing. There is no rhym
 * Ksnapshot for making snapshot-taking very easy
 
 
-## Contributors
+## Contact
 
-Many people have contributed their time, energy, opinions, recommendations, and expertise to this software. I cannot thank them enough.  Their names are listed on the ClamTk website.
-
-
-## Direct contact
+For feature requests or bugs, it's best to use one of the following:
+* https://github.com/dave-theunsub/clamtk/issues
+* https://launchpad.net/clamtk
 
 While we recommend opening an official bug on the appropriate page, we'll also accept emails:
 
