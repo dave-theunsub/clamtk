@@ -62,7 +62,7 @@ You can also verify the tarball. Using 5.22 as the example version, ensure you h
 ## Installation
 
 ### RPMs
-The easiest way to install ClamTk is to use the rpms.
+The easiest way to install ClamTk is to use the rpms. Note: The `dnf` (which is now used by Fedora) command instructions are the same as the `yum` instructions below (just switch out `yum` for `dnf`if that's what your system is using)
 
 First, try `yum install clamtk`. If this does not work,
 download it and try:
