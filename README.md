@@ -19,7 +19,7 @@ This readme file was last updated on 03 November 2016
 
 ClamTk is a frontend for ClamAV (Clam Antivirus). It is intended to be an easy to use, light-weight, on-demand scanner for Linux systems. It has been ported to Fedora, Debian, RedHat, openSUSE, ALT Linux, Ubuntu, CentOS, Gentoo, Archlinux, Mandriva, PCLinuxOS, Frugalware, FreeBSD, and others.
 
-Although its earliest incarnations date to 2003, ClamTk was first uploaded for distribution in 2004 to a rootshell.be account and finally to Sourceforge.net in 2005. At the end of 2013, we moved to a Google Code page (then to github), gitlab, and Bitbucket. It's  now 2015 and for some reason it's still going.  February 2016 marks 12 years of activity (of being publically available, that is).
+Although its earliest incarnations date to 2003, ClamTk was first uploaded for distribution in 2004 to a rootshell.be account and finally to Sourceforge.net in 2005. At the end of 2013, we moved to a Google Code page (then to github), gitlab, and Bitbucket. It's now 2016 and for some reason, it's still going.  In fact, February 2016 marks 12 years of activity (of being publically available, that is).
 
 
 ### Important Links
