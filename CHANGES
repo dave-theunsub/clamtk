@@ -9,6 +9,7 @@ CHANGELOG for ClamTk:
 ------------------
         * Fix startup crash when icon theme lacks 'gtk-new' or other
           icon with Arch patch. Thanks to anthraxx. Closes BZ #1386370
+	* Add comments line in About dialog to translation file
 
 5.23 - Oct 29 2016
 ------------------
