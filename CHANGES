@@ -1,11 +1,14 @@
 CHANGELOG for ClamTk:
 
+5.25 - Dec XX 2016
+------------------
+        * Add whitelisting of files based on file type.
+          Github #66
+	  
 5.24 - Nov XX 2016
 ------------------
         * Fix startup crash when icon theme lacks 'gtk-new' or other
           icon with Arch patch. Thanks to anthraxx. Closes BZ #1386370
-        * Add whitelisting of files based on file type.
-          Github #66
 
 5.23 - Oct 29 2016
 ------------------
