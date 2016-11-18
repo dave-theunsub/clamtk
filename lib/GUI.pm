@@ -93,12 +93,6 @@ sub start_gui {
     $separator->set_expand( TRUE );
     $toolbar->insert( $separator, -1 );
 
-    $button = Gtk2::ToolButton->new_from_stock( 'gtk-help' );
-    $button->can_focus( FALSE );
-    $toolbar->insert( $button, -1 );
-    $button->set_tooltip_text( _( 'Help' ) );
-    $button->signal_connect( clicked => \&help );
-
     $button = Gtk2::ToolButton->new_from_stock( 'gtk-about' );
     $button->can_focus( FALSE );
     $toolbar->insert( $button, -1 );
@@ -602,9 +596,6 @@ sub iconview_react {
     if ( $value eq _( 'About' ) ) {
         about();
         return TRUE;
-    } elsif ( $value eq _( 'Help' ) ) {
-        help();
-        return TRUE;
     } elsif ( $value eq _( 'Analysis' ) ) {
         ClamTk::Analysis->show_window;
         return TRUE;
@@ -757,60 +748,6 @@ sub add_default_view {
     $window->resize( 340, 400 );
     $window->queue_draw;
     Gtk2->main_iteration while Gtk2->events_pending;
-}
-
-sub help {
-    local $ENV{ 'PATH' } = '/bin:/usr/bin:/sbin';
-    delete @ENV{ 'IFS', 'CDPATH', 'ENV', 'BASH_ENV' };
-    my $path  = '';
-    my $which = 'which';
-    my $yelp  = 'yelp';
-    # By default, use this:
-    my $docs = 'help:clamtk/index';
-    # But CentOS will choke on that, because it uses
-    # /usr/share/gnome/help/blah blah blah.
-    # We *could* open /etc/issue, and give it the
-    # right option when it sees CentOS, but...
-    # for now, I'm going to manually uncomment this
-    # when building for CentOS.
-    # my $docs = 'ghelp:clamtk';
-
-    if ( open( my $c, '-|', $which, $yelp ) ) {
-        while ( <$c> ) {
-            chomp;
-            $path = $_ if ( -e $_ );
-        }
-    }
-
-    # If yelp isn't found, maybe gnome-help will be.
-    # Should be the same thing.
-    if ( !$path ) {
-        $yelp = 'gnome-help';
-        if ( open( my $c, '-|', $which, $yelp ) ) {
-            while ( <$c> ) {
-                chomp;
-                $path = $_ if ( -e $_ );
-            }
-        }
-    }
-
-    if ( $path ) {
-        # We can't use "system" here, because it will
-        # wait for the process to end, causing a noticable lag.
-        my $pid = fork();
-        if ( defined( $pid ) && $pid == 0 ) {
-            exec( "$yelp $docs" );
-            exit;
-        }
-        return;
-    }
-
-    my $dialog
-        = Gtk2::MessageDialog->new( undef,
-        [ qw| modal destroy-with-parent | ],
-        'info', 'close', _( 'Please install yelp to view documentation' ) );
-    $dialog->run;
-    $dialog->destroy;
 }
 
 sub about {
