@@ -6,6 +6,8 @@ CHANGELOG for ClamTk:
           icon with Arch patch. Thanks to anthraxx. Closes BZ #1386370
         * Initial credits.md file showing contributors
         * Add comments line in About dialog to translation file
+        * Removed built-in help documentation until updated
+          and translated
         * Updated language files: Ukrainian (uk), Hebrew (he),
           English (en_UK), Galician (gl), Italian (it) Finnish (fi)
 
