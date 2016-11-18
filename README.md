@@ -1,4 +1,4 @@
-This readme file was last updated on 03 November 2016
+This readme file was last updated on 18 November 2016
 
 # Readme for ClamTk
 
