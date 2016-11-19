@@ -781,7 +781,7 @@ sub about {
     #$dialog->set_authors( [ 'Dave M', 'dave.nerd@gmail.com' ] );
     $dialog->set_authors( 'Dave M <dave.nerd@gmail.com>' );
     $dialog->set_comments(
-        'ClamTk is a graphical front-end for the ClamAV Antivirus' );
+        _( 'ClamTk is a graphical front-end for Clam Antivirus' ) );
 
     $dialog->run;
     $dialog->destroy;
