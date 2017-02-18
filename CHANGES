@@ -1,5 +1,15 @@
 CHANGELOG for ClamTk:
 
+5.25 - Feb 18 2017
+------------------
+        * Begin thirteenth year
+        * Use xz instead of gz for source. See this link for size comparison:
+          https://goo.gl/bgfZYq
+        * Remove forced white background (Github #51)
+        * Use "other" for infobar button type (Github #51)
+        * Updated language files: Chinese (zh_TW), Italian (it),
+          English (en_AU), Dutch (nl), French (fr)
+
 5.24 - Nov 18 2016
 ------------------
         * Fix startup crash when icon theme lacks 'gtk-new' or other
@@ -9,7 +19,7 @@ CHANGELOG for ClamTk:
         * Removed built-in help documentation until updated
           and translated
         * Updated language files: Ukrainian (uk), Hebrew (he),
-          English (en_UK), Galician (gl), Italian (it) Finnish (fi)
+          English (en_UK), Galician (gl), Italian (it), Finnish (fi)
 
 5.23 - Oct 29 2016
 ------------------
