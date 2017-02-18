@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2016 Dave M
+# ClamTk, copyright (C) 2004-2017 Dave M
 #
 # This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #
@@ -117,8 +117,8 @@ sub filter {
 
     my $eb = Gtk2::EventBox->new;
     $window->get_content_area->add( $eb );
-    my $white = Gtk2::Gdk::Color->new( 0xFFFF, 0xFFFF, 0xFFFF );
-    $eb->modify_bg( 'normal', $white );
+    # my $white = Gtk2::Gdk::Color->new( 0xFFFF, 0xFFFF, 0xFFFF );
+    # $eb->modify_bg( 'normal', $white );
 
     my $box = Gtk2::VBox->new( FALSE, 5 );
     $eb->add( $box );
@@ -158,7 +158,7 @@ sub filter {
     $box->pack_start( $bottombar, FALSE, FALSE, 5 );
     $bottombar->can_focus( FALSE );
 
-    $bottombar->set_message_type( 'info' );
+    $bottombar->set_message_type( 'other' );
     $bottombar->add_button( 'gtk-cancel', HATE_GNOME_SHELL );
     if ( $show ) {
         $bottombar->add_button( 'gtk-preferences', DESTROY_GNOME_SHELL );

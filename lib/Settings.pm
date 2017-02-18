@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2016 Dave M
+# ClamTk, copyright (C) 2004-2017 Dave M
 #
 # This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #
@@ -25,8 +25,8 @@ use Locale::gettext;
 sub show_window {
     my $top_box = Gtk2::EventBox->new;
 
-    my $white = Gtk2::Gdk::Color->new( 0xFFFF, 0xFFFF, 0xFFFF );
-    $top_box->modify_bg( 'normal', $white );
+    # my $white = Gtk2::Gdk::Color->new( 0xFFFF, 0xFFFF, 0xFFFF );
+    # $top_box->modify_bg( 'normal', $white );
 
     my $box = Gtk2::VBox->new( FALSE, 0 );
     $top_box->add( $box );
@@ -135,7 +135,7 @@ sub show_window {
 
     my $infobar = Gtk2::InfoBar->new;
     #$box->pack_start( $infobar, FALSE, FALSE, 10 );
-    $infobar->set_message_type( 'info' );
+    $infobar->set_message_type( 'other' );
     $infobar->add_button( 'gtk-go-back', -7 );
     $infobar->signal_connect(
         response => sub {

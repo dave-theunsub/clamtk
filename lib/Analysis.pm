@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2016 Dave M
+# ClamTk, copyright (C) 2004-2017 Dave M
 #
 # This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #
@@ -83,7 +83,7 @@ sub show_window {
 
     $bar = Gtk2::InfoBar->new;
     $box->pack_start( $bar, FALSE, FALSE, 0 );
-    $bar->set_message_type( 'info' );
+    $bar->set_message_type( 'other' );
     $bar->add_button( 'gtk-close', -7 );
     $bar->signal_connect(
         response => sub {

@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2016 Dave M
+# ClamTk, copyright (C) 2004-2017 Dave M
 #
 # This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #
@@ -28,8 +28,8 @@ my $infobar;               # Gtk2::InfoBar
 sub show_window {
     my $eb = Gtk2::EventBox->new;
 
-    my $white = Gtk2::Gdk::Color->new( 0xFFFF, 0xFFFF, 0xFFFF );
-    $eb->modify_bg( 'normal', $white );
+    # my $white = Gtk2::Gdk::Color->new( 0xFFFF, 0xFFFF, 0xFFFF );
+    # $eb->modify_bg( 'normal', $white );
 
     #$eb->override_background_color( 'normal',
     #    Gtk2::Gdk::RGBA->new( .93, .93, .93, .93 ),
@@ -269,11 +269,11 @@ sub proxy_non_block_status {
     if ( $status eq 'yes' ) {
         $proxy_status_image->set_stock_id( 'gtk-yes' );
         $message = _( 'Settings saved' );
-        $infobar->set_message_type( 'info' );
+        $infobar->set_message_type( 'other' );
     } else {
         $proxy_status_image->set_stock_id( 'gtk-no' );
         $message = _( 'Error' );
-        $infobar->set_message_type( 'error' );
+        $infobar->set_message_type( 'other' );
     }
     set_infobar_text( $message );
     $proxy_status_image->show;

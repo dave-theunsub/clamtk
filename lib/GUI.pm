@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2016 Dave M
+# ClamTk, copyright (C) 2004-2017 Dave M
 #
 # This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #
@@ -66,9 +66,9 @@ sub start_gui {
         $window->set_icon( $transparent );
     }
 
-    my $white = Gtk2::Gdk::Color->new( 0xFFFF, 0xFFFF, 0xFFFF );
+    # my $white = Gtk2::Gdk::Color->new( 0xFFFF, 0xFFFF, 0xFFFF );
     my $eb = Gtk2::EventBox->new;
-    $eb->modify_bg( 'normal', $white );
+    #$eb->modify_bg( 'normal', $white );
     $window->add( $eb );
 
     $top_box = Gtk2::VBox->new( FALSE, 5 );
@@ -152,16 +152,16 @@ sub startup {
     my ( $message_type, $message );
     if ( $startup_check eq 'both' ) {
         $message      = _( 'Updates are available' );
-        $message_type = 'warning';
+        $message_type = 'other';
     } elsif ( $startup_check eq 'sigs' ) {
         $message      = _( 'The antivirus signatures are outdated' );
         $message_type = 'warning';
     } elsif ( $startup_check eq 'gui' ) {
         $message      = _( 'An update is available' );
-        $message_type = 'info';
+        $message_type = 'other';
     } else {
         $message      = '';
-        $message_type = 'info';
+        $message_type = 'other';
     }
     # Infobar is hidden typically, but if there
     # are updates, we need to show it
@@ -776,7 +776,7 @@ sub about {
     $dialog->set_logo( $pixbuf );
     $dialog->set_translator_credits(
         'Please see the website for full listing' );
-    $dialog->set_copyright( "\x{a9} Dave M 2004 - 2016" );
+    $dialog->set_copyright( "\x{a9} Dave M 2004 - 2017" );
     $dialog->set_program_name( 'ClamTk' );
     #$dialog->set_authors( [ 'Dave M', 'dave.nerd@gmail.com' ] );
     $dialog->set_authors( 'Dave M <dave.nerd@gmail.com>' );
