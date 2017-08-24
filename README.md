@@ -240,4 +240,3 @@ For feature requests or bugs, it's best to use one of the following:
 While we recommend opening an official bug on the appropriate page, we'll also accept emails:
 
 * Dave M, dave.nerd AT gmail DOT com (0x6ADA59DE)
-* Tord D, tord.dellsen AT gmail DOT com (0xF40F0D93)
