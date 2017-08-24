@@ -12,7 +12,7 @@ Veronica B, Muszela Balázs, Adolfo Jayme Barrientos, Papp Bence, David Bengtsso
 Gina C, Eduardo Alberto Calvo, Heriberto Cantú, Andi Chandler, Alexandros Chatzicharalambidis, Eleanor Chen, Zhang Chen, Walter Cheuk, MinSik Cho, Yuri Chornoivan, Jimmy Christensen, George Christofis, Lois/Ciberirmandade, Adam Czabara
 
 ### D
-Nicolas Delvaux, Nicolas Derive, Kenan Dervišević, Fran Diéguez, Thibault Dietlin, Bruno Diniz, Arnaud Dubois
+Nicolas Delvaux, Nicolas Derive, Kenan Dervišević, Fran Diéguez, Thibault Dietlin, Bruno Diniz, Arnaud Dubois, Tord D
 
 ### E
 Max Eaves, Ibrahim Elias
