@@ -2,9 +2,11 @@ CHANGELOG for ClamTk:
 
 5.25 - Sep XX 2017
 ------------------
-        * Begin thirteenth year
+        * Begin thirteenth year :)
         * Use xz instead of gz for source. See this link for size
           comparison: https://goo.gl/bgfZYq
+        * Remove dependency on gnome-icon-theme-legacy; still
+          using gnome-icon-theme for now
         * Remove forced white background (Github #51)
         * Use "other" for infobar button type (Github #51)
         * Updated language files: Chinese (zh_TW), Italian (it),
@@ -353,12 +355,12 @@ CHANGELOG for ClamTk:
 	* Updated Czech (cs) language file. Thanks, Pavel!
 	* Updated Indonesian (id) language file. Thanks, Arief!
 	* Updated Lithuanian (lt) language file
-	  (Launchpad #1080589). Thanks, Mantas!
+      (Launchpad #1080589). Thanks, Mantas!
 
 4.42 - Sep 12 2012
 ------------------
 	* Added tooltips in scanning preferences for
-	  clarity; other minor tweaks. Thanks, Liviu!
+      clarity; other minor tweaks. Thanks, Liviu!
 	* Removed unnecessary buttons in Prefs dialog.
 	* Updated French (fr) language file. Thanks, Nicolas!
 	* Updated Russian (ru) language file. Thanks, Oleg!
