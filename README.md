@@ -28,7 +28,7 @@ ClamTk:
 * https://dave-theunsub.github.io/clamtk/
 * https://gitlab.com/dave_m/clamtk
 * https://github.com/dave-theunsub/clamtk/
-* https://bitbucket.org/dave_theunsub/clamtk/
+* https://bitbucket.org/davem_/clamtk/
 * https://code.google.com/p/clamtk/ (not used anymore)
 * http://clamtk.sourceforge.net (not used anymore)
 
