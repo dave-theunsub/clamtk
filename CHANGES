@@ -1,13 +1,18 @@
 CHANGELOG for ClamTk:
 
-5.25 - Sep XX 2017
+5.26 - XXX XX 2017
 ------------------
+        * Remove dependency on gnome-icon-theme-legacy; still
+          using gnome-icon-theme for now
+
+
+5.25 - Sep 4 2017
+-----------------
         * Begin thirteenth year :)
         * Use xz instead of gz for source. See this link for size
           comparison: https://goo.gl/bgfZYq
-        * Remove dependency on gnome-icon-theme-legacy; still
-          using gnome-icon-theme for now
         * Remove forced white background (Github #51)
+        * Update bitbucket path in various places
         * Use "other" for infobar button type (Github #51)
         * Updated language files: Chinese (zh_TW), Italian (it),
           English (en_AU), Dutch (nl), French (fr), Hungarian (hu),
