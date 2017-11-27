@@ -1,3 +1,5 @@
+[![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/clamtk/Lobby)
+
 This readme file was last updated on 18 February 2017
 
 # Readme for ClamTk
@@ -240,3 +242,5 @@ For feature requests or bugs, it's best to use one of the following:
 While we recommend opening an official bug on the appropriate page, we'll also accept emails:
 
 * Dave M, dave.nerd AT gmail DOT com (0x6ADA59DE)
+
+You can also [chat with us on gitter](https://gitter.im/clamtk/Lobby)
