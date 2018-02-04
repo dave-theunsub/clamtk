@@ -1,6 +1,6 @@
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/clamtk/Lobby)
 
-This readme file was last updated on 18 February 2017
+This readme file was last updated on 4 February 2018
 
 # Readme for ClamTk
 
