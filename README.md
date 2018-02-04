@@ -102,14 +102,14 @@ While the Debian/Ubuntu .debs have always been digitally signed, the rpms have n
 
 1. Get and import the key in one step: `rpm --import https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-10-Sept-2016`
 2. Verify the list of gpg keys installed in RPM DB: `rpm -q gpg-pubkey --qf '%{name}-%{version}-%{release} --> %{summary}\n'`
-3. Check the signature of the rpm. For this example, we'll use version 5.22: `rpm --checksig clamtk-5.22-1.fc.noarch.rpm`
+3. Check the signature of the rpm. For this example, we'll use version 5.25: `rpm --checksig clamtk-5.25-1.fc.noarch.rpm`
 4. You should see something like this: `/home/you/clamtk-5.22-1.fc.noarch.rpm: rsa sha1 (md5) pgp md5 OK`
 
 You can also verify the tarball. Using 5.22 as the example version, ensure you have downloaded the tarball, its detached signature (.asc), and the key in step 1 above.
 
 1. Get the key (skip if you already have it): `wget https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-10-Sept-2016`
 2. Import it (skip if you have done it already): `gpg --import RPM-GPG-KEY-DaveM-10-Sept-2016`
-3. Verify `gpg2 --verify clamtk-5.22.tar.gz.asc clamtk-5.22.tar.gz` or `gpg --verify clamtk-5.22.tar.gz.asc clamtk-5.22.tar.gz`
+3. Verify `gpg2 --verify clamtk-5.25.tar.xz.asc clamtk-5.25.tar.gz` or `gpg --verify clamtk-5.25.tar.gz.asc clamtk-5.25.tar.gz`
 4. You should see something like this: `gpg: Signature made Sun 11 Sep 2016 06:29:41 AM CDT using RSA key ID` (snipped for brevity)
 
 
@@ -168,7 +168,7 @@ Here are the specific pages:
 * For Gnome (Files file manager): https://github.com/dave-theunsub/clamtk-gnome
 * For KDE (Dolphin file manager): https://github.com/dave-theunsub/clamtk-kde
 * For XFCE (Thunar file manager): https://github.com/dave-theunsub/thunar-sendto-clamtk
-* For MATE (Nemo file manager): https://github.com/dave-theunsub/nemo-sendto-clamtk
+* For MATE (Nemo file manager):   https://github.com/dave-theunsub/nemo-sendto-clamtk
 
 
 ## Troubleshooting
@@ -228,7 +228,6 @@ Also a big thank you to:
 * Dag, without whom rpms would likely not exist
 * All the gtk2-perl and gtk3-perl folks for their time and effort
 * Perlmonks.org for helping me learn the wonderful Perl language - and continuing to do so on a daily basis!
-* Ksnapshot for making snapshot-taking very easy
 
 
 ## Contact
