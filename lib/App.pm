@@ -15,6 +15,7 @@ package ClamTk::App;
 # use warnings;
 $| = 1;
 
+use File::BaseDir qw/xdg_data_files/;
 use Time::Piece;
 use File::Basename 'basename';
 
@@ -29,60 +30,57 @@ sub get_TK_version {
 
 sub get_path {
     my ( undef, $wanted ) = @_;
+    my $xdg = File::BaseDir->new;
     my $path;
 
     # These are directories and files necessary for
     # preferences, storing AV signatures, and more
+    $path->{ clamtk } = $xdg->config_home('clamtk');
+
+    # Cron file
+    $path->{ cron } = $xdg->data_home('clamtk', 'cron');
 
     # Images directory:
     # This is a "global" setting which may need
     # to be changed depending on distro, so it's first
     $path->{ images } = '/usr/share/pixmaps/';
 
-    # Now, determine home directory
-    $path->{ directory } = $ENV{ HOME } || ( ( getpwuid $< )[ -2 ] );
-
-    # Default personal clamtk directory
-    $path->{ clamtk } = $path->{ directory } . '/.clamtk';
-
     # Trash directory - main
-    $path->{ trash_dir } = $path->{ directory } . '/.local/share/Trash';
+    $path->{ trash_dir } = $xdg->data_home('Trash');
 
     # Trash directory - where files are held
-    $path->{ trash_dir_files } = $path->{ trash_dir } . '/files';
+    $path->{ trash_dir_files } = $xdg->data_home('Trash', 'files');
 
     # Trash directory - where associated files are held:
     # e.g. trash.jpg.trashinfo
-    $path->{ trash_files_info } = $path->{ trash_dir } . '/info';
+    $path->{ trash_files_info } = $xdg->data_home('Trash', 'info');
 
     # For storing quarantined files
-    $path->{ viruses } = $path->{ clamtk } . '/viruses';
+    $path->{ viruses } = $xdg->data_home('clamtk', 'viruses');
 
     # Store history logs here
-    $path->{ history } = $path->{ clamtk } . '/history';
+    $path->{ history } = $xdg->data_home('clamtk', 'history');
 
     # Plain text file for preferences
-    $path->{ prefs } = $path->{ clamtk } . '/prefs';
+    $path->{ prefs } = $xdg->config_home('clamtk', 'prefs');
 
     # Plain text file for restoring quarantined files
-    $path->{ restore } = $path->{ clamtk } . '/restore';
+    $path->{ restore } = $xdg->data_home('clamtk', 'restore');
 
     # The db directory stores virus defs/freshclam-related stuff
-    $path->{ db } = $path->{ clamtk } . '/db';
+    $path->{ db } = $xdg->data_home('clamtk', 'db');
 
     # The submit directory stores file submission information
-    $path->{ submit } = $path->{ clamtk } . '/submit';
+    $path->{ submit } = $xdg->data_home('clamtk', 'submit');
 
     # Keeps track of previous VT submissions
-    $path->{ previous_submissions }
-        = $path->{ submit } . '/previous_submissions';
+    $path->{ previous_submissions } = $path->{ submit } . '/previous_submissions';
 
     # Keeps track of previous VT submissions
     $path->{ virustotal_links } = $path->{ submit } . '/virustotal_links';
 
     # Default variables
-    $path->{ whitelist_dir }
-        = join( ';', $path->{ viruses }, '/sys/', '/dev/', '/proc/' );
+    $path->{ whitelist_dir } = join( ';', $path->{ viruses }, '/sys/', '/dev/', '/proc/' );
 
     # Most times freshclam is under /usr/bin
     $path->{ freshclam }
