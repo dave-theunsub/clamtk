@@ -56,19 +56,47 @@ my $from_cli;               # from the commandline?
 
 sub filter {
     # $pkg_name = drop this
-    # $scanthis = file or directory to be scanned
+    # @args = paths to be scanned
     # $show = whether or not to show the preferences button;
-    #   we do if it's a commandline or right-click scan; otherwise we don't
     # $from = from the commandline?
-    my ( $pkg_name, $scanthis, $show, $from ) = @_;
+    my $pkg_name = $_[0];
+    my @args = $_[1];
+    my $show = $_[2];
+    my $from = $_[3];
+
     $from_cli = $from;
+
+    # We need to escape special chars
+    # from each path given.
+    my @scanthis;
+    # Might be in Trash, though...
+    my $trash_dir = ClamTk::App->get_path( 'trash_dir' );
+    my $trash_dir_files = ClamTk::App->get_path( 'trash_dir_files' );
+    foreach (@args)
+    {
+        my $path = $_;
+        # // = entire directory
+        if ( $path eq '//' ) {
+            $path = $trash_dir;
+        } elsif ( $path =~ m#^//(.*?)$# && -e "$trash_dir_files/$1") {
+            $path = "$trash_dir_files/$1";
+        }
+        if ( -d $path ) {
+            $path .= '/';
+        }
+        $path = quotemeta( $path );
+        chomp( $path );
+        push @scanthis, $path;
+    }
+
+
 
     # Currently just to test permissions:
     # If given a file/directory from the commandline
     # AND we can't scan it, just die.
     # However, if interface is running
     # AND we can't scan it, just return to interface.
-    if ( !sanity_check( $scanthis ) ) {
+    if ( !sanity_check( @scanthis ) ) {
         if ( $from && $from eq 'startup' ) {
             Gtk2->main_quit;
         } else {
@@ -235,8 +263,8 @@ sub filter {
     # specific path - kmail (e.g.) is somewhere
     # under $HOME/.kde/blah/foo/...
     my @maildirs = qw(
-        .thunderbird	.mozilla-thunderbird
-        Mail	kmail   evolution
+        .thunderbird    .mozilla-thunderbird
+        Mail    kmail   evolution
     );
     for my $mailbox ( @maildirs ) {
         # warn "excluding mailbox directory $mailbox\n";
@@ -246,8 +274,15 @@ sub filter {
     # remove the hidden files if chosen:
     if ( !$prefs{ ScanHidden } ) {
         # But only if Trash directory is not being scanned
-        if ( $scanthis !~ m#/.local/share/Trash# ) {
-            $directive .= ' --exclude="\/\."';
+        for $mypath (@scanthis)
+        {
+            # @TODO: this should not be hardcoded like this.
+            # Maybe get Trash path from
+            # ClamTk::App->$path->{ trash_dir }?
+            if ( $mypath !~ m#/.local/share/Trash# ) {
+                $directive .= ' --exclude="\/\."';
+                last;
+            }
         }
     }
 
@@ -292,17 +327,18 @@ sub filter {
         $directive .= ' --recursive=yes';
     }
 
-    scan( $scanthis, $directive );
+    scan( @scanthis, $directive );
 
     clean_up();
 }
 
 sub scan {
-    my ( $path_to_scan, $directive ) = @_;
-    chomp( $path_to_scan );
+    my ( @path_to_scan, $directive ) = @_;
     chomp( $directive );
 
-    $pb_step = get_step( $path_to_scan );
+    #print @path_to_scan;
+
+    $pb_step = get_step( @path_to_scan );
     if ( $pb_step ) {
         $pb->set_pulse_step( $pb_step );
     } else {
@@ -312,14 +348,13 @@ sub scan {
 
     $pb->show;
 
-    my $quoted = quotemeta( $path_to_scan );
-    chomp( $quoted );
-
     # Leave if we have no real path
-    if ( !$path_to_scan ) {
+    if ( !@path_to_scan ) {
         warn "No path to scan!\n";
         return;
     }
+
+    my $quoted = join ( " ", @path_to_scan);
 
     my $paths   = ClamTk::App->get_path( 'all' );
     my $command = $paths->{ clamscan };
@@ -692,24 +727,21 @@ sub destroy_buttons {
 }
 
 sub get_step {
-    my $dir = shift;
-
     my $recur = ClamTk::Prefs->get_preference( 'Recursive' );
+    foreach my $dir (@_) {
+        return if ( $dir eq '/' );
 
-    return if ( $dir eq '/' );
+        if ( $recur ) {
+            find( \&wanted, $dir );
+        } else {
+            find( { wanted => \&wanted, preprocess => \&nodirs }, $dir );
+        }
 
-    if ( $recur ) {
-        find( \&wanted, $dir );
-    } else {
-        find( { wanted => \&wanted, preprocess => \&nodirs }, $dir );
+        #find( { \&wanted, no_chdir => ( $recur ) ? 0 : 1 }, $dir );
     }
-
-    #find( { \&wanted, no_chdir => ( $recur ) ? 0 : 1 }, $dir );
-
     if ( !$pb_file_counter ) {
-        return;
+            return;
     }
-
     return 1 / $pb_file_counter;
 }
 
@@ -732,31 +764,28 @@ sub wanted {
 }
 
 sub sanity_check {
-    my $check = shift;
-
-    if ( -d $check ) {
-        if ( !chdir( $check ) || $check =~ m#^(/proc|/sys|/dev)# ) {
-            popup(
-                _(  'You do not have permissions to scan that file or directory'
-                )
-            );
-            reset_stats();
-            return 0;
-        } else {
-            return 1;
-        }
-    } elsif ( -f $check ) {
-        if ( !-r $check || $check =~ m#^(/proc|/sys|/dev)# ) {
-            popup(
-                _(  'You do not have permissions to scan that file or directory'
-                )
-            );
-            reset_stats();
-            return 0;
-        } else {
-            return 1;
+    foreach my $check (@_) {
+        if ( -d $check ) {
+            if ( !chdir( $check ) || $check =~ m#^(/proc|/sys|/dev)# ) {
+                popup(
+                    _(  'You do not have permissions to scan that file or directory'
+                    )
+                );
+                reset_stats();
+                return 0;
+            }
+        } elsif ( -f $check ) {
+            if ( !-r $check || $check =~ m#^(/proc|/sys|/dev)# ) {
+                popup(
+                    _(  'You do not have permissions to scan that file or directory'
+                    )
+                );
+                reset_stats();
+                return 0;
+            }
         }
     }
+    return 1;
 }
 
 sub popup {
