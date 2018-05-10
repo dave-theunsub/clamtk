@@ -1,4 +1,4 @@
-#!/usr/bin/perl -l
+#!/usr/bin/perl
 #
 # ClamTk, copyright (C) 2004-2017 Dave M
 #
@@ -56,7 +56,7 @@ ClamTk::Prefs->custom_prefs;
 if ( !@ARGV ) {
     ClamTk::GUI->start_gui();
 } else {
-    ClamTk::Scan->filter( @ARGV, 1, 'startup' );
+    ClamTk::Scan->filter( 1, 'startup', @ARGV );
 }
 
 # End.

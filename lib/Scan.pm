@@ -56,13 +56,13 @@ my $from_cli;               # from the commandline?
 
 sub filter {
     # $pkg_name = drop this
-    # @args = paths to be scanned
     # $show = whether or not to show the preferences button;
     # $from = from the commandline?
-    my $pkg_name = $_[0];
-    my @args = $_[1];
-    my $show = $_[2];
-    my $from = $_[3];
+    # @args = paths to be scanned
+    my $pkg_name = shift;
+    my $show = shift;
+    my $from = shift;
+    my @args = @_;
 
     $from_cli = $from;
 
