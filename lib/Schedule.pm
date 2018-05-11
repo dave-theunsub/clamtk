@@ -297,7 +297,7 @@ sub apply_scan {
     # ensure old task is removed
     remove( '# clamtk-scan' );
 
-    my $tmp_file = $paths->{cron};
+    my $tmp_file = "$paths->{clamtk}" . "/" . "cron";
     open( my $T, '>', $tmp_file )
         or do {
         warn "Error opening temporary file in apply_scan: $!\n";

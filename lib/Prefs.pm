@@ -66,15 +66,6 @@ sub structure {
 
     # This is /home/user/.clamtk/prefs,
     # a custom INI-style file.
-    if ( !-d $paths->{ clamtk }) {
-        eval { mkpath( $paths->{ clamtk }, { mode => oct( $mask ) } ) };
-        warn $@  if ( $@ );
-        return 0 if ( $@ );
-    }
-    else {
-        # Ensure the permissions are correct
-        chmod oct( $mask ), $paths->{ clamtk };
-    }
     if ( !-e $paths->{ prefs } ) {
         warn "note: (re)creating prefs file.\n";
         open( my $F, '>:encoding(UTF-8)', $paths->{ prefs } )
