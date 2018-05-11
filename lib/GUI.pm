@@ -666,7 +666,7 @@ sub select_file {
     }
 
     if ( -e $file ) {
-        ClamTk::Scan->filter( ($file), 0, undef );
+        ClamTk::Scan->filter( 0, undef, ($file) );
     }
 }
 
@@ -704,7 +704,7 @@ sub select_directory {
     }
 
     if ( -e $directory ) {
-        ClamTk::Scan->filter( ($directory), FALSE, undef );
+        ClamTk::Scan->filter( FALSE, undef, ($directory) );
     }
 }
 
