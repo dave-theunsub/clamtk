@@ -1,4 +1,4 @@
-#!/usr/bin/perl -l
+#!/usr/bin/perl
 #
 # ClamTk, copyright (C) 2004-2017 Dave M
 #
@@ -42,6 +42,29 @@ textdomain( 'clamtk' );
 setlocale( LC_ALL, '' );
 bind_textdomain_codeset( 'clamtk', 'UTF-8' );
 
+# Normally this would work...
+# my $arg = $ARGV[0];
+# print "argv = >$_<\n" for(@ARGV);
+#
+# Unfortunately, I don't know how to make python keep a
+# URI with spaces intact.  So....
+my $arg = '';
+$arg = join( ' ', @ARGV );
+
+# Might be in the Trash
+# // = entire directory
+my $trash_dir = ClamTk::App->get_path( 'trash_dir' );
+if ( $arg eq '//' ) {
+    # The whole "Trash" directory
+    $arg = $trash_dir;
+} elsif ( $arg =~ m#^//(.*?)$# ) {
+    # individual file
+    my $trash_dir_files = ClamTk::App->get_path( 'trash_dir_files' );
+    if ( -e "$trash_dir_files/$1" ) {
+        $arg = "$trash_dir_files/$1";
+    }
+}
+
 # Ensure all the normal directories are created
 ClamTk::Prefs->structure;
 
@@ -53,10 +76,10 @@ ClamTk::Prefs->custom_prefs;
 # otherwise, we're scanning.
 # Let Scanner know this is a commandline scan, so
 # if we can't scan (e.g. due to permissions), exit
-if ( !@ARGV ) {
+if ( !$arg or !-e $arg ) {
     ClamTk::GUI->start_gui();
 } else {
-    ClamTk::Scan->filter( @ARGV, 1, 'startup' );
+    ClamTk::Scan->filter( $arg, 1, 'startup' );
 }
 
 # End.
