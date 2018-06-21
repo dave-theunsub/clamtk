@@ -1,6 +1,6 @@
 [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/clamtk/Lobby)
 
-This readme file was last updated on 4 February 2018
+This readme file was last updated on 21 June 2018
 
 # Readme for ClamTk
 
@@ -102,15 +102,15 @@ It is recommended you install ClamTk from official repositories. Check your dist
 
 While the Debian/Ubuntu .debs have always been digitally signed, the rpms have not. Beginning with 5.22, you can once again check the rpm's signature to verify its integrity. Here's one way:
 
-1. Get and import the key in one step: `rpm --import https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-10-Sept-2016`
+1. Get and import the key in one step: `rpm --import https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-21-June-2018`
 2. Verify the list of gpg keys installed in RPM DB: `rpm -q gpg-pubkey --qf '%{name}-%{version}-%{release} --> %{summary}\n'`
 3. Check the signature of the rpm. For this example, we'll use version 5.25: `rpm --checksig clamtk-5.25-1.fc.noarch.rpm`
-4. You should see something like this: `/home/you/clamtk-5.22-1.fc.noarch.rpm: rsa sha1 (md5) pgp md5 OK`
+4. You should see something like this: `/home/you/clamtk-5.25-1.fc.noarch.rpm: rsa sha1 (md5) pgp md5 OK`
 
 You can also verify the tarball. Using 5.22 as the example version, ensure you have downloaded the tarball, its detached signature (.asc), and the key in step 1 above.
 
-1. Get the key (skip if you already have it): `wget https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-10-Sept-2016`
-2. Import it (skip if you have done it already): `gpg --import RPM-GPG-KEY-DaveM-10-Sept-2016`
+1. Get the key (skip if you already have it): `wget https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-21-June-2018`
+2. Import it (skip if you have done it already): `gpg --import RPM-GPG-KEY-DaveM-21-June-2018`
 3. Verify `gpg2 --verify clamtk-5.25.tar.xz.asc clamtk-5.25.tar.gz` or `gpg --verify clamtk-5.25.tar.gz.asc clamtk-5.25.tar.gz`
 4. You should see something like this: `gpg: Signature made Sun 11 Sep 2016 06:29:41 AM CDT using RSA key ID` (snipped for brevity)
 
