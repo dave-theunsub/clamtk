@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2017 Dave M
+# ClamTk, copyright (C) 2004-2018 Dave M
 #
 # This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #

@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2017 Dave M
+# ClamTk, copyright (C) 2004-2018 Dave M
 #
 # This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #
@@ -27,13 +27,6 @@ my $infobar;               # Gtk2::InfoBar
 
 sub show_window {
     my $eb = Gtk2::EventBox->new;
-
-    # my $white = Gtk2::Gdk::Color->new( 0xFFFF, 0xFFFF, 0xFFFF );
-    # $eb->modify_bg( 'normal', $white );
-
-    #$eb->override_background_color( 'normal',
-    #    Gtk2::Gdk::RGBA->new( .93, .93, .93, .93 ),
-    #);
 
     my $box = Gtk2::VBox->new( FALSE, 5 );
     $eb->add( $box );

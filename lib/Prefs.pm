@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2017 Dave M
+# ClamTk, copyright (C) 2004-2018 Dave M
 #
 # This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #
@@ -198,15 +198,6 @@ sub custom_prefs {
         }
     }
 
-    # Single click or double click in the main iconview.
-    # Since we started with double, stick with it by
-    # default for less aggravation
-    # 1 = single, 2 = double
-    # Clickings = short for Click Settings. I think.
-    if ( !exists $pkg{ Clickings } ) {
-        $pkg{ Clickings } = 2;
-    }
-
     write_all( %pkg );
     return;
 }
@@ -239,7 +230,6 @@ sub legit_key {
         TruncateLog SaveToLog
         Whitelist Update ScanHidden
         Thorough Recursive Mounted
-        Clickings
     );
     return 1 if ( grep { $_[ 0 ] eq $_ } @keys );
 }

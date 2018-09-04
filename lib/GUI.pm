@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2017 Dave M
+# ClamTk, copyright (C) 2004-2018 Dave M
 #
 # This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #
@@ -219,40 +219,33 @@ sub add_config_panels {
     );
 
     my $view = Gtk2::IconView->new_with_model( $liststore );
-    $view->set_columns( 4 );
+    $view->set_can_focus( FALSE );
     $view->set_column_spacing( 10 );
-    $view->set_row_spacing( 10 );
+    $view->set_columns( 4 );
     $view->set_pixbuf_column( 0 );
+    $view->set_row_spacing( 10 );
+    $view->set_selection_mode( 'single' );
     $view->set_text_column( 1 );
     $view->set_tooltip_column( 2 );
-    $view->set_selection_mode( 'single' );
-    $view->set_can_focus( FALSE );
 
-    my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
-    if ( $prefs == 2 ) {
-        $view->signal_connect(
-            'item-activated' => \&click,
-            $liststore
-        );
-    } elsif ( $prefs == 1 ) {
-        my $path;
-        $view->signal_connect(
-            'motion-notify-event' => sub {
-                my ( $widget, $event ) = @_;
-                $path = $view->get_path_at_pos( $event->x, $event->y );
-                if ( $path ) {
-                    $view->select_path( $path );
-                } else {
-                    $view->unselect_all();
-                }
+    # Set single-click
+    my $path;
+    $view->signal_connect(
+        'motion-notify-event' => sub {
+            my ( $widget, $event ) = @_;
+            $path = $view->get_path_at_pos( $event->x, $event->y );
+            if ( $path ) {
+                $view->select_path( $path );
+            } else {
+                $view->unselect_all();
             }
-        );
-        $view->signal_connect(
-            'button-press-event' => sub {
-                press( $path, $liststore );
-            }
-        );
-    }
+        }
+    );
+     $view->signal_connect(
+        'button-press-event' => sub {
+            press( $path, $liststore );
+        }
+    );
 
     my @data = (
         {   link        => _( 'Settings' ),
@@ -303,41 +296,33 @@ sub add_update_panels {
     );
 
     my $view = Gtk2::IconView->new_with_model( $liststore );
-    $view->set_columns( 3 );
+    $view->set_can_focus( FALSE );
     $view->set_column_spacing( 10 );
-    $view->set_row_spacing( 10 );
+    $view->set_columns( 3 );
     $view->set_pixbuf_column( 0 );
+    $view->set_row_spacing( 10 );
+    $view->set_selection_mode( 'single' );
     $view->set_text_column( 1 );
     $view->set_tooltip_column( 2 );
-    $view->set_selection_mode( 'single' );
-    $view->set_can_focus( FALSE );
 
-    my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
-
-    if ( $prefs == 2 ) {
-        $view->signal_connect(
-            'item-activated' => \&click,
-            $liststore
-        );
-    } elsif ( $prefs == 1 ) {
-        my $path;
-        $view->signal_connect(
-            'motion-notify-event' => sub {
-                my ( $widget, $event ) = @_;
-                $path = $view->get_path_at_pos( $event->x, $event->y );
-                if ( $path ) {
-                    $view->select_path( $path );
-                } else {
-                    $view->unselect_all();
-                }
+    # Set single-click
+    my $path;
+    $view->signal_connect(
+        'motion-notify-event' => sub {
+            my ( $widget, $event ) = @_;
+            $path = $view->get_path_at_pos( $event->x, $event->y );
+            if ( $path ) {
+                $view->select_path( $path );
+            } else {
+                $view->unselect_all();
             }
-        );
-        $view->signal_connect(
-            'button-press-event' => sub {
-                press( $path, $liststore );
-            }
-        );
-    }
+        }
+    );
+    $view->signal_connect(
+        'button-press-event' => sub {
+            press( $path, $liststore );
+        }
+    );
 
     my @data = (
         {   link        => _( 'Update' ),
@@ -386,32 +371,24 @@ sub add_history_panels {
     $view->set_selection_mode( 'single' );
     $view->set_can_focus( FALSE );
 
-    my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
-
-    if ( $prefs == 2 ) {
-        $view->signal_connect(
-            'item-activated' => \&click,
-            $liststore
-        );
-    } elsif ( $prefs == 1 ) {
-        my $path;
-        $view->signal_connect(
-            'motion-notify-event' => sub {
-                my ( $widget, $event ) = @_;
-                $path = $view->get_path_at_pos( $event->x, $event->y );
-                if ( $path ) {
-                    $view->select_path( $path );
-                } else {
-                    $view->unselect_all();
-                }
+    # Set single-click
+    my $path;
+    $view->signal_connect(
+        'motion-notify-event' => sub {
+            my ( $widget, $event ) = @_;
+            $path = $view->get_path_at_pos( $event->x, $event->y );
+            if ( $path ) {
+                $view->select_path( $path );
+            } else {
+                $view->unselect_all();
             }
-        );
-        $view->signal_connect(
-            'button-press-event' => sub {
-                press( $path, $liststore );
-            }
-        );
-    }
+        }
+    );
+    $view->signal_connect(
+        'button-press-event' => sub {
+            press( $path, $liststore );
+        }
+    );
 
     my @data = (
         {   link        => _( 'History' ),
@@ -451,41 +428,32 @@ sub add_analysis_panels {
     );
 
     my $view = Gtk2::IconView->new_with_model( $liststore );
-    $view->set_columns( 3 );
+    $view->set_can_focus( FALSE );
     $view->set_column_spacing( 10 );
-    $view->set_row_spacing( 10 );
+    $view->set_columns( 3 );
     $view->set_pixbuf_column( 0 );
+    $view->set_row_spacing( 10 );
+    $view->set_selection_mode( 'single' );
     $view->set_text_column( 1 );
     $view->set_tooltip_column( 2 );
-    $view->set_selection_mode( 'single' );
-    $view->set_can_focus( FALSE );
 
-    my $prefs = ClamTk::Prefs->get_preference( 'Clickings' );
-
-    if ( $prefs == 2 ) {
-        $view->signal_connect(
-            'item-activated' => \&click,
-            $liststore
-        );
-    } elsif ( $prefs == 1 ) {
-        my $path;
-        $view->signal_connect(
-            'motion-notify-event' => sub {
-                my ( $widget, $event ) = @_;
-                $path = $view->get_path_at_pos( $event->x, $event->y );
-                if ( $path ) {
-                    $view->select_path( $path );
-                } else {
-                    $view->unselect_all();
-                }
+    my $path;
+    $view->signal_connect(
+        'motion-notify-event' => sub {
+            my ( $widget, $event ) = @_;
+            $path = $view->get_path_at_pos( $event->x, $event->y );
+            if ( $path ) {
+                $view->select_path( $path );
+            } else {
+                $view->unselect_all();
             }
-        );
-        $view->signal_connect(
-            'button-press-event' => sub {
-                press( $path, $liststore );
-            }
-        );
-    }
+        }
+    );
+    $view->signal_connect(
+        'button-press-event' => sub {
+            press( $path, $liststore );
+        }
+    );
 
     #<<<
     # For CentOS only:
@@ -776,7 +744,7 @@ sub about {
     $dialog->set_logo( $pixbuf );
     $dialog->set_translator_credits(
         'Please see the website for full listing' );
-    $dialog->set_copyright( "\x{a9} Dave M 2004 - 2017" );
+    $dialog->set_copyright( "\x{a9} Dave M 2004 - 2018" );
     $dialog->set_program_name( 'ClamTk' );
     #$dialog->set_authors( [ 'Dave M', 'dave.nerd@gmail.com' ] );
     $dialog->set_authors( 'Dave M <dave.nerd@gmail.com>' );

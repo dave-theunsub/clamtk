@@ -1,10 +1,12 @@
 CHANGELOG for ClamTk:
 
-5.26 - XXX XX 2017
+5.26 - Aug 25 2018
 ------------------
-        * Remove dependency on gnome-icon-theme-legacy; still
-          using gnome-icon-theme for now
-
+        * UI change to single-click
+        * Update year to 2018; 14th year :)
+        * Updates to the man pages
+        * Update Swedish (sv) language file for Launchpad #1688469
+        * Begin move to https://gitlab.com/dave_m/clamtk
 
 5.25 - Sep 4 2017
 -----------------
@@ -390,7 +392,7 @@ CHANGELOG for ClamTk:
 4.41 - Jun 1 2012
 ------------------
 	* Actually remove File::Find::Rule from ClamTk sources,
-	  which should have been done in 4.40.  This could cause
+	  which should have been done in 4.40. This could cause
 	  problems with Debian-based distros which can remove
 	  unneeded dependencies
 

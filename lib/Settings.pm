@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2017 Dave M
+# ClamTk, copyright (C) 2004-2018 Dave M
 #
 # This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #
@@ -114,22 +114,6 @@ sub show_window {
             ClamTk::Prefs->set_preference( 'GUICheck', $btn->get_active
                 ? 1
                 : 0 );
-        }
-    );
-
-    $option = Gtk2::CheckButton->new_with_label(
-        _( 'Double click icons to activate' ) );
-    $option->can_focus( FALSE );
-    $option->set_tooltip_text(
-        _( 'Uncheck this box to activate icons with single click' ) );
-    $option->set_active( TRUE ) if ( $prefs{ Clickings } == 2 );
-    $grid->attach_defaults( $option, 0, 1, 5, 6 );
-    $option->signal_connect(
-        toggled => sub {
-            my $btn = shift;
-            ClamTk::Prefs->set_preference( 'Clickings', $btn->get_active
-                ? 2
-                : 1 );
         }
     );
 
