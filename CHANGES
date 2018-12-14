@@ -1,5 +1,13 @@
 CHANGELOG for ClamTk:
 
+5.27 - Dec 14 2018
+------------------
+        * Update options for new ClamAV (0.101.0)
+        * Update language files: Swedish (sv), Japanese (ja)
+        * Language files will begin to incorporate new "Language" field
+        * Language files are now BSD because Launchpad.
+            https://help.launchpad.net/Translations/LicensingFAQ
+
 5.26 - Aug 25 2018
 ------------------
         * UI change to single-click
