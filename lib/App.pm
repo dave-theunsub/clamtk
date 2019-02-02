@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2018 Dave M
+# ClamTk, copyright (C) 2004-2019 Dave M
 #
 # This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #
@@ -24,7 +24,7 @@ use Encode 'decode';
 
 sub get_TK_version {
     # Stick with %.2f format - 4.50 vice 4.5
-    return '5.26';
+    return '5.27';
 }
 
 sub get_path {

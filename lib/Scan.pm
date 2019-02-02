@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2018 Dave M
+# ClamTk, copyright (C) 2004-2019 Dave M
 #
 # This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #
@@ -256,8 +256,10 @@ sub filter {
     my ( $version ) = ClamTk::App->get_AV_version();
     # Ensure it's just digits and dots:
     $version =~ s/[^0-9\.]//g;
-    if (   ( $version cmp '0.97' ) == 0
-        || ( $version cmp '0.97' ) == 1 )
+    $version =~ s/^[0\.]+//;
+    $version =~ s/\.0$//;
+    if (   ( $version <=> '97' ) == 0
+        || ( $version <=> '97' ) == 1 )
     {
         $directive .= ' --follow-dir-symlinks=1';
         $directive .= ' --follow-file-symlinks=1';
@@ -272,11 +274,29 @@ sub filter {
     # These lines are for 'thorough'. :)
     # If it's selected, we add detection for both
     # potentially unwanted applications and broken executables.
+    # Version 0.101.0 changed and added some options.
     if ( $prefs{ Thorough } ) {
-        $directive .= ' --detect-pua --detect-broken';
+        if (   ( $version <=> '101' ) == 0
+            || ( $version <=> '101' ) == 1 )
+        {
+            $directive
+                .= ' --detect-pua --alert-broken'
+                . ' --alert-macros --alert-encrypted-archive'
+                . ' --alert-encrypted-doc --heuristic-alerts';
+        } else {
+            $directive .= ' --detect-pua --algorithmic-detection';
+        }
     } else {
-        $directive =~ s/\s--detect-pua --detect-broken//;
+        if (   ( $version cmp '101' ) == 0
+            || ( $version cmp '101' ) == 1 )
+        {
+            $directive
+                =~ s/\s--detect-pua --alert-broken --alert-macros --alert-encrypted-archive --alert-encrypted-doc --heuristic-alerts'//;
+        } else {
+            $directive =~ s/\s--detect-pua --algorithmic-detection//;
+        }
     }
+    # print "directive = >", $directive, "<\n";
 
     # only a single file
 

@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2018 Dave M
+# ClamTk, copyright (C) 2004-2019 Dave M
 #
 # This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
 #
@@ -744,7 +744,7 @@ sub about {
     $dialog->set_logo( $pixbuf );
     $dialog->set_translator_credits(
         'Please see the website for full listing' );
-    $dialog->set_copyright( "\x{a9} Dave M 2004 - 2018" );
+    $dialog->set_copyright( "\x{a9} Dave M 2004 - 2019" );
     $dialog->set_program_name( 'ClamTk' );
     #$dialog->set_authors( [ 'Dave M', 'dave.nerd@gmail.com' ] );
     $dialog->set_authors( 'Dave M <dave.nerd@gmail.com>' );
