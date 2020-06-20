@@ -451,6 +451,7 @@ sub scan {
             'OK',
             'Zip module failure',
             "RAR module failure",
+            'Encrypted.PDF',
             'Encrypted.RAR',
             'Encrypted.Zip',
             'Empty file',
