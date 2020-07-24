@@ -1,9 +1,9 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 #
-# ClamTk, copyright (C) 2004-2019 Dave M
+# ClamTk, copyright (C) 2004-2020 Dave M
 #
-# This file is part of ClamTk.
-# https://dave-theunsub.github.io/clamtk/
+# This file is part of ClamTk
+# (https://gitlab.com/dave_m/clamtk-gtk3/).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -24,6 +24,7 @@ use ClamTk::App;
 use ClamTk::Assistant;
 use ClamTk::GUI;
 use ClamTk::History;
+use ClamTk::Icons;
 use ClamTk::Network;
 use ClamTk::Prefs;
 use ClamTk::Results;
@@ -36,20 +37,20 @@ use ClamTk::Update;
 use ClamTk::Quarantine;
 use ClamTk::Whitelist;
 
+use Encode 'decode';
 use Locale::gettext;
 use POSIX 'locale_h';
 textdomain( 'clamtk' );
 setlocale( LC_ALL, '' );
+setlocale( LC_ALL, 'C' );
 bind_textdomain_codeset( 'clamtk', 'UTF-8' );
 
-# Normally this would work...
-# my $arg = $ARGV[0];
-# print "argv = >$_<\n" for(@ARGV);
+my $arg = decode( 'utf8', $ARGV[ 0 ] );
 #
 # Unfortunately, I don't know how to make python keep a
 # URI with spaces intact.  So....
-my $arg = '';
-$arg = join( ' ', @ARGV );
+# my $arg = '';
+# $arg = join( ' ', @ARGV );
 
 # Might be in the Trash
 # // = entire directory
