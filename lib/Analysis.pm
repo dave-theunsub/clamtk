@@ -1,6 +1,7 @@
-# ClamTk, copyright (C) 2004-2019 Dave M
+# ClamTk, copyright (C) 2004-2020 Dave M
 #
-# This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
+# This file is part of ClamTk
+# (https://gitlab.com/dave_m/clamtk-gtk3/).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -32,22 +33,24 @@ use Locale::gettext;
 
 binmode STDIN, ":encoding(UTF-8)";
 
-my $store;       # Gtk2::ListStore for results
-my $model;       # Gtk2::ListStore for combobox
-my $combobox;    # Gtk2::ComboBox for previous analysis
-my $nb;          # Gtk2::Notebook
+my $store;       # Liststore results
+my $model;       # ListStore for combobox
+my $combobox;    # ComboBox for previous analysis
+my $nb;          # Notebook
 my $filename = '';    # name of file analyzed
-my $bar;              # Gtk2::InfoBar
-my $window;           # Gtk2::Dialog; global for queue_draw;
+my $bar;              # InfoBar
+my $window;           # Dialog; global for queue_draw;
 my $submitted = 0;    # Boolean value to keep track if file
                       # has been submitted or not
 my $from_scan;
 
 sub show_window {
     ( undef, $from_scan, $parent ) = @_;
-    $window = Gtk2::Dialog->new(
-        _( 'Analysis' ),
-        $parent, [ qw| modal destroy-with-parent no-separator | ],
+    $window = Gtk3::Dialog->new(
+        undef, $parent,
+        [   qw| modal destroy-with-parent no-separator
+                use-header-bar |
+        ],
     );
     $window->signal_connect(
         destroy => sub {
@@ -59,32 +62,51 @@ sub show_window {
     $window->set_default_size( 450, 250 );
     $window->set_position( 'mouse' );
 
-    my $box = Gtk2::VBox->new( FALSE, 5 );
+    my $hb = Gtk3::HeaderBar->new;
+    $hb->set_title( _( 'Schedule' ) );
+    $hb->set_show_close_button( TRUE );
+    $hb->set_decoration_layout( 'menu:close' );
+
+    my $images_dir = ClamTk::App->get_path( 'images' );
+    my $pixbuf
+        = Gtk3::Gdk::Pixbuf->new_from_file_at_size( "$images_dir/clamtk.png",
+        24, 24 );
+    my $image = Gtk3::Image->new;
+    $image->set_from_pixbuf( $pixbuf );
+    my $button = Gtk3::ToolButton->new( $image, '' );
+    $button->set_sensitive( FALSE );
+    $button->set_tooltip_text( _( 'ClamTk Virus Scanner' ) );
+    $hb->pack_start( $button );
+    $window->set_titlebar( $hb );
+
+    my $box = Gtk3::Box->new( 'vertical', 5 );
+    $box->set_homogeneous( FALSE );
     $window->get_content_area->add( $box );
 
-    $nb = Gtk2::Notebook->new;
+    $nb = Gtk3::Notebook->new;
     $box->pack_start( $nb, TRUE, TRUE, 0 );
 
     #<<<
     # Add initial page (select file, etc)
     $nb->insert_page(
         page_one(),
-        Gtk2::Label->new( _( 'File Analysis' ) ),
+        Gtk3::Label->new( _( 'File Analysis' ) ),
         0,
     );
 
     # Add results page
     $nb->insert_page(
         page_two(),
-        Gtk2::Label->new( _( 'Results' ) ),
+        Gtk3::Label->new( _( 'Results' ) ),
         1,
     );
     #>>>
 
-    $bar = Gtk2::InfoBar->new;
+    $bar = Gtk3::InfoBar->new;
     $box->pack_start( $bar, FALSE, FALSE, 0 );
     $bar->set_message_type( 'other' );
-    $bar->add_button( 'gtk-close', -7 );
+    # $bar->add_button( 'gtk-close', -7 );
+    $bar->add_button( _( 'Close' ), -7 );
     $bar->signal_connect(
         response => sub {
             $submitted = 0;
@@ -100,9 +122,10 @@ sub show_window {
 
 sub page_one {
     # Analysis page
-    my $box = Gtk2::VBox->new( FALSE, 5 );
+    my $box = Gtk3::Box->new( 'vertical', 5 );
+    $box->set_homogeneous( FALSE );
 
-    my $separator = Gtk2::HSeparator->new;
+    my $separator = Gtk3::Separator->new( 'horizontal' );
 
     $box->pack_start( analysis_frame_one(), FALSE, FALSE, 5 );
     $box->pack_start( $separator,           FALSE, FALSE, 5 );
@@ -113,9 +136,9 @@ sub page_one {
 
 sub page_two {
     # Results page
-    my $box = Gtk2::VBox->new( FALSE, 0 );
+    my $box = Gtk3::VBox->new( FALSE, 0 );
 
-    my $sw = Gtk2::ScrolledWindow->new;
+    my $sw = Gtk3::ScrolledWindow->new( undef, undef );
     $sw->set_policy( 'never', 'automatic' );
     $box->pack_start( $sw, TRUE, TRUE, 0 );
 
@@ -124,7 +147,7 @@ sub page_two {
     use constant DATE   => 2;
 
     #<<<
-    $store = Gtk2::ListStore->new(
+    $store = Gtk3::ListStore->new(
             # VENDOR
             'Glib::String',
             # RESULT
@@ -133,13 +156,13 @@ sub page_two {
             'Glib::String',
     );
 
-    my $tree = Gtk2::TreeView->new_with_model( $store );
+    my $tree = Gtk3::TreeView->new_with_model( $store );
     $tree->set_rules_hint( TRUE );
     $sw->add( $tree );
 
-    my $renderer = Gtk2::CellRendererText->new;
+    my $renderer = Gtk3::CellRendererText->new;
     my $column
-        = Gtk2::TreeViewColumn->new_with_attributes(
+        = Gtk3::TreeViewColumn->new_with_attributes(
                 _( 'Vendor' ),
                 $renderer,
                 text => VENDOR,
@@ -148,7 +171,7 @@ sub page_two {
     $column->set_sort_column_id( VENDOR );
     $tree->append_column( $column );
 
-    $column = Gtk2::TreeViewColumn->new_with_attributes(
+    $column = Gtk3::TreeViewColumn->new_with_attributes(
                 _( 'Date' ),
                 $renderer,
                 text => DATE,
@@ -157,7 +180,7 @@ sub page_two {
     $column->set_expand( TRUE );
     $tree->append_column( $column );
 
-    $column = Gtk2::TreeViewColumn->new_with_attributes(
+    $column = Gtk3::TreeViewColumn->new_with_attributes(
                 _( 'Result' ),
                 $renderer,
                 text => RESULT,
@@ -167,17 +190,19 @@ sub page_two {
     $tree->append_column( $column );
     #>>>
 
-    my $toolbar = Gtk2::Toolbar->new;
+    my $toolbar = Gtk3::Toolbar->new;
     $box->pack_start( $toolbar, FALSE, FALSE, 3 );
     $toolbar->set_style( 'both-horiz' );
 
-    my $separator = Gtk2::SeparatorToolItem->new;
+    my $separator = Gtk3::SeparatorToolItem->new;
     $separator->set_draw( FALSE );
     $separator->set_expand( TRUE );
     $toolbar->insert( $separator, -1 );
 
-    my $button = Gtk2::ToolButton->new_from_stock( 'gtk-save-as' );
-    $button->set_tooltip_text( _( 'Save results' ) );
+    my $button = Gtk3::ToolButton->new();
+    $button->set_icon_name( 'document-save-as' );
+    $button->set_label( _( 'Save results' ) );
+    # $button->set_tooltip_text( _( 'Save results' ) );
     $toolbar->insert( $button, -1 );
     $button->signal_connect(
         clicked => sub {
@@ -190,26 +215,29 @@ sub page_two {
 }
 
 sub analysis_frame_one {
-    my $box = Gtk2::VBox->new( FALSE, 5 );
+    my $box = Gtk3::Box->new( 'vertical', 5 );
+    $box->set_homogeneous( FALSE );
 
     my $label
-        = Gtk2::Label->new( _( "Check or recheck a file's reputation" ) );
+        = Gtk3::Label->new( _( "Check or recheck a file's reputation" ) );
     $label->set_alignment( 0.0, 0.5 );
     $box->pack_start( $label, FALSE, FALSE, 5 );
 
-    my $grid = Gtk2::Table->new( 1, 3, FALSE );
-    $box->pack_start( $grid, TRUE, TRUE, 5 );
-    $grid->set_col_spacings( 10 );
-    $grid->set_row_spacings( 10 );
-    $grid->set_homogeneous( TRUE );
+    my $grid = Gtk3::Grid->new();
+    $box->pack_start( $grid, FALSE, FALSE, 5 );
+    $grid->set_column_spacing( 10 );
+    $grid->set_column_homogeneous( FALSE );
+    $grid->set_row_spacing( 10 );
+    $grid->set_row_homogeneous( TRUE );
 
     #<<<
     # Declaring this now for setting sensitive/insensitive
-    my $button = Gtk2::ToolButton->new_from_stock( 'gtk-find' );
-    #$button->set_sensitive( FALSE );
+    my $button = Gtk3::ToolButton->new();
+    my $use_image = ClamTk::Icons->get_image('edit-select');
+    $button->set_icon_name($use_image);
 
     my $select_button
-        = Gtk2::FileChooserButton->new(
+        = Gtk3::FileChooserButton->new(
                 _( 'Select a file' ),
                 'open',
     );
@@ -219,31 +247,19 @@ sub analysis_frame_one {
             $select_button->set_filename( $from_scan );
     }
     $button->set_sensitive( TRUE );
-    $select_button->signal_connect(
-            'file-set' => sub {
-                    # Ensure it does not become re-enabled
-                    # after submitting a file.  The stupid
-                    # FileChooserButton cannot be reliably
-                    # reset.
-                    if( ! $submitted ) {
-                            $button->set_sensitive( TRUE );
-                    }
-            }
-    );
+    $select_button->set_hexpand(TRUE);
+
     $select_button->set_current_folder(
         ClamTk::App->get_path( 'directory' )
     );
-    #$grid->attach( $select_button, 0, 0, 1, 1 );
-    $grid->attach_defaults( $select_button, 0, 1, 0, 1 );
+    $grid->attach( $select_button, 0, 0, 1, 1 );
     #>>>
 
-    my $separator = Gtk2::SeparatorToolItem->new;
+    my $separator = Gtk3::SeparatorToolItem->new;
     $separator->set_draw( FALSE );
-    #$grid->attach( $separator, 1, 0, 1, 1 );
-    $grid->attach_defaults( $separator, 1, 2, 0, 1 );
+    $grid->attach( $separator, 1, 0, 1, 1 );
 
-    #$grid->attach( $button, 2, 0, 1, 1 );
-    $grid->attach_defaults( $button, 2, 3, 0, 1 );
+    $grid->attach( $button, 2, 0, 1, 1 );
     $button->set_tooltip_text( _( 'Submit file for analysis' ) );
 
     $button->signal_connect(
@@ -251,30 +267,21 @@ sub analysis_frame_one {
             $filename = $select_button->get_filename;
             return unless -e $filename;
 
-            # Since FileChooserButton cannot reset itself,
-            # we'll just disable the submit button.
-            # Getting real tired of Gtk2.
-            $button->set_sensitive( FALSE );
-            $select_button->set_sensitive( FALSE );
-            # To be sure:
             $submitted++;
 
             # VT size limit using the API is 32MB
             # https://www.virustotal.com/en/faq/
             my $size = -s $filename;
-            my $mb = $size / ( 1024 * 1024 );
+            my $mb   = $size / ( 1024 * 1024 );
             if ( $mb > 32 ) {
                 warn "filesize too large - must be smaller than 32MB\n";
                 popup( _( 'Uploaded files must be smaller than 32MB' ) );
                 return;
             }
 
-            Gtk2->main_iteration while ( Gtk2->events_pending );
+            # Gtk3::main_iteration while Gtk3::events_pending;
             my ( $vt_results, $new_window, $is_error )
                 = check_for_existing( $filename );
-            # warn "VT results = >$vt_results<, ",
-            # "open new_win = >$new_window<, error = >$is_error<\n";
-            #$results->set_text( $vt_results );
 
             # Information exists on this file; show results
             if ( $new_window ) {
@@ -305,38 +312,44 @@ sub analysis_frame_one {
 }
 
 sub analysis_frame_two {
-    my $box = Gtk2::VBox->new( FALSE, 5 );
+    my $box = Gtk3::Box->new( 'vertical', 5 );
+    $box->set_homogeneous( FALSE );
 
-    my $label = Gtk2::Label->new( _( 'View or delete previous results' ) );
+    my $label = Gtk3::Label->new( _( 'View or delete previous results' ) );
     $label->set_alignment( 0.0, 0.5 );
     $box->pack_start( $label, FALSE, FALSE, 0 );
 
-    my $grid = Gtk2::Table->new( 1, 4, FALSE );
-    $box->pack_start( $grid, TRUE, TRUE, 5 );
-    $grid->set_col_spacings( 10 );
-    $grid->set_row_spacings( 10 );
-    $grid->set_homogeneous( FALSE );
+    my $grid = Gtk3::Grid->new();
+    $box->pack_start( $grid, FALSE, FALSE, 5 );
+    $grid->set_column_spacing( 10 );
+    $grid->set_column_homogeneous( FALSE );
+    $grid->set_row_spacing( 10 );
+    $grid->set_row_homogeneous( TRUE );
 
-    $model = Gtk2::ListStore->new( 'Glib::String' );
+    $model = Gtk3::ListStore->new( 'Glib::String' );
 
-    $combobox = Gtk2::ComboBox->new_with_model( $model );
-    $grid->attach_defaults( $combobox, 0, 1, 0, 1 );
-    my $render = Gtk2::CellRendererText->new;
+    $combobox = Gtk3::ComboBox->new_with_model( $model );
+    $combobox->set_hexpand( TRUE );
+    $grid->attach( $combobox, 0, 0, 1, 1 );
+    my $render = Gtk3::CellRendererText->new;
     $combobox->pack_start( $render, TRUE );
     $combobox->add_attribute( $render, text => 0 );
-    # $combobox->signal_connect( changed => \&read_files );
     read_files();
 
-    my $separator = Gtk2::SeparatorToolItem->new;
+    my $separator = Gtk3::SeparatorToolItem->new;
     $separator->set_draw( FALSE );
-    $grid->attach_defaults( $separator, 1, 2, 0, 1 );
+    $grid->attach( $separator, 1, 0, 1, 1 );
 
-    my $button = Gtk2::ToolButton->new_from_stock( 'gtk-index' );
-    $grid->attach_defaults( $button, 2, 3, 0, 1 );
+    my $button = Gtk3::ToolButton->new();
+    $button->set_icon_name( 'text-x-preview' );
     $button->set_tooltip_text( _( 'View file results' ) );
+    $grid->attach( $button, 2, 0, 1, 1 );
     $button->signal_connect(
         clicked => sub {
-            my $file = $combobox->get_active_text;
+            # my $file = $combobox->get_active_text;
+            my $iter = $combobox->get_active_iter();
+            return unless ( $model->iter_is_valid( $iter ) );
+            my $file = $model->get_value( $iter, 0 );
             return unless ( $file );
             my $file_to_use = '';
             my $files       = read_files();
@@ -351,13 +364,12 @@ sub analysis_frame_two {
             # For some reason, we'll use csv files
             my $csv = Text::CSV->new( { binary => 1, eol => "\n" } )
                 or do {
-                warn "unable to begin Text::CSV: $!\n";
-                # popup( _( 'Error with Text::CSV file' ) );
+                warn "Unable to begin Text::CSV: $!\n";
                 return;
                 };
 
             open( my $f, '<:encoding(utf8)', $file_to_use ) or do {
-                warn "unable to opening VT CSV file: $!\n";
+                warn "Unable to opening VT CSV file: $!\n";
                 # popup( _( 'Error opening VT CSV file' ) );
                 return;
             };
@@ -393,9 +405,10 @@ sub analysis_frame_two {
         }
     );
 
-    $button = Gtk2::ToolButton->new_from_stock( 'gtk-delete' );
-    $grid->attach_defaults( $button, 3, 4, 0, 1 );
+    $button = Gtk3::ToolButton->new();
+    $button->set_icon_name( 'edit-delete' );
     $button->set_tooltip_text( _( 'Delete file results' ) );
+    $grid->attach( $button, 3, 0, 1, 1 );
     $button->signal_connect(
         clicked => sub {
             my $file = $combobox->get_active_text;
@@ -412,7 +425,7 @@ sub analysis_frame_two {
                     $file_to_use = $key->{ readpath };
                     if ( -e $file_to_use ) {
                         unlink( $file_to_use ) or do {
-                            warn "unable to delete VT $file_to_use: $!\n";
+                            warn "Unable to delete VT $file_to_use: $!\n";
                             return;
                         };
                         $combobox->set_active( -1 );
@@ -444,7 +457,7 @@ sub read_files {
         $results->[ $arr_count ]->{ readpath } = $f;
         $results->[ $arr_count ]->{ hash }     = basename( $f );
         open( my $t, '<:encoding(utf8)', $f ) or do {
-            warn "unable to open analysis file >$f<: $!\n";
+            warn "Unable to open analysis file >$f<: $!\n";
             next;
         };
         while ( <$t> ) {
@@ -467,10 +480,8 @@ sub read_files {
 sub check_for_existing {
     # First, set the infobar so the
     # user knows something is happening:
-    Gtk2->main_iteration while ( Gtk2->events_pending );
     set_infobar_mode( _( 'Please wait...' ) );
     $window->queue_draw;
-    Gtk2->main_iteration while ( Gtk2->events_pending );
 
     my $file = shift;
     my $url  = 'https://www.virustotal.com/vtapi/v2/file/report';
@@ -497,11 +508,8 @@ sub check_for_existing {
     # $is_error = connection (or other) issue
     my $is_error = FALSE;
 
-    Gtk2->main_iteration while ( Gtk2->events_pending );
     my $response = $ua->post( @req );
     # warn "is_err = >", $response->is_error, "<\n";
-
-    Gtk2->main_iteration while ( Gtk2->events_pending );
 
     my $data;
     if ( $response->is_success ) {
@@ -559,16 +567,13 @@ sub check_for_existing {
         warn "Unable to connect in submission: ", $response->status_line,
             "\n";
     }
-    Gtk2->main_iteration while ( Gtk2->events_pending );
     set_infobar_mode( ' ' );
-    Gtk2->main_iteration while ( Gtk2->events_pending );
     return ( $data->{ response_code }, $new_window, $is_error );
 }
 
 sub submit_new {
     # First, set the infobar so the user knows
     # something is happening:
-    Gtk2->main_iteration while ( Gtk2->events_pending );
     set_infobar_mode( _( 'Please wait...' ) );
     $window->queue_draw;
     my $url = 'https://www.virustotal.com/vtapi/v2/file/scan';
@@ -590,11 +595,9 @@ sub submit_new {
     );
     #>>>
 
-    Gtk2->main_iteration while ( Gtk2->events_pending );
     set_infobar_mode( ' ' );
     $bar->show_all;
     $window->queue_draw;
-    Gtk2->main_iteration while ( Gtk2->events_pending );
 
     if ( $response->is_success ) {
         # Save off the results; might use them later
@@ -606,7 +609,7 @@ sub submit_new {
         my $json_hash = decode_json( $json_text );
 
         open( my $f, '>>:encoding(UTF-8)', $file );
-        # or warn "unable to save virustotal results: $!\n";
+        # or warn "Unable to save virustotal results: $!\n";
         my $csv = Text::CSV->new( { binary => 1, eol => "\n" } );
         my $ref;
         $ref->[ 0 ] = [ $filename, $hash, $json_hash->{ permalink } ];
@@ -641,7 +644,7 @@ sub get_hash {
     my $slurp = do {
         local $/ = undef;
         open( my $f, '<', $file ) or do {
-            warn "unable to open >$file< for hashing: $!\n";
+            warn "Unable to open >$file< for hashing: $!\n";
             return;
         };
         binmode( $f );
@@ -696,7 +699,7 @@ sub save_file {
 sub popup {
     my ( $message, $option ) = @_;
 
-    my $dialog = Gtk2::MessageDialog->new(
+    my $dialog = Gtk3::MessageDialog->new(
         undef,    # no parent
         [ qw| modal destroy-with-parent | ],
         'info',
@@ -717,22 +720,20 @@ sub set_infobar_mode {
     my $text = shift;
 
     for my $c ( $bar->get_content_area->get_children ) {
-        if ( $c->isa( 'Gtk2::Label' ) ) {
+        if ( $c->isa( 'Gtk3::Label' ) ) {
             $c->set_text( $text );
             $bar->show_all;
             $window->queue_draw;
-            Gtk2->main_iteration while Gtk2->events_pending;
             return;
         }
     }
 
     # We don't have a Label, so make one:
-    my $label = Gtk2::Label->new( $text );
+    my $label = Gtk3::Label->new( $text );
     $label->set_use_markup( TRUE );
     $bar->get_content_area->add( $label );
     $bar->show_all;
     $window->queue_draw;
-    Gtk2->main_iteration while Gtk2->events_pending;
 
     return;
 }
@@ -780,14 +781,12 @@ sub add_ua_proxy {
 }
 
 sub button_test {
-    # This is the worst thing ever.  The set_filename function
-    # only works with certain versions of gtk2.  So, this is a test
-    # to determine if it works, which is tested by seeing if we
-    # can get_filename.
-    # Return TRUE if it succeeds so we can add the Analysis button
-    # to the Results window.
+    # So, this is a test to determine if set_filename works,
+    # which is tested by seeing if we can get_filename.
+    # Return TRUE if it succeeds so we can add the Analysis
+    # button to the Results window.
     # Otherwise return FALSE, and don't draw it.
-    my $fcb = Gtk2::FileChooserButton->new( 'just a test', 'open', );
+    my $fcb = Gtk3::FileChooserButton->new( 'just a test', 'open', );
     $fcb->set_filename( '/usr/bin/clamtk' );
     if ( $fcb->get_filename ) {
         return TRUE;

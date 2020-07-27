@@ -1,6 +1,6 @@
-# ClamTk, copyright (C) 2004-2019 Dave M
+# ClamTk, copyright (C) 2004-2020 Dave M
 #
-# This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
+# This file is part of ClamTk (https://gitlab.com/dave_m/clamtk/).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -23,7 +23,8 @@ use Locale::gettext;
 my $pref;
 
 sub show_window {
-    my $box = Gtk2::VBox->new( FALSE, 0 );
+    my $box = Gtk3::Box->new( 'vertical', 0 );
+    $box->set_homogeneous( FALSE );
     $box->set_border_width( 12 );
 
     # Get current update preference
@@ -32,29 +33,26 @@ sub show_window {
     $pref ||= 'shared';
 
     #<<<
-    my $label = Gtk2::Label->new(
+    my $label = Gtk3::Label->new(
           _(
            'Please choose how you will update your antivirus signatures'
           )
     );
     #>>>
-    my $flabel = Gtk2::Label->new;
+    my $flabel = Gtk3::Label->new( '' );
     $flabel->set_markup( "<b>" . $label->get_label . "</b>" );
     $flabel->set_alignment( 0.0, 0.5 );
     $box->pack_start( $flabel, FALSE, FALSE, 10 );
 
-    my $bbox = Gtk2::VButtonBox->new;
-    $bbox->can_focus( FALSE );
-    $bbox->set_spacing_default( 5 );
-    $bbox->set_layout_default( 'start' );
+    my $bbox = Gtk3::ButtonBox->new( 'vertical' );
+    $bbox->set_layout( 'start' );
     $box->add( $bbox );
 
     #<<<
-    my $auto_button = Gtk2::RadioButton->new_with_label_from_widget(
+    my $auto_button = Gtk3::RadioButton->new_with_label_from_widget(
             undef,
             _('My computer automatically receives updates')
     );
-    $auto_button->can_focus( FALSE );
     $auto_button->signal_connect(
         toggled => sub {
             if( $auto_button->get_active ) {
@@ -65,11 +63,10 @@ sub show_window {
         }
     );
 
-    my $man_button = Gtk2::RadioButton->new_from_widget( $auto_button );
+    my $man_button = Gtk3::RadioButton->new_from_widget( $auto_button );
     $man_button->set_label(
             _('I would like to update signatures myself')
     );
-    $man_button->can_focus( FALSE );
     $man_button->signal_connect(
         toggled => sub {
             if( $man_button->get_active ) {
@@ -89,19 +86,18 @@ sub show_window {
         $man_button->set_active( TRUE );
     }
 
-    my $infobar = Gtk2::InfoBar->new;
+    my $infobar = Gtk3::InfoBar->new;
     $infobar->set_message_type( 'other' );
     $box->pack_start( $infobar, FALSE, FALSE, 10 );
 
-    $label = Gtk2::Label->new( _( 'Press Apply to save changes' ) );
+    $label = Gtk3::Label->new( _( 'Press Apply to save changes' ) );
     $infobar->get_content_area->add( $label );
-    $infobar->add_button( 'gtk-apply', -10 );
+    $infobar->add_button( 'gtk-apply', GTK_RESPONSE_APPLY );
     $infobar->signal_connect(
         response => sub {
-            my ( $bar, $sig ) = @_;
-            Gtk2->main_iteration while Gtk2->events_pending;
+            my ( $bar, $sig, undef ) = @_;
+            # Gtk3::main_iteration while Gtk3::events_pending;
             $label->set_text( _( 'Please wait...' ) );
-            Gtk2->main_iteration while Gtk2->events_pending;
             if ( save() ) {
                 set_infobar_text( TRUE, $bar );
             } else {
@@ -131,7 +127,7 @@ sub set_infobar_text {
     }
 
     for my $child ( $bar->get_content_area->get_children ) {
-        if ( $child->isa( 'Gtk2::Label' ) ) {
+        if ( $child->isa( 'Gtk3::Label' ) ) {
             $child->set_text( $label );
         }
     }
@@ -150,12 +146,10 @@ sub set_infobar_text {
     $bar->set_message_type( 'other' );
     #for my $child ( $bar->get_content_area->get_children ) {
     for my $child ( $bar->get_children ) {
-        if ( $child->isa( 'Gtk2::Label' ) ) {
+        if ( $child->isa( 'Gtk3::Label' ) ) {
             $child->set_text( _( 'Press Apply to save changes' ) );
         }
     }
-
-    Gtk2->main_iteration while Gtk2->events_pending;
 }
 
 sub save {
@@ -167,8 +161,9 @@ sub save {
         my $paths = ClamTk::App->get_path( 'db' );
 
         if ( $pref eq 'single' ) {
+            # $d(aily) and $m(ain) signatures
             my ( $d, $m ) = ( 0 ) x 2;
-            Gtk2->main_iteration while ( Gtk2->events_pending );
+            # Gtk3::main_iteration while Gtk3::events_pending;
             for my $dir_list (
                 '/var/clamav',             '/var/lib/clamav',
                 '/opt/local/share/clamav', '/usr/share/clamav',
@@ -177,29 +172,42 @@ sub save {
             {
                 if ( -e "$dir_list/daily.cld" ) {
                     copy( "$dir_list/daily.cld", "$paths/daily.cld" );
+                    if ( $! ) {
+                        warn "issue copying daily.cld: $!\n";
+                    }
                     $d = 1;
                 } elsif ( -e "$dir_list/daily.cvd" ) {
                     copy( "$dir_list/daily.cvd", "$paths/daily.cvd" );
+                    if ( $! ) {
+                        warn "issue copying daily.cvd: $!\n";
+                    }
                     $d = 1;
                 }
                 if ( -e "$dir_list/main.cld" ) {
                     copy( "$dir_list/main.cld", "$paths/main.cld" );
+                    if ( $! ) {
+                        warn "issue copying main.cld: $!\n";
+                    }
                     $m = 1;
                 } elsif ( -e "$dir_list/main.cvd" ) {
                     copy( "$dir_list/main.cvd", "$paths/main.cvd" );
+                    if ( $! ) {
+                        warn "issue copying main.cvd: $!\n";
+                    }
                     $m = 1;
                 }
                 if ( -e "$dir_list/bytecode.cld" ) {
                     copy( "$dir_list/bytecode.cld", "$paths/bytecode.cld" );
+                    if ( $! ) {
+                        warn "issue copying bytecode: $!\n";
+                    }
                 }
                 last if ( $d && $m );
             }
         }
     }
     # Update statusbar
-    Gtk2->main_iteration while Gtk2->events_pending;
     ClamTk::GUI->startup();
-    Gtk2->main_iteration while Gtk2->events_pending;
 
     return 1;
 }

@@ -1,6 +1,7 @@
-# ClamTk, copyright (C) 2004-2019 Dave M
+# ClamTk, copyright (C) 2004-2020 Dave M
 #
-# This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
+# This file is part of ClamTk
+# (https://gitlab.com/dave_m/clamtk-gtk3/).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -32,24 +33,33 @@ binmode( STDOUT, ':utf8' );
 sub show_window {
     my ( $pkg_name, $hash, $parent ) = @_;
 
-    $dialog = Gtk2::Dialog->new( _( 'Results' ), $parent,
-        'destroy-with-parent', );
-    $dialog->set_size_request( 600, 200 );
+    $dialog = Gtk3::Dialog->new( _( 'Results' ),
+        $parent, [ qw| destroy-with-parent use-header-bar | ] );
+    $dialog->set_size_request( 600, 300 );
 
-    my $sbox = Gtk2::VBox->new( FALSE, 0 );
+    my $hb = Gtk3::HeaderBar->new;
+    $hb->set_title( _( 'Results' ) );
+    $hb->set_show_close_button( TRUE );
+    $hb->set_decoration_layout( 'menu:close' );
+    $hb->show();
+    $dialog->set_titlebar( $hb );
+
+    my $sbox = Gtk3::Box->new( 'vertical', 10 );
+    $sbox->set_homogeneous( FALSE );
     # This scrolled window holds the slist
-    my $sw = Gtk2::ScrolledWindow->new;
+    my $sw = Gtk3::ScrolledWindow->new( undef, undef );
+    $sw->set_vexpand( TRUE );
+    $sw->set_shadow_type( 'etched_in' );
+    $sw->set_policy( 'automatic', 'automatic' );
     $sbox->pack_start( $sw, TRUE, TRUE, 0 );
     $dialog->get_content_area->add( $sbox );
-    $sw->set_shadow_type( 'etched_in' );
-    $sw->set_policy( 'never', 'automatic' );
 
     use constant FILE         => 0;
     use constant STATUS       => 1;
     use constant ACTION_TAKEN => 2;
 
     #<<<
-    $liststore = Gtk2::ListStore->new(
+    $liststore = Gtk3::ListStore->new(
             # FILE
             'Glib::String',
             # STATUS
@@ -58,44 +68,49 @@ sub show_window {
             'Glib::String',
     );
 
-    my $tree = Gtk2::TreeView->new_with_model( $liststore );
+    my $tree = Gtk3::TreeView->new_with_model( $liststore );
     $tree->set_rules_hint( TRUE );
     $sw->add( $tree );
 
-    my $renderer = Gtk2::CellRendererText->new;
+    my $renderer = Gtk3::CellRendererText->new;
     my $column
-        = Gtk2::TreeViewColumn->new_with_attributes(
+        = Gtk3::TreeViewColumn->new_with_attributes(
                 _( 'File' ),
                 $renderer,
                 markup => FILE,
     );
     $column->set_sort_column_id( FILE );
-    $column->set_resizable( TRUE );
     $column->set_sizing( 'fixed' );
     $column->set_expand( TRUE );
+    $column->set_resizable( TRUE );
     $tree->append_column( $column );
 
-    $column = Gtk2::TreeViewColumn->new_with_attributes(
+    $column = Gtk3::TreeViewColumn->new_with_attributes(
                 _( 'Status' ),
                 $renderer,
                 markup => STATUS,
     );
     $column->set_sort_column_id( STATUS );
-    $column->set_resizable( TRUE );
     $column->set_sizing( 'fixed' );
     $column->set_expand( TRUE );
+    $column->set_resizable( TRUE );
     $tree->append_column( $column );
 
-    $column = Gtk2::TreeViewColumn->new_with_attributes(
+    $column = Gtk3::TreeViewColumn->new_with_attributes(
             _( 'Action Taken' ),
             $renderer,
             markup => ACTION_TAKEN,
     );
     $column->set_sort_column_id( ACTION_TAKEN );
-    $column->set_resizable( TRUE );
     $column->set_sizing( 'fixed' );
     $column->set_expand( TRUE );
+    $column->set_resizable( TRUE );
     $tree->append_column( $column );
+
+    my ($w, undef) = $dialog->get_size();
+    for my $tvc ($tree->get_columns()) {
+        $tvc->set_fixed_width($w / 3)
+    }
 
     #<<<
     my $i = 0;
@@ -113,18 +128,22 @@ sub show_window {
     }
     #>>>
 
-    my $hbox = Gtk2::Toolbar->new;
+    my $hbox = Gtk3::Toolbar->new;
     $hbox->set_style( 'both-horiz' );
-    $sbox->pack_start( $hbox, FALSE, FALSE, 5 );
+    $hbox->set_vexpand( FALSE );
+    $sbox->pack_start( $hbox, FALSE, FALSE, 0 );
 
-    my $image = Gtk2::Image->new_from_stock( 'gtk-refresh', 'menu' );
-    my $button = Gtk2::ToolButton->new( $image, _( 'Quarantine' ) );
+    my $theme     = Gtk3::IconTheme->new;
+    my $use_image = ClamTk::Icons->get_image( 'system-lock-screen' );
+    my $image     = Gtk3::Image->new_from_icon_name( $use_image, 'menu' );
+    my $button    = Gtk3::ToolButton->new( $image, _( 'Quarantine' ) );
     $button->set_is_important( TRUE );
     $hbox->insert( $button, -1 );
     $button->signal_connect( clicked => \&action, $tree );
 
-    $image = Gtk2::Image->new_from_stock( 'gtk-delete', 'menu' );
-    $button = Gtk2::ToolButton->new( $image, _( 'Delete' ) );
+    $use_image = ClamTk::Icons->get_image( 'user-trash-full' );
+    $image     = Gtk3::Image->new_from_icon_name( $use_image, 'menu' );
+    $button    = Gtk3::ToolButton->new( $image, _( 'Delete' ) );
     $button->set_is_important( TRUE );
     $hbox->insert( $button, -1 );
     $button->signal_connect( clicked => \&action, $tree );
@@ -132,20 +151,22 @@ sub show_window {
     # Testing to see if we can add Analysis button.
     # See ClamTk::Analysis->button_test for more
     if ( ClamTk::Analysis->button_test ) {
-        $image = Gtk2::Image->new_from_stock( 'gtk-find', 'menu' );
-        $button = Gtk2::ToolButton->new( $image, _( 'Analysis' ) );
+        my $use_image = ClamTk::Icons->get_image( 'edit-find' );
+        $image  = Gtk3::Image->new_from_icon_name( $use_image, 'menu' );
+        $button = Gtk3::ToolButton->new( $image, _( 'Analysis' ) );
         $button->set_is_important( TRUE );
         $hbox->insert( $button, -1 );
         $button->signal_connect( clicked => \&action, $tree );
     }
 
-    my $sep = Gtk2::SeparatorToolItem->new;
+    my $sep = Gtk3::SeparatorToolItem->new;
     $sep->set_draw( FALSE );
     $sep->set_expand( TRUE );
     $hbox->insert( $sep, -1 );
 
-    $image = Gtk2::Image->new_from_stock( 'gtk-close', 'menu' );
-    $button = Gtk2::ToolButton->new( $image, _( 'Close' ) );
+    $use_image = ClamTk::Icons->get_image( 'window-close' );
+    $image     = Gtk3::Image->new_from_icon_name( $use_image, 'menu' );
+    $button    = Gtk3::ToolButton->new( $image, _( 'Close' ) );
     $button->signal_connect(
         clicked => sub {
             $dialog->destroy;
@@ -155,6 +176,7 @@ sub show_window {
     $hbox->insert( $button, -1 );
 
     $sbox->show_all;
+    $sbox->set_vexpand( TRUE );
     $dialog->run;
     $dialog->destroy;
 }
@@ -210,7 +232,7 @@ sub action {
         ClamTk::Analysis->show_window( $first_col_value, $dialog );
         return TRUE;
     } else {
-        warn 'unable to ' . $button->get_label . " file >$first_col_value<\n";
+        warn 'Unable to ' . $button->get_label . " file >$first_col_value<\n";
     }
 
     return TRUE;
@@ -243,7 +265,7 @@ sub quarantine {
         # d'oh... so just to make sure, unlink the intended target
         # and THEN return.
         unlink( "$paths/$basename" )
-            or warn "unable to delete tmp file $paths/$basename\n: $!\n";
+            or warn "Unable to delete tmp file $paths/$basename\n: $!\n";
         return FALSE;
     };
 }
@@ -259,7 +281,7 @@ sub delete_file {
         = sprintf( _( 'Really delete this file (%s) ?' ), $basename );
 
     my $message
-        = Gtk2::MessageDialog->new( undef,
+        = Gtk3::MessageDialog->new( undef,
         [ qw| modal destroy-with-parent | ],
         'question', 'ok-cancel', $question, );
 
@@ -270,7 +292,7 @@ sub delete_file {
         return FALSE;
     }
     unlink( $file ) or do {
-        warn "unable to delete >$file<: $!\n";
+        warn "Unable to delete >$file<: $!\n";
         return FALSE;
     };
 
@@ -330,7 +352,7 @@ sub get_hash {
     my $slurp = do {
         local $/ = undef;
         open( my $f, ' < ', $file ) or do {
-            warn "unable to open >$file<: $!\n";
+            warn "Unable to open >$file<: $!\n";
             return;
         };
         binmode( $f );

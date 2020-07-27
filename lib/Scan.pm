@@ -1,6 +1,7 @@
-# ClamTk, copyright (C) 2004-2019 Dave M
+# ClamTk, copyright (C) 2004-2020 Dave M
 #
-# This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
+# This file is part of ClamTk
+# (https://gitlab.com/dave_m/clamtk-gtk3/).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -37,20 +38,20 @@ my $found_count = 0;    # Scalar number of bad stuff found
 my $num_scanned = 0;    # Overall number of files scanned
 my %dirs_scanned;       # Directories scanned
 
-my $pb;                 # Gtk2::ProgressBar
-my $pb_file_counter = 0;    # For progressbar
-my $pb_step;                # For progressbar
+my $hb;                 # HeaderBar
+my $pb;                 # ProgressBar
+my $pb_file_counter = 0;    # For ProgressBar
+my $pb_step;                # For ProgressBar
 my $root_scan = FALSE;      # Scanning /
 my $scan_pid;               # PID of scanner, for killing/cancelling scan
 
 my $stopped = 1;            # Whether scanner is stopped (1) or running (0)
 my $directive;              # Options sent to scanner
-my $topbar;                 # Gtk2::InfoBar on top
-my $bottombar;              # Gtk2::InfoBar on bottom
-my $files_scanned_label;    # Gtk2::Label
-my $threats_label;          # Gtk2::Label
+my $topbar;                 # InfoBar on top
+my $bottombar;              # InfoBar on bottom
+my $files_scanned_label;    # Label
+my $threats_label;          # Label
 my $show;                   # Whether or not to show the preferences button
-
 my $window;                 # Main window/dialog
 my $from_cli;               # from the commandline?
 
@@ -70,7 +71,7 @@ sub filter {
     # AND we can't scan it, just return to interface.
     if ( !sanity_check( $scanthis ) ) {
         if ( $from && $from eq 'startup' ) {
-            Gtk2->main_quit;
+            Gtk3->main_quit;
         } else {
             return;
         }
@@ -87,12 +88,20 @@ sub filter {
     }
 
     # Begin popup scanning
-    $window
-        = Gtk2::Dialog->new( undef, undef,
-        [ qw| modal destroy-with-parent no-separator | ],
-        );
+    $window = Gtk3::Dialog->new(
+        undef, undef,
+        [   qw| modal destroy-with-parent no-separator
+                use-header-bar |
+        ],
+    );
     $window->set_deletable( FALSE );
     $window->set_default_size( 450, 80 );
+
+    $hb = Gtk3::HeaderBar->new;
+    $window->set_titlebar( $hb );
+    $hb->set_title( _( 'Please wait...' ) );
+    $hb->set_show_close_button( TRUE );
+    $hb->set_decoration_layout( 'menu:close' );
 
     $window->signal_connect(
         'destroy' => sub {
@@ -110,31 +119,29 @@ sub filter {
     my $images_dir = ClamTk::App->get_path( 'images' );
     if ( -e "$images_dir/clamtk.png" ) {
         my $pixbuf
-            = Gtk2::Gdk::Pixbuf->new_from_file( "$images_dir/clamtk.png" );
+            = Gtk3::Gdk::Pixbuf->new_from_file( "$images_dir/clamtk.png" );
         my $transparent = $pixbuf->add_alpha( TRUE, 0xff, 0xff, 0xff );
         $window->set_icon( $transparent );
     }
 
-    my $eb = Gtk2::EventBox->new;
+    my $eb = Gtk3::EventBox->new;
     $window->get_content_area->add( $eb );
-    # my $white = Gtk2::Gdk::Color->new( 0xFFFF, 0xFFFF, 0xFFFF );
-    # $eb->modify_bg( 'normal', $white );
 
-    my $box = Gtk2::VBox->new( FALSE, 5 );
+    my $box = Gtk3::VBox->new( FALSE, 5 );
     $eb->add( $box );
 
-    my $hbox = Gtk2::HBox->new( FALSE, 0 );
+    my $hbox = Gtk3::HBox->new( FALSE, 0 );
     $box->add( $hbox );
 
-    $topbar = Gtk2::InfoBar->new;
+    $topbar = Gtk3::InfoBar->new;
     $hbox->pack_start( $topbar, TRUE, TRUE, 5 );
 
-    Gtk2->main_iteration while ( Gtk2->events_pending );
+    Gtk3::main_iteration while Gtk3::events_pending;
     $topbar->set_message_type( 'other' );
     set_infobar_text( $topbar, _( 'Preparing...' ) );
-    Gtk2->main_iteration while ( Gtk2->events_pending );
+    Gtk3::main_iteration while Gtk3::events_pending;
 
-    $pb = Gtk2::ProgressBar->new;
+    $pb = Gtk3::ProgressBar->new;
     $box->pack_start( $pb, FALSE, FALSE, 5 );
     $window->{ pb } = $pb;
 
@@ -142,26 +149,29 @@ sub filter {
     reset_stats();
 
     $files_scanned_label
-        = Gtk2::Label->new( sprintf _( "Files scanned: %d" ), $num_scanned );
+        = Gtk3::Label->new( sprintf _( "Files scanned: %d" ), $num_scanned );
     $files_scanned_label->set_alignment( 0.0, 0.5 );
 
     $threats_label
-        = Gtk2::Label->new( sprintf _( "Possible threats: %d" ),
+        = Gtk3::Label->new( sprintf _( "Possible threats: %d" ),
         $found_count );
     $threats_label->set_alignment( 0.0, 0.5 );
 
-    my $text_box = Gtk2::VBox->new( FALSE, 5 );
+    my $text_box = Gtk3::VBox->new( FALSE, 5 );
     $text_box->add( $files_scanned_label );
     $text_box->add( $threats_label );
 
-    $bottombar = Gtk2::InfoBar->new;
+    $bottombar = Gtk3::InfoBar->new;
     $box->pack_start( $bottombar, FALSE, FALSE, 5 );
-    $bottombar->can_focus( FALSE );
 
     $bottombar->set_message_type( 'other' );
-    $bottombar->add_button( 'gtk-cancel', HATE_GNOME_SHELL );
+    # Stupid infobars
+    # $use_image = ClamTk::Icons->get_image( 'gtk-cancel' );
+    $use_image = 'gtk-cancel';
+    $bottombar->add_button( $use_image, HATE_GNOME_SHELL );
     if ( $show ) {
-        $bottombar->add_button( 'gtk-preferences', DESTROY_GNOME_SHELL );
+        $use_image = ClamTk::Icons->get_image( 'preferences-system' );
+        $bottombar->add_button( $use_image, DESTROY_GNOME_SHELL );
     }
     $bottombar->signal_connect(
         response => sub {
@@ -180,7 +190,7 @@ sub filter {
     $window->set_gravity( 'south-east' );
     $window->queue_draw;
     $window->set_position( 'mouse' );
-    Gtk2->main_iteration while ( Gtk2->events_pending );
+    Gtk3::main_iteration while Gtk3::events_pending;
 
     # Try to avoid MS Windows file systems...
     # This fubars Live ISOs: see
@@ -281,8 +291,7 @@ sub filter {
         {
             $directive
                 .= ' --detect-pua --alert-broken'
-                . ' --alert-macros --alert-encrypted-archive'
-                . ' --alert-encrypted-doc --heuristic-alerts';
+                . ' --alert-macros';
         } else {
             $directive .= ' --detect-pua --algorithmic-detection';
         }
@@ -291,12 +300,19 @@ sub filter {
             || ( $version cmp '101' ) == 1 )
         {
             $directive
-                =~ s/\s--detect-pua --alert-broken --alert-macros --alert-encrypted-archive --alert-encrypted-doc --heuristic-alerts'//;
+                =~ s/\s--detect-pua --alert-broken --alert-macros'//;
         } else {
             $directive =~ s/\s--detect-pua --algorithmic-detection//;
         }
     }
-    # print "directive = >", $directive, "<\n";
+
+    # remove the hidden files if chosen:
+    if ( $prefs{ Heuristic } ) {
+        # By default, if included, == yes
+        $directive .= ' --heuristic-alerts=yes';
+    } else {
+        $directive .= ' --heuristic-alerts=no';
+    }
 
     # only a single file
 
@@ -352,22 +368,21 @@ sub scan {
     # Implicit fork; gives us the PID of clamscan so we can
     # kill it if the user hits the Stop button
     #<<<
-    Gtk2->main_iteration while ( Gtk2->events_pending );
     # Using the verbose (-v) switch gives us the next file
     # for the display "Scanning $1..."
     $scan_pid
         = open( $SCAN, '-|', "$command $directive -v $quoted 2>&1" );
     defined( $scan_pid ) or die "couldn't fork: $!\n";
     $window->queue_draw;
-    Gtk2->main_iteration while ( Gtk2->events_pending );
+    Gtk3::main_iteration while Gtk3::events_pending;
     #>>>
     # binmode( $SCAN, ':utf8:bytes' );
 
-    Gtk2->main_iteration while ( Gtk2->events_pending );
+    Gtk3::main_iteration while Gtk3::events_pending;
     while ( <$SCAN> ) {
         chomp;
-        Gtk2->main_iteration while ( Gtk2->events_pending );
         $window->queue_draw;
+        Gtk3::main_iteration while Gtk3::events_pending;
 
         # Warning stuff we don't need
         next if ( /^LibClamAV/ );
@@ -396,11 +411,11 @@ sub scan {
                 $pb->set_fraction( $pb_current );
             }
 
-            Gtk2->main_iteration while ( Gtk2->events_pending );
+            Gtk3::main_iteration while Gtk3::events_pending;
             $files_scanned_label->set_text( sprintf _( "Files scanned: %d" ),
                 $num_scanned );
             $topbar->show_all;
-            Gtk2->main_iteration while ( Gtk2->events_pending );
+            Gtk3::main_iteration while Gtk3::events_pending;
             $window->queue_draw;
             next;
         }
@@ -451,6 +466,7 @@ sub scan {
             'OK',
             'Zip module failure',
             "RAR module failure",
+            'Encrypted.PDF',
             'Encrypted.RAR',
             'Encrypted.Zip',
             'Empty file',
@@ -473,7 +489,7 @@ sub scan {
 
     }
 
-    Gtk2->main_iteration while ( Gtk2->events_pending );
+    Gtk3::main_iteration while Gtk3::events_pending;
 
     # Done scanning - close filehandle and return to
     # filter() and then to clean-up
@@ -498,6 +514,7 @@ sub clean_up {
     destroy_buttons();
     add_closing_buttons();
 
+    $hb->set_title( _( 'Complete' ) );
     my $message = '';
     if ( !$found_count ) {
         $message = _( 'Scanning complete' );
@@ -512,7 +529,7 @@ sub clean_up {
     if ( $found_count ) {
         ClamTk::Results->show_window( $found, $window );
         if ( $from_cli ) {
-            Gtk2->main_quit;
+            Gtk3->main_quit;
         }
     } else {
         bad_popup();
@@ -542,7 +559,7 @@ sub reset_stats {
 }
 
 sub bad_popup {
-    my $dialog = Gtk2::MessageDialog->new(
+    my $dialog = Gtk3::MessageDialog->new(
         $window, [ qw| modal destroy-with-parent | ],
         'info', 'close', _( 'No threats found' ),
     );
@@ -637,27 +654,27 @@ sub logit {
 sub set_infobar_text {
     my ( $bar, $text ) = @_;
 
-    Gtk2->main_iteration while ( Gtk2->events_pending );
+    Gtk3::main_iteration while Gtk3::events_pending;
     for my $c ( $bar->get_content_area->get_children ) {
-        if ( $c->isa( 'Gtk2::Label' ) ) {
+        if ( $c->isa( 'Gtk3::Label' ) ) {
             $c->set_text( $text );
-            Gtk2->main_iteration while ( Gtk2->events_pending );
+            Gtk3::main_iteration while Gtk3::events_pending;
             return;
         }
     }
 
     #<<<
-    my $label = Gtk2::Label->new;
+    my $label = Gtk3::Label->new;
     $label->set_text( _( $text ) );
     $label->set_alignment( 0.0, 0.5 );
     $label->set_ellipsize( 'middle' );
     $bar->get_content_area->add(
-            #Gtk2::Label->new( _( $text ) )
+            #Gtk3::Label->new( _( $text ) )
             $label
     );
     #>>>
     $window->queue_draw;
-    Gtk2->main_iteration while ( Gtk2->events_pending );
+    Gtk3::main_iteration while Gtk3::events_pending;
 }
 
 sub add_default_buttons {
@@ -704,7 +721,7 @@ sub add_closing_buttons {
 
 sub destroy_buttons {
     for my $c ( $bottombar->get_action_area->get_children ) {
-        if ( $c->isa( 'Gtk2::Button' ) ) {
+        if ( $c->isa( 'Gtk3::Button' ) ) {
             $c->destroy;
         }
     }
@@ -782,7 +799,7 @@ sub sanity_check {
 sub popup {
     my ( $message, $option ) = @_;
 
-    my $dialog = Gtk2::MessageDialog->new(
+    my $dialog = Gtk3::MessageDialog->new(
         undef,    # no parent
         [ qw| modal destroy-with-parent | ],
         'info',

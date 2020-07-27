@@ -1,6 +1,7 @@
-# ClamTk, copyright (C) 2004-2019 Dave M
+# ClamTk, copyright (C) 2004-2020 Dave M
 #
-# This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
+# This file is part of ClamTk
+# (https://gitlab.com/dave_m/clamtk-gtk3/).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -64,7 +65,7 @@ sub check_gui {
     my $remote_tk_version = ClamTk::Update->get_remote_TK_version();
 
     my ( $local_chopped, $remote_chopped );
-    ( $local_chopped  = $local_tk_version ) =~ s/[^0-9]//;
+    ( $local_chopped  = $local_tk_version )  =~ s/[^0-9]//;
     ( $remote_chopped = $remote_tk_version ) =~ s/[^0-9]//;
 
     # Sanity check to ensure we received an answer

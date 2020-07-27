@@ -1,6 +1,7 @@
-# ClamTk, copyright (C) 2004-2019 Dave M
+# ClamTk, copyright (C) 2004-2020 Dave M
 #
-# This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
+# This file is part of ClamTk
+# (https://gitlab.com/dave_m/clamtk-gtk3/).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -33,55 +34,68 @@ binmode( STDIN,  ':utf8' );
 binmode( STDOUT, ':utf8' );
 
 sub show_window {
-    my $box = Gtk2::VBox->new( FALSE, 5 );
+    my $box = Gtk3::Box->new( 'vertical', 5 );
+    $box->set_homogeneous( FALSE );
 
-    my $sw = Gtk2::ScrolledWindow->new( undef, undef );
+    my $sw = Gtk3::ScrolledWindow->new( undef, undef );
+    $sw->set_policy( 'automatic', 'automatic' );
+    $sw->set_vexpand( TRUE );
     $box->pack_start( $sw, TRUE, TRUE, 5 );
-    $sw->set_policy( 'never', 'automatic' );
 
     #<<<
-    $liststore = Gtk2::ListStore->new(
+    $liststore = Gtk3::ListStore->new(
             'Glib::Int',
             'Glib::String',
     );
     #>>>
 
-    my $view = Gtk2::TreeView->new_with_model( $liststore );
+    my $view = Gtk3::TreeView->new_with_model( $liststore );
     $view->set_rules_hint( TRUE );
 
-    my $column = Gtk2::TreeViewColumn->new_with_attributes(
+    my $column = Gtk3::TreeViewColumn->new_with_attributes(
         _( 'Number' ),
-        Gtk2::CellRendererText->new,
+        Gtk3::CellRendererText->new,
         text => ROW,
     );
     $column->set_sort_column_id( 0 );
+    $column->set_sizing( 'fixed' );
+    $column->set_expand( TRUE );
+    $column->set_resizable( TRUE );
     $view->append_column( $column );
 
-    $column = Gtk2::TreeViewColumn->new_with_attributes(
+    $column = Gtk3::TreeViewColumn->new_with_attributes(
         _( 'File' ),
-        Gtk2::CellRendererText->new,
+        Gtk3::CellRendererText->new,
         text => FILE,
     );
     $column->set_sort_column_id( 1 );
+    $column->set_sizing( 'fixed' );
+    $column->set_expand( TRUE );
+    $column->set_resizable( TRUE );
     $view->append_column( $column );
     $sw->add( $view );
 
-    my $viewbar = Gtk2::Toolbar->new;
+    my $viewbar = Gtk3::Toolbar->new;
     $box->pack_start( $viewbar, FALSE, FALSE, 5 );
     $viewbar->set_style( 'both-horiz' );
 
-    my $button = Gtk2::ToolButton->new_from_stock( 'gtk-undelete' );
+    my $button    = Gtk3::ToolButton->new();
+    my $use_image = ClamTk::Icons->get_image( 'edit-undo' );
+    $button->set_icon_name( $use_image );
     $button->set_label( _( 'Restore' ) );
     $viewbar->insert( $button, -1 );
     $button->set_is_important( TRUE );
     $button->signal_connect( clicked => \&restore, $view );
 
-    my $v_sep = Gtk2::SeparatorToolItem->new;
+    my $v_sep = Gtk3::SeparatorToolItem->new;
     $v_sep->set_draw( FALSE );
     $v_sep->set_expand( TRUE );
     $viewbar->insert( $v_sep, -1 );
 
-    $button = Gtk2::ToolButton->new_from_stock( 'gtk-delete' );
+    $button    = Gtk3::ToolButton->new();
+    $use_image = ClamTk::Icons->get_image( 'edit-delete' );
+    $button->set_icon_name( $use_image );
+    $button->set_label( _( 'Delete' ) );
     $viewbar->insert( $button, -1 );
     $button->set_is_important( TRUE );
     $button->signal_connect( clicked => \&delete, $view );
@@ -112,7 +126,7 @@ sub delete {
     );
 
     my $message
-        = Gtk2::MessageDialog->new(
+        = Gtk3::MessageDialog->new(
                 undef,
                 [ qw| modal destroy-with-parent | ],
                 'question',
@@ -124,7 +138,7 @@ sub delete {
     if ( 'ok' eq $message->run ) {
         $message->destroy;
         unlink( $fullname ) or do {
-            warn "unable to delete >$fullname<: $!\n";
+            warn "Unable to delete >$fullname<: $!\n";
             return FALSE;
         };
         $model->clear;
@@ -167,7 +181,7 @@ sub restore {
     }
 
     # Save-as dialog
-    my $dialog = Gtk2::FileChooserDialog->new(
+    my $dialog = Gtk3::FileChooserDialog->new(
         _( 'Save file as...' ),
         undef,
         'save',
@@ -282,7 +296,6 @@ sub add_hash {
 
     my $restore_path = ClamTk::App->get_path( 'restore' );
     open( my $F, '<:encoding(UTF-8)', $restore_path ) or do {
-    # open( my $F, '<', $restore_path ) or do {
         warn "Can't open restore file for reading: $!\n";
         return FALSE;
     };
@@ -379,7 +392,7 @@ sub get_hash {
     my $slurp = do {
         local $/ = undef;
         open( my $f, '<', $file ) or do {
-            warn "unable to open >$file< for hashing: $!\n";
+            warn "Unable to open >$file< for hashing: $!\n";
             return;
         };
         binmode( $f );

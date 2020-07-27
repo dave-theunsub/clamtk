@@ -1,6 +1,7 @@
-# ClamTk, copyright (C) 2004-2019 Dave M
+# ClamTk, copyright (C) 2004-2020 Dave M
 #
-# This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
+# This file is part of ClamTk
+# (https://gitlab.com/dave_m/clamtk-gtk3/).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -27,7 +28,7 @@ use open ':encoding(utf8)';
 
 # This should be under /usr/bin, but we'll check anyway.
 my $cmd
-    = ( -e '/usr/bin/crontab' ) ? '/usr/bin/crontab'
+    = ( -e '/usr/bin/crontab' )       ? '/usr/bin/crontab'
     : ( -e '/usr/local/bin/crontab' ) ? '/usr/local/bin/crontab'
     : ( -e '/bin/crontab' )           ? '/bin/crontab'
     :                                   '';
@@ -43,71 +44,94 @@ my ( $defs_apply_btn, $defs_remove_btn );
 
 sub show_window {
     my $dialog
-        = Gtk2::Dialog->new( _( 'Schedule' ), undef, 'destroy-with-parent' );
+        = Gtk3::Dialog->new( undef, undef,
+        [ qw|destroy-with-parent use-header-bar | ],
+        );
     $dialog->signal_connect( close   => sub { $dialog->destroy } );
-    $dialog->signal_connect( destroy => sub { Gtk2->main_quit } );
+    $dialog->signal_connect( destroy => sub { Gtk3->main_quit } );
 
-    my $ebox = Gtk2::EventBox->new;
-    #$ebox->modify_bg( 'normal',
-    #    Gtk2::Gdk::Color->new( 0xFFFF, 0xFFFF, 0xFFFF ) );
+    my $hb = Gtk3::HeaderBar->new;
+    $hb->set_title( _( 'Scheduler' ) );
+    $hb->set_show_close_button( TRUE );
+    $hb->set_decoration_layout( 'menu:close' );
+
+    my $images_dir = ClamTk::App->get_path( 'images' );
+    my $pixbuf
+        = Gtk3::Gdk::Pixbuf->new_from_file_at_size( "$images_dir/clamtk.png",
+        24, 24 );
+    my $image = Gtk3::Image->new;
+    $image->set_from_pixbuf( $pixbuf );
+    my $button = Gtk3::ToolButton->new( $image, '' );
+    $button->set_sensitive( FALSE );
+    $button->set_tooltip_text( _( 'ClamTk Virus Scanner' ) );
+    $hb->pack_start( $button );
+    $dialog->set_titlebar( $hb );
+
+    my $ebox = Gtk3::EventBox->new;
     $dialog->get_content_area->add( $ebox );
     $dialog->set_position( 'mouse' );
 
-    my $vbox = Gtk2::VBox->new( FALSE, 5 );
+    my $vbox = Gtk3::VBox->new( FALSE, 5 );
     $ebox->add( $vbox );
 
     ################
     # scan options #
     ################
 
-    my $scan_frame = Gtk2::Frame->new( _( 'Scan' ) );
+    my $scan_frame = Gtk3::Frame->new( _( 'Scan' ) );
     $vbox->pack_start( $scan_frame, FALSE, FALSE, 5 );
-    my $scan_box = Gtk2::VBox->new( FALSE, 5 );
+    my $scan_box = Gtk3::Box->new( 'vertical', 5 );
+    $scan_box->set_homogeneous( FALSE );
     $scan_frame->add( $scan_box );
 
-    my $label = Gtk2::Label->new(
+    my $label = Gtk3::Label->new(
         _( 'Select a time to scan your home directory' ) );
     $scan_box->pack_start( $label, FALSE, FALSE, 5 );
 
     $label
-        = Gtk2::Label->new( _( 'Set the scan time using a 24 hour clock' ) );
+        = Gtk3::Label->new( _( 'Set the scan time using a 24 hour clock' ) );
     $scan_box->pack_start( $label, FALSE, FALSE, 5 );
 
-    my $time_hbox = Gtk2::HBox->new;
+    my $time_hbox = Gtk3::Box->new( 'horizontal', 5 );
+    $scan_box->set_homogeneous( FALSE );
     $scan_box->pack_start( $time_hbox, FALSE, FALSE, 0 );
 
-    $hour_spin_scan = Gtk2::SpinButton->new_with_range( 0, 23, 1 );
+    $hour_spin_scan = Gtk3::SpinButton->new_with_range( 0, 23, 1 );
     $time_hbox->pack_start( $hour_spin_scan, TRUE, TRUE, 5 );
     $hour_spin_scan->set_wrap( TRUE );
     $hour_spin_scan->set_tooltip_text(
         _( 'Set the hour using a 24 hour clock' ) );
-    my $hour_label = Gtk2::Label->new( _( 'Hour' ) );
+    my $hour_label = Gtk3::Label->new( _( 'Hour' ) );
     $hour_label->set_alignment( 0.0, 0.5 );
     $time_hbox->pack_start( $hour_label, FALSE, TRUE, 5 );
 
-    $min_spin_scan = Gtk2::SpinButton->new_with_range( 0, 59, 1 );
+    $min_spin_scan = Gtk3::SpinButton->new_with_range( 0, 59, 1 );
     $min_spin_scan->set_wrap( TRUE );
     $time_hbox->pack_start( $min_spin_scan, TRUE, TRUE, 5 );
-    my $min_label = Gtk2::Label->new( _( 'Minute' ) );
+    my $min_label = Gtk3::Label->new( _( 'Minute' ) );
     $min_label->set_alignment( 0.0, 0.5 );
     $time_hbox->pack_start( $min_label, FALSE, TRUE, 5 );
 
-    my $time_bar = Gtk2::Toolbar->new;
+    my $time_bar = Gtk3::Toolbar->new;
     $scan_box->pack_start( $time_bar, FALSE, FALSE, 0 );
     $time_bar->set_style( 'icons' );
 
-    my $dsep = Gtk2::SeparatorToolItem->new;
+    my $dsep = Gtk3::SeparatorToolItem->new;
     $dsep->set_draw( FALSE );
     $dsep->set_expand( TRUE );
     $time_bar->insert( $dsep, -1 );
 
-    $scan_apply_btn = Gtk2::ToolButton->new_from_stock( 'gtk-add' );
+    $scan_apply_btn = Gtk3::ToolButton->new();
+    my $use_image = ClamTk::Icons->get_image( 'list-add' );
+    $scan_apply_btn->set_icon_name( $use_image );
     $time_bar->insert( $scan_apply_btn, -1 );
     $scan_apply_btn->signal_connect( 'clicked' => \&apply_scan );
 
-    $time_bar->insert( Gtk2::SeparatorToolItem->new, -1 );
+    $time_bar->insert( Gtk3::SeparatorToolItem->new, -1 );
 
-    $scan_remove_btn = Gtk2::ToolButton->new_from_stock( 'gtk-remove' );
+    $scan_remove_btn = Gtk3::ToolButton->new();
+    $use_image       = ClamTk::Icons->get_image( 'list-remove' );
+    $scan_remove_btn->set_icon_name( $use_image );
     $time_bar->insert( $scan_remove_btn, -1 );
     $scan_remove_btn->signal_connect(
         'clicked' => sub {
@@ -119,42 +143,42 @@ sub show_window {
     # antivirus signature options #
     ###############################
 
-    my $defs_frame = Gtk2::Frame->new( _( 'Antivirus signatures' ) );
+    my $defs_frame = Gtk3::Frame->new( _( 'Antivirus signatures' ) );
     $vbox->pack_start( $defs_frame, FALSE, FALSE, 5 );
 
-    my $defs_vbox = Gtk2::VBox->new;
+    my $defs_vbox = Gtk3::VBox->new;
     $defs_frame->add( $defs_vbox );
 
     $label
-        = Gtk2::Label->new( _( 'Select a time to update your signatures' ) );
+        = Gtk3::Label->new( _( 'Select a time to update your signatures' ) );
     $defs_vbox->pack_start( $label, FALSE, FALSE, 5 );
 
-    my $defs_hbox = Gtk2::HBox->new;
+    my $defs_hbox = Gtk3::HBox->new;
     $defs_vbox->pack_start( $defs_hbox, FALSE, FALSE, 0 );
 
-    $hour_spin_defs = Gtk2::SpinButton->new_with_range( 0, 23, 1 );
+    $hour_spin_defs = Gtk3::SpinButton->new_with_range( 0, 23, 1 );
     $defs_hbox->pack_start( $hour_spin_defs, TRUE, TRUE, 5 );
     $hour_spin_defs->set_wrap( TRUE );
     $hour_spin_defs->set_tooltip_text(
         _( 'Set the hour using a 24 hour clock' ) );
-    $label = Gtk2::Label->new( _( 'Hour' ) );
+    $label = Gtk3::Label->new( _( 'Hour' ) );
     $defs_hbox->pack_start( $label, FALSE, TRUE, 5 );
 
-    $min_spin_defs = Gtk2::SpinButton->new_with_range( 0, 59, 1 );
+    $min_spin_defs = Gtk3::SpinButton->new_with_range( 0, 59, 1 );
     $min_spin_defs->set_wrap( TRUE );
     $defs_hbox->pack_start( $min_spin_defs, TRUE, TRUE, 5 );
-    $label = Gtk2::Label->new( _( 'Minute' ) );
+    $label = Gtk3::Label->new( _( 'Minute' ) );
     $defs_hbox->pack_start( $label, FALSE, TRUE, 5 );
 
-    my $defs_hbb = Gtk2::HButtonBox->new;
+    my $defs_hbb = Gtk3::HButtonBox->new;
     $defs_vbox->pack_start( $defs_hbb, FALSE, FALSE, 0 );
     $defs_hbb->set_layout( 'end' );
 
-    my $defs_bar = Gtk2::Toolbar->new;
+    my $defs_bar = Gtk3::Toolbar->new;
     $defs_vbox->pack_start( $defs_bar, FALSE, FALSE, 0 );
     $defs_bar->set_style( 'icons' );
 
-    $dsep = Gtk2::SeparatorToolItem->new;
+    $dsep = Gtk3::SeparatorToolItem->new;
     $dsep->set_draw( FALSE );
     $dsep->set_expand( TRUE );
     $defs_bar->insert( $dsep, -1 );
@@ -164,15 +188,19 @@ sub show_window {
         ? FALSE
         : TRUE;
 
-    $defs_apply_btn = Gtk2::ToolButton->new_from_stock( 'gtk-add' );
+    $defs_apply_btn = Gtk3::ToolButton->new();
+    $defs_apply_btn->set_icon_name( 'list-add' );
+    $defs_apply_btn->set_label( _( 'Close' ) );
     if ( $can_update ) {
         $defs_bar->insert( $defs_apply_btn, -1 );
         $defs_apply_btn->signal_connect( 'clicked' => \&apply_defs );
     }
 
-    $defs_bar->insert( Gtk2::SeparatorToolItem->new, -1 );
+    $defs_bar->insert( Gtk3::SeparatorToolItem->new, -1 );
 
-    $defs_remove_btn = Gtk2::ToolButton->new_from_stock( 'gtk-remove' );
+    $defs_remove_btn = Gtk3::ToolButton->new();
+    $defs_remove_btn->set_icon_name( 'list-remove' );
+    $defs_remove_btn->set_label( _( 'Delete' ) );
     $defs_bar->insert( $defs_remove_btn, -1 );
     $defs_remove_btn->signal_connect(
         'clicked' => sub {
@@ -184,32 +212,34 @@ sub show_window {
     # status #
     ##########
 
-    my $status_frame = Gtk2::Frame->new( _( 'Status' ) );
+    my $status_frame = Gtk3::Frame->new( _( 'Status' ) );
     $vbox->pack_start( $status_frame, FALSE, FALSE, 5 );
 
-    my $status_box = Gtk2::VBox->new( TRUE, 5 );
+    my $status_box = Gtk3::VBox->new( TRUE, 5 );
     $status_frame->add( $status_box );
 
     # By default, put the label in; helps with spacing and what not
-    $scan_status_label = Gtk2::Label->new;
+    $scan_status_label = Gtk3::Label->new( '' );
     $status_box->pack_start( $scan_status_label, FALSE, FALSE, 0 );
     $scan_status_label->set_text( _( 'A daily scan is scheduled' ) );
 
-    $defs_status_label = Gtk2::Label->new;
+    $defs_status_label = Gtk3::Label->new( '' );
     $status_box->pack_start( $defs_status_label, FALSE, FALSE, 0 );
     $defs_status_label->set_text(
         _( 'A daily definitions update is scheduled' ) );
 
-    my $end_bar = Gtk2::Toolbar->new;
+    my $end_bar = Gtk3::Toolbar->new;
     $vbox->pack_start( $end_bar, FALSE, FALSE, 0 );
     $end_bar->set_style( 'both-horiz' );
 
-    $dsep = Gtk2::SeparatorToolItem->new;
+    $dsep = Gtk3::SeparatorToolItem->new;
     $dsep->set_draw( FALSE );
     $dsep->set_expand( TRUE );
     $end_bar->insert( $dsep, -1 );
 
-    my $btn = Gtk2::ToolButton->new_from_stock( 'gtk-close' );
+    my $btn = Gtk3::ToolButton->new();
+    $btn->set_icon_name( 'window-close' );
+    $btn->set_label( _( 'Close' ) );
     $btn->set_is_important( TRUE );
     $end_bar->insert( $btn, -1 );
     $btn->signal_connect( 'clicked' => sub { $dialog->destroy } );
@@ -217,7 +247,7 @@ sub show_window {
     $dialog->show_all;
 
     is_enabled();
-    Gtk2->main();
+    Gtk3->main();
 }
 
 sub is_enabled {
@@ -231,7 +261,7 @@ sub is_enabled {
         or warn "problem checking crontab listing in is_enabled\n";
 
     while ( <$L> ) {
-        Gtk2->main_iteration while ( Gtk2->events_pending );
+        Gtk3::main_iteration while Gtk3::events_pending;
         next if /^#/;
         next if /^\s*$/;
         chomp;
@@ -311,7 +341,7 @@ sub apply_scan {
         };
 
     while ( <$L> ) {
-        Gtk2->main_iteration while ( Gtk2->events_pending );
+        Gtk3::main_iteration while Gtk3::events_pending;
         print $T $_;
     }
     close( $L );
@@ -331,6 +361,24 @@ sub apply_scan {
     # By default, we ignore .gvfs directories.
     for my $m ( 'smb4k', "/run/user/$ENV{USER}/gvfs", "$ENV{HOME}/.gvfs" ) {
         $full_cmd .= " --exclude-dir=$m";
+    }
+
+    # Now strip whitelisted directories
+    for my $ignore (
+        split(
+            /;/,
+            ClamTk::Prefs->get_preference( 'Whitelist' )
+                . $paths->{ whitelist_dir }
+        )
+        )
+    {
+        # warn "excluding $ignore\n";
+        # --exclude-dir=REGEX  Don't scan directories matching REGEX
+        # Using REGEX is important because users could have some
+        # of the whitelisted domains as part of a directory that
+        # should be scanned.
+        # Github #61 - https://github.com/dave-theunsub/clamtk/issues/61
+        $directive .= " --exclude-dir=^" . quotemeta( $ignore );
     }
 
     # Ignore mail directories until we can parse stuff
@@ -406,7 +454,7 @@ sub apply_defs {
         };
 
     while ( <$L> ) {
-        Gtk2->main_iteration while ( Gtk2->events_pending );
+        Gtk3::main_iteration while Gtk3::events_pending;
         print $T $_;
     }
     close( $L );
@@ -474,7 +522,7 @@ sub remove {
         };
 
     while ( <$L> ) {
-        Gtk2->main_iteration while ( Gtk2->events_pending );
+        Gtk3::main_iteration while Gtk3::events_pending;
         print $T $_ unless ( /$which/ );
     }
     close( $L );

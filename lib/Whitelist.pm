@@ -1,6 +1,7 @@
-# ClamTk, copyright (C) 2004-2019 Dave M
+# ClamTk, copyright (C) 2004-2020 Dave M
 #
-# This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
+# This file is part of ClamTk
+# (https://gitlab.com/dave_m/clamtk-gtk3/).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -25,28 +26,27 @@ my $user_whitelist   = ClamTk::Prefs->get_preference( 'Whitelist' );
 my $system_whitelist = ClamTk::App->get_path( 'whitelist_dir' );
 
 sub show_window {
-    my $eb = Gtk2::EventBox->new;
+    my $eb = Gtk3::EventBox->new;
 
-    # my $white = Gtk2::Gdk::Color->new( 0xFFFF, 0xFFFF, 0xFFFF );
-    # $eb->modify_bg( 'normal', $white );
-
-    my $box = Gtk2::VBox->new( FALSE, 5 );
+    my $box = Gtk3::Box->new( 'vertical', 5 );
+    $box->set_homogeneous( FALSE );
     $eb->add( $box );
 
-    my $s_win = Gtk2::ScrolledWindow->new;
+    my $s_win = Gtk3::ScrolledWindow->new( undef, undef );
+    $s_win->set_vexpand( TRUE );
     $s_win->set_shadow_type( 'etched-in' );
     $s_win->set_policy( 'automatic', 'automatic' );
     $box->pack_start( $s_win, TRUE, TRUE, 10 );
 
-    my $liststore = Gtk2::ListStore->new( 'Glib::String', );
+    my $liststore = Gtk3::ListStore->new( 'Glib::String', );
 
-    my $view = Gtk2::TreeView->new_with_model( $liststore );
+    my $view = Gtk3::TreeView->new_with_model( $liststore );
     $view->set_can_focus( FALSE );
     $s_win->add( $view );
 
-    my $column = Gtk2::TreeViewColumn->new_with_attributes(
+    my $column = Gtk3::TreeViewColumn->new_with_attributes(
         _( 'Directory' ),
-        Gtk2::CellRendererText->new,
+        Gtk3::CellRendererText->new,
         text => 0,
     );
     $view->append_column( $column );
@@ -59,27 +59,31 @@ sub show_window {
         $liststore->set( $iter, 0, $d, );
     }
 
-    my $bbox = Gtk2::Toolbar->new;
+    my $bbox = Gtk3::Toolbar->new;
     $box->pack_start( $bbox, FALSE, FALSE, 5 );
     $bbox->set_style( 'both-horiz' );
     $bbox->set_show_arrow( FALSE );
 
-    my $button = Gtk2::ToolButton->new_from_stock( 'gtk-add' );
+    my $button    = Gtk3::ToolButton->new();
+    my $use_image = ClamTk::Icons->get_image( 'list-add' );
+    $button->set_icon_name( $use_image );
+    $button->set_label( _( 'Add a directory' ) );
     $bbox->insert( $button, -1 );
     $button->set_is_important( TRUE );
     $button->signal_connect( clicked => \&add, $liststore );
-    $button->set_tooltip_text( _( 'Add a directory' ) );
 
-    my $sep = Gtk2::SeparatorToolItem->new;
+    my $sep = Gtk3::SeparatorToolItem->new;
     $sep->set_draw( FALSE );
     $sep->set_expand( TRUE );
     $bbox->insert( $sep, -1 );
 
-    $button = Gtk2::ToolButton->new_from_stock( 'gtk-delete' );
+    $button    = Gtk3::ToolButton->new();
+    $use_image = ClamTk::Icons->get_image( 'list-remove' );
+    $button->set_icon_name( $use_image );
+    $button->set_label( _( 'Remove a directory' ) );
     $bbox->insert( $button, -1 );
     $button->set_is_important( TRUE );
     $button->signal_connect( clicked => \&delete, $view );
-    $button->set_tooltip_text( _( 'Remove a directory' ) );
 
     $eb->show_all;
     return $eb;
@@ -92,7 +96,7 @@ sub add {
     my $home = ClamTk::App->get_path( 'directory' );
 
     my $dir    = '';
-    my $dialog = Gtk2::FileChooserDialog->new(
+    my $dialog = Gtk3::FileChooserDialog->new(
         _( 'Select a directory' ),
         undef,
         'select-folder',
@@ -136,7 +140,7 @@ sub delete {
     my ( $model, $iter ) = $selected->get_selected;
     return unless ( $iter );
 
-    my $row = $model->get_value( $iter, 0 );
+    my $row          = $model->get_value( $iter, 0 );
     my $remove_value = "$row;";
 
     # refresh our whitelist

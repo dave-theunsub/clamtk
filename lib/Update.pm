@@ -1,6 +1,7 @@
-# ClamTk, copyright (C) 2004-2019 Dave M
+# ClamTk, copyright (C) 2004-2020 Dave M
 #
-# This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
+# This file is part of ClamTk
+# (https://gitlab.com/dave_m/clamtk-gtk3/).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -21,20 +22,22 @@ use LWP::UserAgent;
 use Locale::gettext;
 
 # Keeping these global for easy messaging.
-my $infobar;      # Gtk2::InfoBar for status
-my $pb;           # Gtk2::ProgressBar
+my $infobar;      # InfoBar for status
+my $pb;           # ProgressBar for ... showing progress
 my $liststore;    # Information on current and remote versions
 my $iter_hash;    # Must be global to update sig area
 
 my $updated = 0;
 
 sub show_window {
-    my $box = Gtk2::VBox->new( FALSE, 5 );
+    my $box = Gtk3::Box->new( vertical, 5 );
+    $box->set_homogeneous( FALSE );
 
-    my $top_box = Gtk2::VBox->new( FALSE, 5 );
+    my $top_box = Gtk3::Box->new( vertical, 5 );
+    $top_box->set_homogeneous( FALSE );
     $box->pack_start( $top_box, TRUE, TRUE, 0 );
 
-    my $scrolled = Gtk2::ScrolledWindow->new( undef, undef );
+    my $scrolled = Gtk3::ScrolledWindow->new( undef, undef );
     $scrolled->set_policy( 'never', 'never' );
     $scrolled->set_shadow_type( 'etched-out' );
     $top_box->pack_start( $scrolled, FALSE, TRUE, 2 );
@@ -44,26 +47,26 @@ sub show_window {
     # gtk-no  = no
     # gtk-dialog-error = unknown
 
-    $liststore = Gtk2::ListStore->new(
+    $liststore = Gtk3::ListStore->new(
         # product, local version,
         'Glib::String', 'Glib::String',
     );
 
     # Product column
-    my $view = Gtk2::TreeView->new_with_model( $liststore );
+    my $view = Gtk3::TreeView->new_with_model( $liststore );
     $view->set_can_focus( FALSE );
     $scrolled->add( $view );
-    my $column = Gtk2::TreeViewColumn->new_with_attributes(
+    my $column = Gtk3::TreeViewColumn->new_with_attributes(
         _( 'Product' ),
-        Gtk2::CellRendererText->new,
+        Gtk3::CellRendererText->new,
         text => 0,
     );
     $view->append_column( $column );
 
     # Installed version column
-    $column = Gtk2::TreeViewColumn->new_with_attributes(
+    $column = Gtk3::TreeViewColumn->new_with_attributes(
         _( 'Installed' ),
-        Gtk2::CellRendererText->new,
+        Gtk3::CellRendererText->new,
         text => 1,
     );
     $view->append_column( $column );
@@ -92,32 +95,31 @@ sub show_window {
     }
     #>>>
 
-    $infobar = Gtk2::InfoBar->new;
+    $infobar = Gtk3::InfoBar->new;
     $infobar->set_message_type( 'other' );
 
     my $text = '';
     if ( ClamTk::Prefs->get_preference( 'Update' ) eq 'shared' ) {
-        $text = _( 'You are configured to automatically receive updates' );
+        my $label = Gtk3::Label->new;
+        $label->set_text(
+            _( 'You are configured to automatically receive updates' ) );
+        $infobar->get_content_area()->add( $label );
     } else {
         $text = _( 'Check for updates' );
-        $infobar->add_button( 'gtk-ok', -5 );
+        $infobar->add_button( $text, -5 );
+
+        #<<<
+        $infobar->signal_connect(
+            response => sub {
+                    update_signatures();
+            }
+        );
+        #>>>
     }
 
-    my $label = Gtk2::Label->new;
-    $label->set_text( $text );
-    $infobar->get_content_area()->add( $label );
-    #<<<
-    $infobar->signal_connect(
-        response => sub {
-                # update_store();
-                update_signatures();
-        }
-    );
-    #>>>
+    $box->pack_start( Gtk3::VBox->new, TRUE, TRUE, 5 );
 
-    $box->pack_start( Gtk2::VBox->new, TRUE, TRUE, 5 );
-
-    $pb = Gtk2::ProgressBar->new;
+    $pb = Gtk3::ProgressBar->new;
     $box->pack_start( $infobar, FALSE, FALSE, 0 );
     $box->pack_start( $pb,      FALSE, FALSE, 0 );
 
@@ -127,16 +129,13 @@ sub show_window {
 }
 
 sub get_remote_TK_version {
-    my $url = 'https://bitbucket.org/davem_/clamtk/raw/master/latest';
-    # my $url = 'http://clamtk.googlecode.com/git/latest';
+    my $url = 'https://bitbucket.org/davem_/clamtk-gtk3/raw/master/latest6';
 
     $ENV{ HTTPS_DEBUG } = 1;
 
     my $ua = add_ua_proxy();
 
-    Gtk2->main_iteration while Gtk2->events_pending;
     my $response = $ua->get( $url );
-    Gtk2->main_iteration while Gtk2->events_pending;
 
     if ( $response->is_success ) {
         my $content = $response->content;
@@ -152,10 +151,15 @@ sub get_remote_TK_version {
 sub update_signatures {
     $pb->{ timer } = Glib::Timeout->add( 100, \&progress_timeout, $pb );
     $pb->show;
-    #$pb->set_show_text( TRUE );
     $pb->set_text( _( 'Please wait...' ) );
 
     my $freshclam = get_freshclam_path();
+    if ( ClamTk::Prefs->get_preference( 'Update' ) eq 'single' ) {
+        my $dbpath = ClamTk::App->get_path( 'db' ) . '/' . 'freshclam.conf';
+        if ( -e $dbpath ) {
+            $freshclam .= " --config-file=$dbpath";
+        }
+    }
 
     # The mirrors can be slow sometimes and may return/die
     # 'failed' despite that the update is still in progress.
@@ -166,7 +170,8 @@ sub update_signatures {
     my $update;
     my $update_sig_pid;
     eval {
-        local $SIG{ ALRM } = sub { die "failed\n" };
+        local $SIG{ ALRM }
+            = sub { die "failed updating signatures (timeout)\n" };
         alarm 100;
 
         $update_sig_pid = open( $update, '-|', "$freshclam --stdout" );
@@ -190,26 +195,22 @@ sub update_signatures {
     # and try to sum it up.
 
     while ( defined( my $line = <$update> ) ) {
+        Gtk3::main_iteration while Gtk3::events_pending;
         $pb->set_text( _( 'Downloading...' ) );
-        Gtk2->main_iteration while Gtk2->events_pending;
         chomp( $line );
 
         if ( $line =~ /^Downloading daily-(\d+)/ ) {
             my $new_daily = $1;
-            Gtk2->main_iteration while Gtk2->events_pending;
 
             $liststore->set( $iter_hash, 0, _( 'Antivirus signatures' ),
                 1, $new_daily, );
 
         } elsif ( $line =~ /Database updated/ ) {
-            Gtk2->main_iteration while Gtk2->events_pending;
             $pb->set_fraction( 1.0 );
-            Gtk2->main_iteration while Gtk2->events_pending;
         } else {
             # warn "skipping line: >$line<\n";
             next;
         }
-        Gtk2->main_iteration while Gtk2->events_pending;
     }
     # Get local information. It would probably be okay to just
     # keep the same number we saw during the update, but this
@@ -223,8 +224,7 @@ sub update_signatures {
     $pb->set_text( _( 'Complete' ) );
 
     # Update infobar type and text; remove button
-    Gtk2->main_iteration while Gtk2->events_pending;
-    set_infobar_text( 'info', '' );
+    set_infobar_text( 'info', _( 'Complete' ) );
     ClamTk::GUI::set_infobar_mode( 'info', '' );
     # $pb->hide;
     # destroy_button();
@@ -260,13 +260,11 @@ sub set_infobar_text {
     $infobar->set_message_type( $type );
 
     for my $child ( $infobar->get_content_area->get_children ) {
-        Gtk2->main_iteration while Gtk2->events_pending;
-        if ( $child->isa( 'Gtk2::Label' ) ) {
+        if ( $child->isa( 'Gtk3::Label' ) ) {
             $child->set_text( $text );
             $infobar->queue_draw;
         }
     }
-    Gtk2->main_iteration while Gtk2->events_pending;
 }
 
 sub set_infobar_button {
@@ -275,7 +273,7 @@ sub set_infobar_button {
         $infobar->add_button( $stock_icon, $signal );
     } else {
         for my $child ( $infobar->get_action_area->get_children ) {
-            if ( $child->isa( 'Gtk2::Button' ) ) {
+            if ( $child->isa( 'Gtk3::Button' ) ) {
                 $child->set_label( $stock_icon );
             }
         }
@@ -285,16 +283,14 @@ sub set_infobar_button {
 sub destroy_button {
     # Remove button from $infobar
     for my $child ( $infobar->get_action_area->get_children ) {
-        if ( $child->isa( 'Gtk2::Button' ) ) {
+        if ( $child->isa( 'Gtk3::Button' ) ) {
             $child->destroy;
         }
     }
 }
 
 sub progress_timeout {
-    Gtk2->main_iteration while Gtk2->events_pending;
     $pb->pulse;
-    Gtk2->main_iteration while Gtk2->events_pending;
 
     return TRUE;
 }

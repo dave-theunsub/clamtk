@@ -1,6 +1,7 @@
-# ClamTk, copyright (C) 2004-2019 Dave M
+# ClamTk, copyright (C) 2004-2020 Dave M
 #
-# This file is part of ClamTk (https://dave-theunsub.github.io/clamtk).
+# This file is part of ClamTk
+# (https://gitlab.com/dave_m/clamtk-gtk3/).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -32,7 +33,7 @@ sub get_pseudo_keys {
         [
             'Exit', undef,
             _('Exit'), '<control>X',
-            undef, sub { Gtk2->main_quit },
+            undef, sub { Gtk3->main_quit },
             FALSE
         ],
         [
