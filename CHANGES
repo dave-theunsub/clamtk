@@ -1,5 +1,12 @@
 CHANGELOG for ClamTk:
 
+6.05 - 20200807
+---------------
+    * Exclude Timeshift directory (Github #121)
+    * Added Help button in Analysis to explain its purpose
+      (Github #122)
+    * Updated language files: English (en_UK)
+
 6.04 - 20200711
 ---------------
     * Add Encrypted.PDF as clean (Github #120). Also, remove alert-
