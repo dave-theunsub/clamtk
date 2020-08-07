@@ -216,7 +216,6 @@ sub filter {
             'smb4k',
             "/run/user/$ENV{USER}/gvfs",
             "$ENV{HOME}/.gvfs" ) {
-                # warn "excluding $m\n";
                 $directive .= " --exclude-dir=$m";
     }
     #>>>
@@ -239,14 +238,13 @@ sub filter {
         $directive .= " --exclude-dir=^" . quotemeta( $ignore );
     }
 
-    # Remove mail directories for now -
-    # until we can parse them... sigh.
+    # Remove mail directories and some backup directories for now.
     # Not all of these can be appended to $HOME for a more
     # specific path - kmail (e.g.) is somewhere
     # under $HOME/.kde/blah/foo/...
     my @maildirs = qw(
         .thunderbird	.mozilla-thunderbird
-        Mail	kmail   evolution
+        Mail	kmail   evolution   timeshift
     );
     for my $mailbox ( @maildirs ) {
         # warn "excluding mailbox directory $mailbox\n";

@@ -1,4 +1,4 @@
-This README was last updated on 11 July 2020.
+This README was last updated on 25 July 2020.
 
 # Readme for ClamTk
 
@@ -48,7 +48,7 @@ https://github.com/dave-theunsub/clamtk/ (deprecated)
 
 ### RPMs  
 The easiest way to install ClamTk is to use the rpms. The commands `dnf` and `yum` will pull in requirements.   
-  
+
 First, start with the official repositories.
 
 `sudo yum install clamtk` or `sudo dnf install clamtk`.  
@@ -62,7 +62,7 @@ To install using a terminal window:
 `sudo yum install clamtk-6.04-1.el8.noarch.rpm` or `sudo dnf install clamtk-6.04-1.fc.noarch.rpm`
 
 To remove clamtk:  
-  
+
 `sudo yum erase clamtk` or `sudo dnf erase clamtk`.
 
 ### Source  
@@ -95,11 +95,11 @@ You should be able to just double click the .deb file to install it. Your packag
 
 From the commandline, you can do this:  
 
-    `sudo apt install clamtk`
+    sudo apt install clamtk
 
 If you downloaded the file, then use this:
 
-    `sudo apt install clamtk_6.04-1_all.deb`
+    sudo apt install clamtk_6.04-1_all.deb
 
 To remove clamtk:  
 
@@ -178,12 +178,12 @@ minisign -V -x clamtk-6.04.tar.xz.minisig -p davemminisign.pub -m clamtk-6.04.ta
 ClamTk can run from the commandline, too:  
 ```  
 clamtk file_to_be_scanned  
-```    
+```
 or  
 ```
 clamtk directory_to_be_scanned  
 ```
-  
+
 The main reason for the commandline option (however basic) is to allow for right-click scanning within your file manager (e.g., Files, Caja, or Dolphin).  If you require more extensive commandline options, it is recommended that you use the clamscan executable itself. (Type `man clamscan` at the commandline.)  
 
 ### Afterwards
@@ -206,9 +206,9 @@ If you've quarantined files for later examination, you have the option to restor
 To add a right-click, context menu ability to send files and directories to the scanner, install the appropriate plugin. Links to the latest versions are available here:  
 
 https://gitlab.com/dave_m/clamtk/wikis/Downloads  
-  
+
 Here are the specific pages:  
-  
+
 For Gnome (Files file manager):  
 https://gitlab.com/dave_m/clamtk-gnome  
 
@@ -220,7 +220,7 @@ https://gitlab.com/dave_m/thunar-sendto-clamtk
 
 For Mate (Nemo file manager):  
 https://gitlab.com/dave_m/nemo-sendto-clamtk  
-  
+
 
 ## Troubleshooting
 
@@ -284,17 +284,17 @@ Also a big thank you to:
 * Everyone who has contributed in one way or another to ClamTk - including language files, bug notifications, and feature requests
 * Dag, without whom rpms would likely not exist
 * All the gtk2-perl and gtk3-perl folks for their time and effort
-* [Perlmonks](https://perlmonks.org), for helping me learn the wonderful Perl language - and continuing to do so on a daily basis!
+* [Perlmonks](https://perlmonks.org)
 
 
 ## Contact
 
 For feature requests or bugs, it is best to use one of the following:  
 
-https://gitlab.com/dave_m/clamtk/issues  
+[https://gitlab.com/dave_m/clamtk/issues](https://gitlab.com/dave_m/clamtk/issues)  
 https://launchpad.net/clamtk  
-  
+
 While we recommend opening an official bug on the appropriate page, we will also accept email.   
 
-* Dave M, dave.nerd @gmail.com (0x6ADA59DE)  
+* Dave M, dave.nerd @gmail.com [0xF51D19546ADA59DE](https://pgp.circl.lu/pks/lookup?op=get&search=0xF51D19546ADA59DE)  
 * Tord D, tord.dellsen @gmail.com  
