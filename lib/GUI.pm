@@ -617,9 +617,7 @@ sub select_directory {
     );
     $dialog->set_position( 'center-on-parent' );
     $dialog->set_current_folder( ClamTk::App->get_path( 'directory' ) );
-    if ( ClamTk::Prefs->get_preference( 'ScanHidden' ) ) {
-        $dialog->set_show_hidden( TRUE );
-    }
+    $dialog->set_show_hidden( FALSE );
     if ( 'ok' eq $dialog->run ) {
         $directory = $dialog->get_filename;
         Gtk3::main_iteration while Gtk3::events_pending;
