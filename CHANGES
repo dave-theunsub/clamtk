@@ -5,7 +5,7 @@ CHANGELOG for ClamTk:
     * Fix for 'Show Hidden Files' checkbox automatically
       (Launchpad #1876497)
     * Updated language files: Japanese (ja), English (en_AU),
-      Mon (mnw)
+      Mon (mnw_MM), Finnish (fi)
 
 6.05 - 20200809
 ---------------
