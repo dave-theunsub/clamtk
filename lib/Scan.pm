@@ -170,7 +170,8 @@ sub filter {
     $use_image = 'gtk-cancel';
     $bottombar->add_button( $use_image, HATE_GNOME_SHELL );
     if ( $show ) {
-        $use_image = ClamTk::Icons->get_image( 'preferences-system' );
+        # $use_image = ClamTk::Icons->get_image( 'preferences-system' );
+        $use_image = ClamTk::Icons->get_image( 'document-properties' );
         $bottombar->add_button( $use_image, DESTROY_GNOME_SHELL );
     }
     $bottombar->signal_connect(
@@ -287,9 +288,8 @@ sub filter {
         if (   ( $version <=> '101' ) == 0
             || ( $version <=> '101' ) == 1 )
         {
-            $directive
-                .= ' --detect-pua --alert-broken'
-                . ' --alert-macros';
+            $directive .= ' --detect-pua --alert-broken'
+            . ' --alert-macros';
         } else {
             $directive .= ' --detect-pua --algorithmic-detection';
         }
@@ -297,14 +297,13 @@ sub filter {
         if (   ( $version cmp '101' ) == 0
             || ( $version cmp '101' ) == 1 )
         {
-            $directive
-                =~ s/\s--detect-pua --alert-broken --alert-macros'//;
+            $directive =~ s/\s--detect-pua --alert-broken --alert-macros'//;
         } else {
             $directive =~ s/\s--detect-pua --algorithmic-detection//;
         }
     }
 
-    # remove the hidden files if chosen:
+    # Heuristic scanning
     if ( $prefs{ Heuristic } ) {
         # By default, if included, == yes
         $directive .= ' --heuristic-alerts=yes';
@@ -461,20 +460,13 @@ sub scan {
         # These aren't necessarily clean (despite the variable's name)
         # - we just don't want them counted as viruses
         my $clean_words = join( '|',
-            'OK',
-            'Zip module failure',
-            "RAR module failure",
-            'Encrypted.PDF',
-            'Encrypted.RAR',
-            'Encrypted.Zip',
-            'Empty file',
-            'Excluded',
-            'Input/Output error',
-            'Files number limit exceeded',
-            'handler error',
-            'Broken.Executable',
-            'Oversized.Zip',
-            'Symbolic link' );
+            'OK',                 'Zip module failure',
+            "RAR module failure", 'Encrypted.PDF',
+            'Encrypted.RAR',      'Encrypted.Zip',
+            'Empty file',         'Excluded',
+            'Input/Output error', 'Files number limit exceeded',
+            'handler error',      'Broken.Executable',
+            'Oversized.Zip',      'Symbolic link' );
 
         if ( $status !~ /$clean_words/ ) {    # a virus
             $found->{ $found_count }->{ name }   = $file;

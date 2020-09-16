@@ -30,6 +30,7 @@ sub get_image() {
     $table{ 'alarm' }                      = 'gtk-properties';
     $table{ 'document-new' }               = 'gtk-file';
     $table{ 'document-print' }             = 'gtk-print';
+    $table{ 'document-properties' }        = 'document-properties';
     $table{ 'document-save' }              = 'gtk-apply';
     $table{ 'document-save-as' }           = 'gtk-save-as';
     $table{ 'document-send' }              = 'gtk-index';

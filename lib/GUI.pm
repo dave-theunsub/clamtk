@@ -579,10 +579,11 @@ sub select_file {
         'gtk-ok'     => 'ok',
     );
     $dialog->set_select_multiple( FALSE );
-    if ( ClamTk::Prefs->get_preference( 'ScanHidden' ) ) {
-        $dialog->set_show_hidden( TRUE );
-    }
     $dialog->set_position( 'center-on-parent' );
+
+    # FALSE until there is an option to change it
+    $dialog->set_show_hidden( FALSE );
+
     if ( 'ok' eq $dialog->run ) {
         $window->queue_draw;
         Gtk3::main_iteration while Gtk3::events_pending;
@@ -609,7 +610,8 @@ sub select_file {
 
 sub select_directory {
     my $directory = '';
-    my $dialog    = Gtk3::FileChooserDialog->new(
+
+    my $dialog = Gtk3::FileChooserDialog->new(
         _( 'Select a directory' ), $window,
         'select-folder',
         'gtk-cancel' => 'cancel',
@@ -618,6 +620,7 @@ sub select_directory {
     $dialog->set_position( 'center-on-parent' );
     $dialog->set_current_folder( ClamTk::App->get_path( 'directory' ) );
     $dialog->set_show_hidden( FALSE );
+
     if ( 'ok' eq $dialog->run ) {
         $directory = $dialog->get_filename;
         Gtk3::main_iteration while Gtk3::events_pending;

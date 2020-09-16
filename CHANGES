@@ -1,11 +1,14 @@
 CHANGELOG for ClamTk:
 
-6.06 - 20200817
+6.06 - 20200916
 ---------------
     * Fix for 'Show Hidden Files' checkbox automatically
       (Launchpad #1876497)
+    * Remove env from clamtk startup for correct
+      dependency detection (rpmlint)
+    * Minor language updates to desktop file
     * Updated language files: Japanese (ja), English (en_AU),
-      Mon (mnw_MM), Finnish (fi)
+      Mon (mnw_MM), Finnish (fi), Malay (ms)
 
 6.05 - 20200809
 ---------------

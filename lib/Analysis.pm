@@ -79,14 +79,15 @@ sub show_window {
     $hb->pack_start( $button );
     $window->set_titlebar( $hb );
 
-    my $help_message =
-_("This section allows you to check the status of a file from Virustotal. If a file has been previously submitted, you will see the results of the scans from dozens of antivirus and security vendors. This allows you to make a more informed decision about the safety of a file.
+    my $help_message = _(
+        "This section allows you to check the status of a file from Virustotal. If a file has been previously submitted, you will see the results of the scans from dozens of antivirus and security vendors. This allows you to make a more informed decision about the safety of a file.
 
 If the file has never been submitted to Virustotal, you can submit it yourself. When you resubmit the file minutes later, you should see the results.
 
 Please note you should never submit sensitive files to Virustotal.  Any uploaded file can be viewed by Virustotal customers. Do not submit anything with personal information or passwords.
 
-https://www.virustotal.com/gui/home/search");
+https://www.virustotal.com/gui/home/search"
+    );
 
     my $help_btn  = Gtk3::ToolButton->new();
     my $use_image = ClamTk::Icons->get_image( 'system-help' );
@@ -94,7 +95,7 @@ https://www.virustotal.com/gui/home/search");
     $help_btn->set_icon_name( $use_image );
     $help_btn->set_is_important( TRUE );
     $help_btn->set_tooltip_text( _( 'What is this?' ) );
-    $help_btn->signal_connect( clicked => sub { popup( $help_message ) });
+    $help_btn->signal_connect( clicked => sub { popup( $help_message ) } );
     $hb->pack_start( $help_btn );
 
     my $box = Gtk3::Box->new( 'vertical', 5 );
