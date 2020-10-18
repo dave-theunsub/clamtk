@@ -1,4 +1,4 @@
-This README was last updated on 25 July 2020.
+This README was last updated on 18 October 2020.
 
 # Readme for ClamTk
 
@@ -33,8 +33,8 @@ https://gitlab.com/dave_m/clamtk-gtk3/
 https://bitbucket.org/davem_/clamtk-gtk3/  
 https://gitlab.com/dave_m/clamtk/wikis/home  
 https://launchpad.net/clamtk  
-https://code.google.com/p/clamtk/ (not used anymore)  
-http://clamtk.sourceforge.net (not used anymore)  
+https://code.google.com/p/clamtk/ (deprecated)  
+http://clamtk.sourceforge.net (deprecated)  
 https://dave-theunsub.github.io/clamtk/ (deprecated)  
 https://github.com/dave-theunsub/clamtk/ (deprecated)  
 
@@ -55,11 +55,11 @@ First, start with the official repositories.
 
 If this does not work, download the file from [the official site](https://gitlab.com/dave_m/clamtk/-/wikis/Home). You should be able to just double click the file for installation or upgrade.
 
-For these examples, we will use version 6.04. The name of the file may differ based on your distribution.
+For these examples, we will use version 6.06. The name of the file may differ based on your distribution.
 
 To install using a terminal window:  
 
-`sudo yum install clamtk-6.04-1.el8.noarch.rpm` or `sudo dnf install clamtk-6.04-1.fc.noarch.rpm`
+`sudo yum install clamtk-6.06-1.el8.noarch.rpm` or `sudo dnf install clamtk-6.06-1.fc.noarch.rpm`
 
 To remove clamtk:  
 
@@ -71,10 +71,11 @@ To remove clamtk:
 The tarball contains all the sources. One way to do this, as tested on Fedora, is to run the following commands:  
 
 ```
-mkdir -p /usr/share/perl5/vendor_perl/ClamTk  
-cp lib/*.pm /usr/share/perl5/vendor_perl/ClamTk  
-chmod +x clamtk  
-cp clamtk /usr/local/bin (or /usr/bin)  
+tar xzf clamtk-6.06.tar.xz  
+sudo mkdir -p /usr/share/perl5/vendor_perl/ClamTk  
+sudo cp lib/*.pm /usr/share/perl5/vendor_perl/ClamTk  
+sudo chmod +x clamtk  
+sudo cp clamtk /usr/local/bin (or /usr/bin)  
 ```
 
 Examples:
@@ -99,7 +100,7 @@ From the commandline, you can do this:
 
 If you downloaded the file, then use this:
 
-    sudo apt install clamtk_6.04-1_all.deb
+    sudo apt install clamtk_6.06-1_all.deb
 
 To remove clamtk:  
 
@@ -117,20 +118,20 @@ While the Debian/Ubuntu .debs have always been digitally signed, the rpms have n
 `rpm --import https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-21-June-2018`  
 2. Verify the list of gpg keys installed in RPM DB:  
 `rpm -q gpg-pubkey --qf '%{name}-%{version}-%{release} --> %{summary}\n'`  
-3. Check the signature of the rpm. For this example, we'll use version 6.04:  
-`rpm --checksig clamtk-6.04-1.fc.noarch.rpm`  
+3. Check the signature of the rpm. For this example, we'll use version 6.06:  
+`rpm --checksig clamtk-6.06-1.fc.noarch.rpm`  
 4. You should see something like this:  
-`/home/you/clamtk-6.04-1.fc.noarch.rpm: rsa sha1 (md5) pgp md5 OK`
+`/home/you/clamtk-6.06-1.fc.noarch.rpm: rsa sha1 (md5) pgp md5 OK`
 
-You can also verify the tarball. Using 6.04 as the example version, ensure you have downloaded the tarball, its detached signature (.asc), and the key in step 1 above.
+You can also verify the tarball. Using 6.06 as the example version, ensure you have downloaded the tarball, its detached signature (.asc), and the key in step 1 above.
 
 1. Get the key (skip this step if you already have it):  
 `wget https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-21-June-2018`  
 2. Import it (skip this step if you have done it already):  
 `gpg --import RPM-GPG-KEY-DaveM-21-June-2018`  
 3. Verify like so:  
-`gpg2 --verify clamtk-6.04.tar.xz.asc clamtk-6.04.tar.gz` or  
-`gpg --verify clamtk-6.04.tar.xz.asc clamtk-6.04.tar.xz`  
+`gpg2 --verify clamtk-6.06.tar.xz.asc clamtk-6.06.tar.gz` or  
+`gpg --verify clamtk-6.06.tar.xz.asc clamtk-6.06.tar.xz`  
 4. You should see something like this:  
 `gpg: Signature made Sun 11 Sep 2016 06:29:41 AM CDT using RSA key ID` (snipped for brevity).  
 
@@ -145,11 +146,11 @@ Then, you will need the minisig file for the program you are verifying.
 A link to it will be with the rest of the downloads. 
 
 For this example:  
-https://bitbucket.org/davem_/clamtk-gtk3/downloads/clamtk-6.04.tar.xz.minisig
+https://bitbucket.org/davem_/clamtk-gtk3/downloads/clamtk-6.06.tar.xz.minisig
 
 Now, you verify like so:  
 ```
-minisign -V -x clamtk-6.04.tar.xz.minisig -p davemminisign.pub -m clamtk-6.04.tar.xz
+minisign -V -x clamtk-6.06.tar.xz.minisig -p davemminisign.pub -m clamtk-6.06.tar.xz
 ```
 
 
