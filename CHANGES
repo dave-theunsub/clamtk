@@ -1,5 +1,10 @@
 CHANGELOG for ClamTk:
 
+6.07 - 20201026
+---------------
+    * Update to look for additional information to during update
+      to know when it's finished
+
 6.06 - 20200916
 ---------------
     * Fix for 'Show Hidden Files' checkbox automatically

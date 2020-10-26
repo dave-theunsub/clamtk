@@ -170,16 +170,18 @@ sub update_signatures {
     my $update;
     my $update_sig_pid;
     eval {
-        local $SIG{ ALRM }
-            = sub { die "failed updating signatures (timeout)\n" };
+        local $SIG{ ALRM } = sub {
+            die "failed updating signatures (timeout)\n";
+        };
         alarm 100;
 
         $update_sig_pid = open( $update, '-|', "$freshclam --stdout" );
-        defined( $update_sig_pid ) or do {
+        defined( $update_sig_pid )
+            or do {
             set_infobar_text( 'error',
                 _( 'Error updating: try again later' ) );
             return 0;
-        };
+            };
         alarm 0;
     };
     if ( $@ && $@ eq "failed\n" ) {
@@ -193,19 +195,54 @@ sub update_signatures {
     # We can't just print stuff out; that's bad for non-English
     # speaking users. So, we'll grab the first couple words
     # and try to sum it up.
+    #
+    # logg("!Database update process failed: %s (%d)\n"
+    # Downloading database patch # 25961..
 
     while ( defined( my $line = <$update> ) ) {
         Gtk3::main_iteration while Gtk3::events_pending;
         $pb->set_text( _( 'Downloading...' ) );
         chomp( $line );
 
-        if ( $line =~ /^Downloading daily-(\d+)/ ) {
+        if ( $line =~ /failed/ ) {
+            # Print these out to terminal window for now
+            warn $line, "\n";
+
+        } elsif ( $line =~ /Database test passed./ ) {
+            warn "Database test passed.\n";
+
+        } elsif ( $line =~ /^Downloading daily-(\d+).*?$/ ) {
+            # This one should probably be removed;
+            # was probably changed to the next elsif
+            my $new_daily = $1;
+
+            $liststore->set( $iter_hash, 0, _( 'Antivirus signatures' ),
+                1, $new_daily, );
+
+        } elsif ( $line
+            =~ q#^Retrieving https://database.clamav.net/daily-(\d+).cdiff# )
+        {
+            my $new_daily = $1;
+
+            $liststore->set( $iter_hash, 0, _( 'Antivirus signatures' ),
+                1, $new_daily, );
+
+        } elsif ( $line =~ /^Downloading database patch # (\d+).*?$/ ) {
             my $new_daily = $1;
 
             $liststore->set( $iter_hash, 0, _( 'Antivirus signatures' ),
                 1, $new_daily, );
 
         } elsif ( $line =~ /Database updated/ ) {
+            $pb->set_fraction( 1.0 );
+
+        } elsif (
+            # bytecode appears to be last
+            $line =~ /.*?bytecode.*?$/ && ( $line =~ /.*?up-to-date\.$/
+                || $line =~ /.*?up to date .*?/
+                || $line =~ /.*?updated\.$/ )
+            )
+        {
             $pb->set_fraction( 1.0 );
         } else {
             # warn "skipping line: >$line<\n";
@@ -242,6 +279,8 @@ sub get_freshclam_path {
         $command
             .= " --datadir=$paths->{db} --log=$paths->{db}/freshclam.log";
     }
+    # Add verbosity
+    $command .= " --verbose";
 
     # Did the user set the proxy option?
     if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) ) {
@@ -314,7 +353,8 @@ sub add_ua_proxy {
                         if ( /HTTPProxyServer\s+(.*?)$/ ) {
                             $url = $1;
                         }
-                        last if ( !$url );
+                        last
+                            if ( !$url );
                         if ( /HTTPProxyPort\s+(\d+)$/ ) {
                             $port = $1;
                         }

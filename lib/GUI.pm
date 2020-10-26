@@ -67,7 +67,7 @@ sub start_gui {
     $eb->add( $top_box );
 
     $hb->set_title( _( 'Virus Scanner' ) );
-    $hb->set_decoration_layout( 'menu:minimize,close' );
+    $hb->set_decoration_layout( 'menu,icon:minimize,close' );
     $hb->set_show_close_button( TRUE );
 
     my $separator = Gtk3::SeparatorToolItem->new;
