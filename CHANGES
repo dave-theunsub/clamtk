@@ -1,9 +1,10 @@
 CHANGELOG for ClamTk:
 
-6.07 - 20201026
+6.07 - 20210130
 ---------------
-    * Update to look for additional information to during update
-      to know when it's finished
+    * Update to look for additional information during update
+      to know when finished
+    * Update dates to 2021
 
 6.06 - 20200916
 ---------------

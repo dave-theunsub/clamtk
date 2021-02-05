@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2020 Dave M
+# ClamTk, copyright (C) 2004-2021 Dave M
 #
 # This file is part of ClamTk
 # (https://gitlab.com/dave_m/clamtk-gtk3/).
@@ -108,13 +108,13 @@ sub show_window {
         $text = _( 'Check for updates' );
         $infobar->add_button( $text, -5 );
 
-        #<<<
         $infobar->signal_connect(
             response => sub {
-                    update_signatures();
+                Gtk3::main_iteration while Gtk3::events_pending;
+                update_signatures();
+                Gtk3::main_iteration while Gtk3::events_pending;
             }
         );
-        #>>>
     }
 
     $box->pack_start( Gtk3::VBox->new, TRUE, TRUE, 5 );
@@ -227,6 +227,9 @@ sub update_signatures {
             $liststore->set( $iter_hash, 0, _( 'Antivirus signatures' ),
                 1, $new_daily, );
 
+        } elsif ( $line =~ /^Testing database/ ) {
+            $pb->set_text( _( 'Testing database' ) );
+
         } elsif ( $line =~ /^Downloading database patch # (\d+).*?$/ ) {
             my $new_daily = $1;
 
@@ -248,6 +251,7 @@ sub update_signatures {
             # warn "skipping line: >$line<\n";
             next;
         }
+        Gtk3::main_iteration while Gtk3::events_pending;
     }
     # Get local information. It would probably be okay to just
     # keep the same number we saw during the update, but this
@@ -263,8 +267,8 @@ sub update_signatures {
     # Update infobar type and text; remove button
     set_infobar_text( 'info', _( 'Complete' ) );
     ClamTk::GUI::set_infobar_mode( 'info', '' );
-    # $pb->hide;
-    # destroy_button();
+    $pb->hide;
+    destroy_button();
 
     return TRUE;
 }

@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2020 Dave M
+# ClamTk, copyright (C) 2004-2021 Dave M
 #
 # This file is part of ClamTk (https://gitlab.com/dave_m/clamtk/).
 #

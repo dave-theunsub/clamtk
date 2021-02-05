@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2020 Dave M
+# ClamTk, copyright (C) 2004-2021 Dave M
 #
 # This file is part of ClamTk
 # (https://gitlab.com/dave_m/clamtk-gtk3/).
@@ -559,6 +559,7 @@ sub bad_popup {
 
 sub logit {
     my $db_total = ClamTk::App->get_sigtool_info( 'count' );
+    # warn "in Scan: db_total = >$db_total<\n";
     my $REPORT;    # filehandle for histories log
 
     #<<<
