@@ -90,7 +90,7 @@ sub filter {
     # Begin popup scanning
     $window = Gtk3::Dialog->new(
         undef, undef,
-        [   qw| modal destroy-with-parent no-separator
+        [   qw| modal destroy-with-parent 
                 use-header-bar |
         ],
     );

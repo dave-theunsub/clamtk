@@ -48,7 +48,7 @@ sub show_window {
     ( undef, $from_scan, $parent ) = @_;
     $window = Gtk3::Dialog->new(
         undef, $parent,
-        [   qw| modal destroy-with-parent no-separator
+        [   qw| modal destroy-with-parent 
                 use-header-bar |
         ],
     );
