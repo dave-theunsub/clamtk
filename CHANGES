@@ -6,6 +6,7 @@ CHANGELOG for ClamTk:
     * Bug: app doesn't scan files/folders on demand  (Debian #981384)
     * Bug: Do not inject 'no-separator' into window decoration
       (Github #126)
+    * Add --alert-broken-media option for versions >= 103.1
 
 6.07 - 20210130
 ---------------

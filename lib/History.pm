@@ -148,7 +148,7 @@ sub view_history {
 
     my $win = Gtk3::Dialog->new(
         sprintf( _( 'Viewing %s' ), $basename ),
-        undef, [ qw| modal destroy-with-parent no-separator | ],
+        undef, [ qw| modal destroy-with-parent | ],
     );
     $win->signal_connect( destroy => sub { $win->destroy; 1 } );
     $win->set_default_size( 800, 350 );

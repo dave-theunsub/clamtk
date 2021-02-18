@@ -33,10 +33,10 @@ use Locale::gettext;
 
 binmode STDIN, ":encoding(UTF-8)";
 
-my $store;       # Liststore results
-my $model;       # ListStore for combobox
-my $combobox;    # ComboBox for previous analysis
-my $nb;          # Notebook
+my $store;            # Liststore results
+my $model;            # ListStore for combobox
+my $combobox;         # ComboBox for previous analysis
+my $nb;               # Notebook
 my $filename = '';    # name of file analyzed
 my $bar;              # InfoBar
 my $window;           # Dialog; global for queue_draw;
@@ -46,12 +46,10 @@ my $from_scan;
 
 sub show_window {
     ( undef, $from_scan, $parent ) = @_;
-    $window = Gtk3::Dialog->new(
-        undef, $parent,
-        [   qw| modal destroy-with-parent no-separator
-                use-header-bar |
-        ],
-    );
+    $window
+        = Gtk3::Dialog->new( undef, $parent,
+        [ qw| modal destroy-with-parent use-header-bar | ],
+        );
     $window->signal_connect(
         destroy => sub {
             $window->destroy;
