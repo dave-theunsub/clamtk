@@ -1,12 +1,12 @@
 CHANGELOG for ClamTk:
 
-6.08 - 2021XXXX
+6.08 - 20210218
 ---------------
-    * Completely remove older repo (clamtk-gtk3), use clamtk only
     * Bug: app doesn't scan files/folders on demand  (Debian #981384)
     * Bug: Do not inject 'no-separator' into window decoration
       (Github #126)
     * Add --alert-broken-media option for versions >= 103.1
+    * Remove older repo (clamtk-gtk3), use clamtk only
 
 6.07 - 20210130
 ---------------
