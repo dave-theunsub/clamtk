@@ -1,4 +1,4 @@
-This README was last updated on 18 October 2020.
+This README was last updated on 18 February 2021.
 
 # Readme for ClamTk
 
@@ -19,7 +19,7 @@ This README was last updated on 18 October 2020.
 
 ClamTk is a frontend for ClamAV (Clam Antivirus). It is intended to be an easy to use, light-weight, on-demand scanner for Linux systems.
 
-Although its earliest incarnations date to 2003, ClamTk was first uploaded for distribution in 2004 to a rootshell.be account and finally to Sourceforge.net in 2005. At the end of 2013, it was moved to a Google Code page (then to Github), then Gitlab and Bitbucket. It is now 2020 and for some reason, development is still going. In fact, February 2020 marks 16 years of activity (of being publicly available, that is).
+Although its earliest incarnations date to 2003, ClamTk was first uploaded for distribution in 2004 to a rootshell.be account and finally to Sourceforge.net in 2005. At the end of 2013, it was moved to a Google Code page (then to Github), then Gitlab and Bitbucket. It is now 2021 and for some reason, development is still going. In fact, February 2021 marks 17 years of activity (of being publicly available, that is).
 
 
 ## Plans
