@@ -1,7 +1,7 @@
 # ClamTk, copyright (C) 2004-2021 Dave M
 #
 # This file is part of ClamTk
-# (https://gitlab.com/dave_m/clamtk-gtk3/).
+# (https://gitlab.com/dave_m/clamtk/).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -25,7 +25,7 @@ use Encode 'decode';
 
 sub get_TK_version {
     # Stick with %.2f format - 4.50 vice 4.5
-    return '6.07';
+    return '6.08';
 }
 
 sub get_path {

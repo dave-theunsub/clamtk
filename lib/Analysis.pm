@@ -1,7 +1,7 @@
 # ClamTk, copyright (C) 2004-2021 Dave M
 #
 # This file is part of ClamTk
-# (https://gitlab.com/dave_m/clamtk-gtk3/).
+# (https://gitlab.com/dave_m/clamtk/).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -33,10 +33,10 @@ use Locale::gettext;
 
 binmode STDIN, ":encoding(UTF-8)";
 
-my $store;       # Liststore results
-my $model;       # ListStore for combobox
-my $combobox;    # ComboBox for previous analysis
-my $nb;          # Notebook
+my $store;            # Liststore results
+my $model;            # ListStore for combobox
+my $combobox;         # ComboBox for previous analysis
+my $nb;               # Notebook
 my $filename = '';    # name of file analyzed
 my $bar;              # InfoBar
 my $window;           # Dialog; global for queue_draw;
@@ -48,10 +48,9 @@ sub show_window {
     ( undef, $from_scan, $parent ) = @_;
     $window = Gtk3::Dialog->new(
         undef, $parent,
-        [   qw| modal destroy-with-parent 
-                use-header-bar |
-        ],
+        [ qw| modal destroy-with-parent use-header-bar | ],
     );
+
     $window->signal_connect(
         destroy => sub {
             $window->destroy;

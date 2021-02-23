@@ -1,7 +1,7 @@
 # ClamTk, copyright (C) 2004-2021 Dave M
 #
 # This file is part of ClamTk
-# (https://gitlab.com/dave_m/clamtk-gtk3/).
+# (https://gitlab.com/dave_m/clamtk/).
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
@@ -38,8 +38,8 @@ my $found_count = 0;    # Scalar number of bad stuff found
 my $num_scanned = 0;    # Overall number of files scanned
 my %dirs_scanned;       # Directories scanned
 
-my $hb;                 # HeaderBar
-my $pb;                 # ProgressBar
+my $hb;                     # HeaderBar
+my $pb;                     # ProgressBar
 my $pb_file_counter = 0;    # For ProgressBar
 my $pb_step;                # For ProgressBar
 my $root_scan = FALSE;      # Scanning /
@@ -90,9 +90,7 @@ sub filter {
     # Begin popup scanning
     $window = Gtk3::Dialog->new(
         undef, undef,
-        [   qw| modal destroy-with-parent 
-                use-header-bar |
-        ],
+        [ qw| modal destroy-with-parent use-header-bar | ],
     );
     $window->set_deletable( FALSE );
     $window->set_default_size( 450, 80 );
@@ -267,11 +265,18 @@ sub filter {
     $version =~ s/[^0-9\.]//g;
     $version =~ s/^[0\.]+//;
     $version =~ s/\.0$//;
+    warn "clamscan version = >$version<\n";
     if (   ( $version <=> '97' ) == 0
         || ( $version <=> '97' ) == 1 )
     {
         $directive .= ' --follow-dir-symlinks=1';
         $directive .= ' --follow-file-symlinks=1';
+    }
+    # This feature mitigates the risk of malformed media files intended
+    # to exploit vulnerabilities in other software. At present, media
+    # validation exists for JPEG, TIFF, PNG and GIF files.
+    if ( $version >= '103.1' ) {
+        $directive .= ' --alert-broken-media=yes';
     }
 
     # we'll count this as ! $stopped
@@ -288,8 +293,7 @@ sub filter {
         if (   ( $version <=> '101' ) == 0
             || ( $version <=> '101' ) == 1 )
         {
-            $directive .= ' --detect-pua --alert-broken'
-            . ' --alert-macros';
+            $directive .= ' --detect-pua --alert-broken' . ' --alert-macros';
         } else {
             $directive .= ' --detect-pua --algorithmic-detection';
         }
@@ -551,7 +555,7 @@ sub reset_stats {
 sub bad_popup {
     my $dialog = Gtk3::MessageDialog->new(
         $window, [ qw| modal destroy-with-parent | ],
-        'info', 'close', _( 'No threats found' ),
+        'info',  'close', _( 'No threats found' ),
     );
     $dialog->run;
     $dialog->destroy;
