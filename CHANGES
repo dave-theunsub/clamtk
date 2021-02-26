@@ -1,5 +1,10 @@
 CHANGELOG for ClamTk:
 
+6.09 - 20210227
+---------------
+    * Remove code referencing old repo.
+    * Closing: Gitlab #112, Github #8 (clamtk-gnome), Github #99, Github #118
+
 6.08 - 20210218
 ---------------
     * Bug: app doesn't scan files/folders on demand  (Debian #981384)

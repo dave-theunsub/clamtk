@@ -1,4 +1,4 @@
-This README was last updated on 22 February 2021.
+This README was last updated on 26 February 2021.
 
 # Readme for ClamTk
 
@@ -30,13 +30,14 @@ Version 7 will likely have a new design, and will almost certainly use a differe
 
 ClamTk:  
 https://gitlab.com/dave_m/clamtk-gtk3/  
-https://bitbucket.org/davem_/clamtk-gtk3/  
 https://gitlab.com/dave_m/clamtk/wikis/home  
 https://launchpad.net/clamtk  
 https://code.google.com/p/clamtk/ (deprecated)  
 http://clamtk.sourceforge.net (deprecated)  
 https://dave-theunsub.github.io/clamtk/ (deprecated)  
 https://github.com/dave-theunsub/clamtk/ (deprecated)  
+https://bitbucket.org/davem_/clamtk-gtk3/ (deprecated)  
+https://bitbucket.org/davem_/clamtk/ (deprecated)  
 
 [ClamAV](https://www.clamav.net)  
 [Gtk2-Perl](http://gtk2-perl.sourceforge.net)  
