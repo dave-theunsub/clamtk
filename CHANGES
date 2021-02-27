@@ -4,6 +4,8 @@ CHANGELOG for ClamTk:
 ---------------
     * Remove code referencing old repo.
     * Closing: Gitlab #112, Github #8 (clamtk-gnome), Github #99, Github #118
+    * Move Greek (el_GR) language file to probably proper directory
+    * Updated language file: English (en_CA)
 
 6.08 - 20210218
 ---------------
