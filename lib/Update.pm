@@ -129,7 +129,7 @@ sub show_window {
 }
 
 sub get_remote_TK_version {
-    my $url = 'https://bitbucket.org/davem_/clamtk-gtk3/raw/master/latest6';
+    my $url = 'https://raw.githubusercontent.com/dave-theunsub/clamtk/master/latest';
 
     $ENV{ HTTPS_DEBUG } = 1;
 
@@ -140,8 +140,10 @@ sub get_remote_TK_version {
     if ( $response->is_success ) {
         my $content = $response->content;
         chomp( $content );
+        warn "remote tk version = >$content<\n";
         return $content;
     } else {
+        warn "failed remote tk check >", $response->status_line, "<\n";
         return '';
     }
 

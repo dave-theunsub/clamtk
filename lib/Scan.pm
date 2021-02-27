@@ -582,7 +582,7 @@ sub logit {
     my $paths = ClamTk::App->get_path( 'history' );
 
     my $virus_log
-        = $paths . "/" . decode( 'utf8', "$mon-$day-$year" ) . '.log';
+        = $paths . "/" . decode( 'UTF-8', "$mon-$day-$year" ) . '.log';
 
     #<<<
     # sort the directories scanned for display
