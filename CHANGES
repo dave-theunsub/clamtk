@@ -2,7 +2,7 @@ CHANGELOG for ClamTk:
 
 6.10 - 2021xxxx
 ---------------
-    * Add appdata.xml file.
+    * Add appdata.xml file (Bugzilla #1819344)
 
 6.09 - 20210227
 ---------------
