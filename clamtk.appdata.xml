@@ -80,8 +80,6 @@
    <category>System</category>
  </categories>
  <icon type="local" width="128" height="128">/usr/share/pixmaps/clamtk.png</icon>
- <url type="homepage">https://github.com/dave-theunsub/clamtk/</url>
- <update_contact>dave.nerd@gmail.com</update_contact>
  <releases>
     <release version="6.09" date="2021-02-27">
       <description>
@@ -89,4 +87,10 @@
       </description>
     </release>
   </releases>
+ <update_contact>dave.nerd@gmail.com</update_contact>
+ <url type="homepage">https://github.com/dave-theunsub/clamtk/</url>
+ <url type="bugtracker">https://bugzilla.redhat.com/buglist.cgi?quicksearch=clamtk</url>
+  <url type="translate">https://translations.launchpad.net/clamtk</url>
+  <url type="faq">https://github.com/dave-theunsub/clamtk/blob/master/README.md</url>
+
 </component>
