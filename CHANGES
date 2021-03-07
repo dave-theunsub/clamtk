@@ -1,5 +1,9 @@
 CHANGELOG for ClamTk:
 
+6.10 - 2021xxxx
+---------------
+    * Add appdata.xml file.
+
 6.09 - 20210227
 ---------------
     * Remove code referencing old repo.

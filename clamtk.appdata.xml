@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2021 Dave M <dave.nerd@gmail.com> -->
+<component>
+ <id>org.clamtk</id>
+ <metadata_license>FSFAP</metadata_license>
+ <project_license>GPL-2.0+</project_license>
+ <name>ClamTk</name>
+ <name xml:lang="af">ClamTk Virus Skandeerder</name>
+ <name xml:lang="ast">Analizador de virus ClamTk</name>
+ <name xml:lang="az">ClamTk Virus Skaneri</name>
+ <name xml:lang="bg">Антивирусен скенер ClamTK</name>
+ <name xml:lang="cs">ClamTk Virus Scanner</name>
+ <name xml:lang="de">ClamTK-Virenscanner</name>
+ <name xml:lang="es">Analizador de virus ClamTk</name>
+ <name xml:lang="fi">ClamTk-virustarkistus</name>
+ <name xml:lang="fr">Antivirus ClamTk</name>
+ <name xml:lang="gl">Analizador de virus ClamTk</name>
+ <name xml:lang="he">סורק הווירוסים ClamTk</name>
+ <name xml:lang="hu">ClamTk víruskereső</name>
+ <name xml:lang="id">Pemindai Virus ClamTk</name>
+ <name xml:lang="it">Analizzatore virus ClamTk</name>
+ <name xml:lang="jp">ClamTkウイルススキャナー</name>
+ <name xml:lang="ko">ClamTk 바이러스 검사기</name>
+ <name xml:lang="mnw">စက်ဂၠာဲစၟ CLamTk</name>
+ <name xml:lang="ms">Pengimbas Virus ClamTk</name>
+ <name xml:lang="nl">ClamTk-virusscanner</name>
+ <name xml:lang="nl_BE">Virusscanner</name>
+ <name xml:lang="pa">Sਕਲੈਮ-ਟੀ-ਕੇ (ClamTk) ਵਿਸ਼ਾਣੂ ਖੋਜੀ</name>
+ <name xml:lang="pl">Skaner antywirusowy ClamTK</name>
+ <name xml:lang="pt">Analizador de Virus ClamTk</name>
+ <name xml:lang="pt_BR">ClamTK Escaneador de Vírus</name>
+ <name xml:lang="ro">Scaner de viruși ClamT</name>
+ <name xml:lang="ru">Антивирусный сканер ClamTK</name>
+ <name xml:lang="sk">ClamTk Virus Scanner</name>
+ <name xml:lang="sr@latin">ClamTk Virus Skener</name>
+ <name xml:lang="sv">ClamTk-virusskanner</name>
+ <name xml:lang="tr">ClamTk Virüs Tarayıcı</name>
+ <name xml:lang="uk">Антивірусний сканер ClamTk</name>
+ <name xml:lang="uz">ClamTk Virus Scanner</name>
+ <name xml:lang="zh_CN">ClamTk 病毒扫描器</name>
+ <name xml:lang="zh_TW">ClamTk 病毒掃描</name>
+ <summary>Easy to use graphical user interface for Clam Antivirus (ClamAV)</summary>
+ <summary xml:lang="af">ClamTk is 'n grafiese voorkant-einde vir Clam Antivirus</summary>
+ <summary xml:lang="ast">ClamTk ye una interfaz gráfica pa Clam Antivirus</summary>
+ <summary xml:lang="bs">ClamTk je grafičko sučelje za ClamAV antivirus</summary>
+ <summary xml:lang="ca">ClamTk és una interfície gràfica per a l'antivirus ClamAV programat</summary>
+ <summary xml:lang="de">ClamTk ist eine grafisches Oberfläche für Clam-Antivirus</summary>
+ <summary xml:lang="es">ClamTk es una interfaz gráfica para Clam Antivirus</summary>
+ <summary xml:lang="eu">gtk2-perl erabiliz ClamAV antibirusarentzako sortutako interfaze grafiko bat da ClamTk</summary>
+ <summary xml:lang="fi">ClamTk on graafinen käyttöliittymä Clam Antivirus -virustorjunnalle</summary>
+ <summary xml:lang="fo">ClamTk er eitt grafiskt brúkaramarkamót (GUI) fyri ClamAV antivirus</summary>
+ <summary xml:lang="fr">ClamTk est une interface graphique pour Clam Antivirus</summary>
+ <summary xml:lang="gl">ClamTk é unha interface gráfica para Clam Antivirus</summary>
+ <summary xml:lang="he">ClamTk הוא מעטפת גרפית ל־Clam Antivirus</summary>
+ <summary xml:lang="hu">A ClamTk egy grafikus felület a Clam Antivirushoz</summary>
+ <summary xml:lang="id">ClamTk adalah grafis tampilan muka untuk Clam Antivirus</summary>
+ <summary xml:lang="it">ClamTk è un'interfaccia grafica per Clam Antivirus</summary>
+ <summary xml:lang="ja">ClamTkはClam Antivirusのためのグラフィカルなフロントエンドです</summary>
+ <summary xml:lang="lt">ClamTk yra ClamAV antivirusinės programos grafinė sąsaja</summary>
+ <summary xml:lang="ms">ClamTk ialah sebuah bahagian-hadapan bergrafik untuk Clam Antivirus</summary>
+ <summary xml:lang="nb">ClamTk er et grafisk grensesnitt til ClamAV</summary>
+ <summary xml:lang="nl">ClamTk is een grafische gebruikersinterface voor Clam Antivirus</summary>
+ <summary xml:lang="pl">ClamTK jest graficznym interfejsem dla Clam Antivirus</summary>
+ <summary xml:lang="sl">ClamTk je grafični vmesnik za protivirusni sistem ClamAV</summary>
+ <summary xml:lang="sv">ClamTk är ett grafiskt front-end för Clam Antivirus</summary>
+ <summary xml:lang="tr">ClamTk, Clam Antivirus İçin Grafik Arayüz</summary>
+ <summary xml:lang="uk">ClamTk — графічна оболонка до антивірусу Clam</summary>
+ <summary xml:lang="uz">ClamTk – Clam Antivirusning grafik interfeysli versiyasi</summary>
+ <summary xml:lang="zh_TW">ClamTk 是 Clam Antivirus 的圖形化前端</summary>
+ <description>
+ <p>ClamTk is intended to be an easy to use, light-weight, on-demand scanner for Linux systems.</p>
+ </description>
+ <screenshots>
+   <screenshot type="default">
+     <caption>An easy to use virus scanner for Linux systems.</caption>
+     <image type="source" width="300" height="300">https://github.com/dave-theunsub/clamtk/raw/master/images/clamtk_300x300.png</image>
+   </screenshot>
+ </screenshots>.
+ <categories>
+   <category>System</category>
+ </categories>
+ <icon type="local" width="128" height="128">/usr/share/pixmaps/clamtk.png</icon>
+ <url type="homepage">https://github.com/dave-theunsub/clamtk/</url>
+ <update_contact>dave.nerd@gmail.com</update_contact>
+ <releases>
+    <release version="6.09" date="2021-02-27">
+      <description>
+        <p>Bug fixes</p>
+      </description>
+    </release>
+  </releases>
+</component>
