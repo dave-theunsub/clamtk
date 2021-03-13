@@ -1,6 +1,6 @@
 CHANGELOG for ClamTk:
 
-6.10 - 2021xxxx
+6.10 - 20210313
 ---------------
     * Add appdata.xml file (Bugzilla #1819344)
     * Updated language file: Finnish (fi)
