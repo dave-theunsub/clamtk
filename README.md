@@ -1,4 +1,4 @@
-This README was last updated on 27 February 2021.
+This README was last updated on 13 March 2021.
 
 # Readme for ClamTk
 
@@ -61,7 +61,7 @@ For these examples, we will use version 6.06. The name of the file may differ ba
 
 To install using a terminal window:  
 
-`sudo yum install clamtk-6.06-1.el8.noarch.rpm` or `sudo dnf install clamtk-6.06-1.fc.noarch.rpm`
+`sudo yum install clamtk-6.10-1.el8.noarch.rpm` or `sudo dnf install clamtk-6.10-1.fc.noarch.rpm`
 
 To remove clamtk:  
 
@@ -73,7 +73,7 @@ To remove clamtk:
 The tarball contains all the sources. One way to do this, as tested on Fedora, is to run the following commands:  
 
 ```
-tar xzf clamtk-6.06.tar.xz  
+tar xzf clamtk-6.10.tar.xz  
 sudo mkdir -p /usr/share/perl5/vendor_perl/ClamTk  
 sudo cp lib/*.pm /usr/share/perl5/vendor_perl/ClamTk  
 sudo chmod +x clamtk  
@@ -102,7 +102,7 @@ From the commandline, you can do this:
 
 If you downloaded the file, then use this:
 
-    sudo apt install clamtk_6.06-1_all.deb
+    sudo apt install clamtk_6.09-1_all.deb
 
 To remove clamtk:  
 
@@ -120,10 +120,10 @@ While the Debian/Ubuntu .debs have always been digitally signed, the rpms have n
 `rpm --import https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-21-June-2018`  
 2. Verify the list of gpg keys installed in RPM DB:  
 `rpm -q gpg-pubkey --qf '%{name}-%{version}-%{release} --> %{summary}\n'`  
-3. Check the signature of the rpm. For this example, we'll use version 6.06:  
-`rpm --checksig clamtk-6.06-1.fc.noarch.rpm`  
+3. Check the signature of the rpm. For this example, we'll use version 6.10:  
+`rpm --checksig clamtk-6.10-1.fc.noarch.rpm`  
 4. You should see something like this:  
-`/home/you/clamtk-6.06-1.fc.noarch.rpm: rsa sha1 (md5) pgp md5 OK`
+`/home/you/clamtk-6.10-1.fc.noarch.rpm: rsa sha1 (md5) pgp md5 OK`
 
 You can also verify the tarball. Using 6.06 as the example version, ensure you have downloaded the tarball, its detached signature (.asc), and the key in step 1 above.
 
@@ -132,8 +132,8 @@ You can also verify the tarball. Using 6.06 as the example version, ensure you h
 2. Import it (skip this step if you have done it already):  
 `gpg --import RPM-GPG-KEY-DaveM-21-June-2018`  
 3. Verify like so:  
-`gpg2 --verify clamtk-6.06.tar.xz.asc clamtk-6.06.tar.gz` or  
-`gpg --verify clamtk-6.06.tar.xz.asc clamtk-6.06.tar.xz`  
+`gpg2 --verify clamtk-6.10.tar.xz.asc clamtk-6.10.tar.gz` or  
+`gpg --verify clamtk-6.10.tar.xz.asc clamtk-6.10.tar.xz`  
 4. You should see something like this:  
 `gpg: Signature made Sun 11 Sep 2016 06:29:41 AM CDT using RSA key ID` (snipped for brevity).  
 
@@ -148,11 +148,11 @@ Then, you will need the minisig file for the program you are verifying.
 A link to it will be with the rest of the downloads. 
 
 For this example:  
-https://bitbucket.org/davem_/clamtk-gtk3/downloads/clamtk-6.06.tar.xz.minisig
+https://github.com/dave-theunsub/clamtk/releases/download/v6.10/clamtk-6.10.tar.xz.minisig
 
 Now, you verify like so:  
 ```
-minisign -V -x clamtk-6.06.tar.xz.minisig -p davemminisign.pub -m clamtk-6.06.tar.xz
+minisign -V -x clamtk-6.10.tar.xz.minisig -p davemminisign.pub -m clamtk-6.10.tar.xz
 ```
 
 
@@ -162,11 +162,11 @@ minisign -V -x clamtk-6.06.tar.xz.minisig -p davemminisign.pub -m clamtk-6.06.ta
 
 * Beginning with version 4.23, ClamTk will automatically search for signatures if you do not have them set already. This way ClamTk should work right out of the box, with no prompting.  
 * Consider the extra scanning options in Settings.
-  * Select "Scan files beginning with a dot (.*)" to scan those files beginning with a ".".  These are sometimes referred to as "hidden" files.  
-  * Select "Scan directories recursively" to scan all files and directories within a directory.  
-  * The "Scan for PUAs" option enables the ability to scan for Potentially Unwanted Applications as well as broken executables.  Note that this can result in what may be false positives.  
-  * By default, ClamTk will avoid scanning files larger than 20MB. To force scanning of these files, check the "Scan files larger than 20 MB" box.  
-  * You can also check for updates upon startup.  This requires an active Internet connection.  
+* Select "Scan files beginning with a dot (.*)" to scan those files beginning with a ".".  These are sometimes referred to as "hidden" files.  
+* Select "Scan directories recursively" to scan all files and directories within a directory.  
+* The "Scan for PUAs" option enables the ability to scan for Potentially Unwanted Applications as well as broken executables.  Note that this can result in what may be false positives.  
+* By default, ClamTk will avoid scanning files larger than 20MB. To force scanning of these files, check the "Scan files larger than 20 MB" box.  
+* You can also check for updates upon startup.  This requires an active Internet connection.  
 * Information on items quarantined is available under the "Quarantine" option.  If you believe there is a false positive contained, you can easily move it back to your home directory. You may also delete this file(s). *Note that there is no recycle bin - once deleted, they are gone forever.*    
 * Scan a file or directory by right-clicking on it within the file manager (e.g., Nautilus).  This functionality requires an extra package (clamtk-gnome).
 * You can STOP the scan by clicking the Cancel button. Note that due to the speed of the scanning, it may not stop immediately; it will continue scanning and displaying files it has already "read" until the stop catches up.  
@@ -210,7 +210,7 @@ To add a right-click, context menu ability to send files and directories to the 
 
 https://gitlab.com/dave_m/clamtk/wikis/Downloads  
 
-Here are the specific pages:  
+Here are the specific pages. Note that these are usually mirrored on Github as wel.  
 
 For Gnome (Files file manager):  
 https://gitlab.com/dave_m/clamtk-gnome  
@@ -295,9 +295,9 @@ Also a big thank you to:
 For feature requests or bugs, it is best to use one of the following:  
 
 [https://gitlab.com/dave_m/clamtk/issues](https://gitlab.com/dave_m/clamtk/issues)  
+https://github.com/dave-theunsub/clamtk  
 https://launchpad.net/clamtk  
 
 While we recommend opening an official bug on the appropriate page, we will also accept email.   
 
 * Dave M, dave.nerd @gmail.com [0xF51D19546ADA59DE](https://pgp.circl.lu/pks/lookup?op=get&search=0xF51D19546ADA59DE)  
-* Tord D, tord.dellsen @gmail.com  
