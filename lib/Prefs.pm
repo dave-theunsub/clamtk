@@ -68,7 +68,7 @@ sub structure {
     # This is /home/user/.clamtk/prefs,
     # a custom INI-style file.
     if ( !-e $paths->{ prefs } ) {
-        warn "note: (re)creating prefs file.\n";
+        # warn "note: (re)creating prefs file.\n";
         open( my $F, '>:encoding(UTF-8)', $paths->{ prefs } )
             or do {
             warn "Unable to create preferences! $!\n";
@@ -323,10 +323,11 @@ sub set_proxy {
     # If the user doesn't set a port, we'll just jot down port 80.
     $port = $port || '80';
 
-    my $path = ClamTk::App->get_path( 'db' );
+    my $path = ClamTk::App->get_path( 'localfreshclamconf' );
+    warn "Prefs set_proxy: path = >$path<\n";
 
     # This gets clobbered every time.
-    open( my $FH, '>:encoding(UTF-8)', "$path/local.conf" )
+    open( my $FH, '>:encoding(UTF-8)', $path )
         or return -1;
     print $FH <<"EOF";
 HTTPProxyServer $ip
@@ -340,13 +341,11 @@ EOF
 }
 
 sub set_local_config {
-    my $path = ClamTk::App->get_path( 'db' );
-    if ( -e "$path/freshclam.conf" ) {
-        return;
-    }
+    my $path = ClamTk::App->get_path( 'localfreshclamconf' );
+    return if ( -e $path );
 
     # This gets clobbered every time.
-    open( my $FH, '>:encoding(UTF-8)', "$path/freshclam.conf" )
+    open( my $FH, '>:encoding(UTF-8)', $path )
         or return -1;
     print $FH <<"EOF";
 # Local config
@@ -354,9 +353,9 @@ DatabaseMirror database.clamav.net
 LogSyslog no
 EOF
     close( $FH )
-        or warn "Couldn't close $path/freshclam.conf: $!\n";
-    if ( !-e "$path/freshclam.conf" ) {
-        warn "Couldn't create local freshclam.conf!\n"
+        or warn "Couldn't close $path: $!\n";
+    if ( !-e $path ) {
+        warn "Couldn't create local freshclam ($path)!\n"
             . "You will be unable to do manual updates.\n";
     }
     return 1;

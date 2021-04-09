@@ -327,7 +327,7 @@ sub apply_scan {
     # ensure old task is removed
     remove( '# clamtk-scan' );
 
-    my $tmp_file = "$paths->{clamtk}" . "/" . "cron";
+    my $tmp_file = "$paths->{ clamtk }" . "/" . "cron";
     open( my $T, '>', $tmp_file )
         or do {
         warn "Error opening temporary file in apply_scan: $!\n";
@@ -421,7 +421,7 @@ sub apply_scan {
     # reload crontab
     system( $cmd, $tmp_file ) == 0
         or do {
-        warn 'Error reloading cron file';
+        warn "Error reloading cron file\n";
         unlink( $tmp_file )
             or warn "Unable to delete tmp_file $tmp_file: $!\n";
         return;
@@ -471,14 +471,16 @@ sub apply_defs {
         )
     {
         $full_cmd
-            .= " --datadir=$paths->{db} --log=$paths->{db}/freshclam.log";
+            .= " --config-file=$paths->{ localfreshclamconf } "
+            . "--datadir=$paths->{db} "
+            . "--log=$paths->{db}/freshclam.log";
     }
 
     # Add config file if user has configured a proxy
     if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) ) {
         if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 2 ) {
-            if ( -e "$paths->{db}/local.conf" ) {
-                $full_cmd .= " --config-file=$paths->{db}/local.conf";
+            if ( -e $paths->{ localfreshclamconf } ) {
+                $full_cmd .= " --config-file=$paths->{ localfreshclamconf }";
             }
         }
     }

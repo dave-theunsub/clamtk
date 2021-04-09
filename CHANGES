@@ -1,5 +1,10 @@
 CHANGELOG for ClamTk:
 
+6.11 - 20210409
+---------------
+    * Clamtk and Clamav do not update automatically (Github #127).
+      Please remove old scheduled tasks and re-add them to take effect
+
 6.10 - 20210313
 ---------------
     * Add appdata.xml file (Bugzilla #1819344)

@@ -129,7 +129,8 @@ sub show_window {
 }
 
 sub get_remote_TK_version {
-    my $url = 'https://raw.githubusercontent.com/dave-theunsub/clamtk/master/latest';
+    my $url
+        = 'https://raw.githubusercontent.com/dave-theunsub/clamtk/master/latest';
 
     $ENV{ HTTPS_DEBUG } = 1;
 
@@ -140,7 +141,7 @@ sub get_remote_TK_version {
     if ( $response->is_success ) {
         my $content = $response->content;
         chomp( $content );
-        warn "remote tk version = >$content<\n";
+        # warn "remote tk version = >$content<\n";
         return $content;
     } else {
         warn "failed remote tk check >", $response->status_line, "<\n";
@@ -157,7 +158,7 @@ sub update_signatures {
 
     my $freshclam = get_freshclam_path();
     if ( ClamTk::Prefs->get_preference( 'Update' ) eq 'single' ) {
-        my $dbpath = ClamTk::App->get_path( 'db' ) . '/' . 'freshclam.conf';
+        my $dbpath = ClamTk::App->get_path( 'localfreshclamconf' );
         if ( -e $dbpath ) {
             $freshclam .= " --config-file=$dbpath";
         }
@@ -288,11 +289,11 @@ sub get_freshclam_path {
     # Add verbosity
     $command .= " --verbose";
 
-    # Did the user set the proxy option?
+    # Was the proxy option set?
     if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) ) {
         if ( ClamTk::Prefs->get_preference( 'HTTPProxy' ) == 2 ) {
-            if ( -e "$paths->{db}/local.conf" ) {
-                $command .= " --config-file=$paths->{db}/local.conf";
+            if ( -e $paths->{ localfreshclamconf } ) {
+                $command .= " --config-file=$paths->{ localfreshclamconf }";
             }
         }
     }

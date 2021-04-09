@@ -92,6 +92,20 @@ sub get_path {
         : ( -e '/opt/local/bin/freshclam' ) ? '/opt/local/bin/freshclam'
         :                                     '';
 
+    # Most times freshclam.conf is under /etc
+    # If Update eq "shared":
+    $path->{ systemfreshclamconf }
+        = ( -e '/etc/freshclam.conf' )
+        ? '/etc/freshclam.conf'
+        : '';
+
+    # Local freshclam.conf is under ~/.clamtk/db/
+    # If Update eq "single":
+    $path->{ localfreshclamconf } = "$path->{db}/local.conf";
+    #= ( -e "$path->{ db }/local.conf" )
+    # ? "$path->{ db }/local.conf"
+    # : '';
+
     # Use sigtool for db info
     $path->{ sigtool }
         = ( -e '/usr/bin/sigtool' )       ? '/usr/bin/sigtool'
