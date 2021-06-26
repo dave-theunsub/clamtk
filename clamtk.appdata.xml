@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2021 Dave M <dave.nerd@gmail.com> -->
-<component>
- <id>org.clamtk</id>
+<component type="desktop">
+ <id>clamtk.desktop</id>
  <metadata_license>FSFAP</metadata_license>
  <project_license>GPL-2.0+</project_license>
  <name>ClamTk</name>
