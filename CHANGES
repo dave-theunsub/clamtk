@@ -1,8 +1,14 @@
 CHANGELOG for ClamTk:
 
+6.12 - 20210605
+---------------
+    * Fixes for appdata.xml (Github #128, Bugzilla #1819344)
+    * Partially work Github #129 (add engine version, date of sigs)
+    * Update translations in clamtk.desktop
+
 6.11 - 20210409
 ---------------
-    * Clamtk and Clamav do not update automatically (Github #127).
+    * Clamtk and Clamav do not update automatically (Github #127)
       Please remove old scheduled tasks and re-add them to take effect
 
 6.10 - 20210313
@@ -12,7 +18,7 @@ CHANGELOG for ClamTk:
 
 6.09 - 20210227
 ---------------
-    * Remove code referencing old repo.
+    * Remove code referencing old repo
     * Closing: Gitlab #112, Github #8 (clamtk-gnome), Github #99, Github #118
     * Move Greek (el_GR) language file to probably proper directory
     * Updated language file: English (en_CA)
