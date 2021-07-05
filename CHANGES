@@ -1,9 +1,9 @@
 CHANGELOG for ClamTk:
 
-6.12 - 20210605
+6.12 - 20210705
 ---------------
     * Fixes for appdata.xml (Github #128, Bugzilla #1819344)
-    * Partially work Github #129 (add engine version, date of sigs)
+    * Partially work Github #129 (engine version, date of sigs, title)
     * Update translations in clamtk.desktop
 
 6.11 - 20210409

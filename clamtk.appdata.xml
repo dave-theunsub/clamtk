@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2021 Dave M <dave.nerd@gmail.com> -->
-<component type="desktop">
- <id>clamtk.desktop</id>
+<component type="desktop-application">
+ <id>com.github.davetheunsub.clamtk</id>
  <metadata_license>FSFAP</metadata_license>
  <project_license>GPL-2.0+</project_license>
  <name>ClamTk</name>
@@ -70,18 +70,24 @@
  <description>
  <p>ClamTk is intended to be an easy to use, light-weight, on-demand scanner for Linux systems.</p>
  </description>
- <screenshots>
-   <screenshot type="default">
-     <caption>An easy to use virus scanner for Linux systems.</caption>
-     <image type="source" width="300" height="300">https://github.com/dave-theunsub/clamtk/raw/master/images/clamtk_300x300.png</image>
-   </screenshot>
- </screenshots>.
- <categories>
+
+  <categories>
    <category>System</category>
  </categories>
- <icon type="local" width="128" height="128">/usr/share/pixmaps/clamtk.png</icon>
+
+ <screenshots>
+     <screenshot type="default">
+         <caption>The initial screen</caption>
+         <image>https://davem.fedorapeople.org/images/clamtk-1-screenshot.png</image>
+     </screenshot>
+     <screenshot>
+         <caption>Program settings dialog</caption>
+         <image>https://davem.fedorapeople.org/images/clamtk-2-screenshot.png</image>
+     </screenshot>
+ </screenshots>
+
  <releases>
-    <release version="6.09" date="2021-02-27">
+    <release version="6.12" date="2021-06-05">
       <description>
         <p>Bug fixes</p>
       </description>

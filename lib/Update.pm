@@ -49,7 +49,7 @@ sub show_window {
 
     $liststore = Gtk3::ListStore->new(
         # product, local version,
-        'Glib::String', 'Glib::String',
+        'Glib::String', 'Glib::String', 'Glib::String',
     );
 
     # Product column
@@ -61,6 +61,7 @@ sub show_window {
         Gtk3::CellRendererText->new,
         text => 0,
     );
+    $column->set_alignment( 0.5 );
     $view->append_column( $column );
 
     # Installed version column
@@ -69,16 +70,30 @@ sub show_window {
         Gtk3::CellRendererText->new,
         text => 1,
     );
+    $column->set_alignment( 0.5 );
+    $view->append_column( $column );
+
+    # Date of signatures
+    $column = Gtk3::TreeViewColumn->new_with_attributes(
+        _( 'Date' ),
+        Gtk3::CellRendererText->new,
+        text => 2,
+    );
+    $column->set_alignment( 0.5 );
     $view->append_column( $column );
 
     # Get local information
     my $local_sig_version = ClamTk::App->get_local_sig_version();
+
+    # Get date of signatures
+    my $av_date = ClamTk::App->get_sigtool_info( 'date' );
 
     #<<<
     my @data = (
         {
             product => _( 'Antivirus signatures' ),
             local   => $local_sig_version,
+            date    => $av_date,
         },
     );
 
@@ -91,6 +106,7 @@ sub show_window {
         $liststore->set( $iter,
                 0, $item->{ product },
                 1, $item->{ local },
+                2, $item->{ date },
         );
     }
     #>>>
@@ -123,6 +139,7 @@ sub show_window {
     $box->pack_start( $infobar, FALSE, FALSE, 0 );
     $box->pack_start( $pb,      FALSE, FALSE, 0 );
 
+    $view->columns_autosize();
     $box->show_all;
     $pb->hide;
     return $box;

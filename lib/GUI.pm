@@ -66,7 +66,7 @@ sub start_gui {
     $top_box->set_homogeneous( FALSE );
     $eb->add( $top_box );
 
-    $hb->set_title( _( 'Virus Scanner' ) );
+    $hb->set_title( _( 'ClamTk Virus Scanner' ) );
     $hb->set_decoration_layout( 'menu,icon:minimize,close' );
     $hb->set_show_close_button( TRUE );
 
@@ -716,7 +716,10 @@ sub about {
     $dialog->set_program_name( 'ClamTk' );
     $dialog->set_authors( [ 'Dave M', 'dave.nerd@gmail.com' ] );
     $dialog->set_comments(
-        _( 'ClamTk is a graphical front-end for Clam Antivirus' ) );
+              _( 'ClamTk is a graphical front-end for Clam Antivirus' ) . "\n"
+            . '(ClamAV '
+            . ClamTk::App->get_AV_version()
+            . ')' );
 
     $dialog->run;
     $dialog->destroy;
