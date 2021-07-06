@@ -2,6 +2,7 @@
 <!-- Copyright 2021 Dave M <dave.nerd@gmail.com> -->
 <component type="desktop-application">
  <id>com.github.davetheunsub.clamtk</id>
+ <launchable type="desktop-id">clamtk.desktop</launchable>
  <metadata_license>FSFAP</metadata_license>
  <project_license>GPL-2.0+</project_license>
  <name>ClamTk</name>
@@ -96,7 +97,7 @@
  <update_contact>dave.nerd@gmail.com</update_contact>
  <url type="homepage">https://github.com/dave-theunsub/clamtk/</url>
  <url type="bugtracker">https://bugzilla.redhat.com/buglist.cgi?quicksearch=clamtk</url>
-  <url type="translate">https://translations.launchpad.net/clamtk</url>
-  <url type="faq">https://github.com/dave-theunsub/clamtk/blob/master/README.md</url>
+ <url type="translate">https://translations.launchpad.net/clamtk</url>
+ <url type="faq">https://github.com/dave-theunsub/clamtk/blob/master/README.md</url>
 
 </component>
