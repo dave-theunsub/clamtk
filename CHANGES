@@ -1,5 +1,9 @@
 CHANGELOG for ClamTk:
 
+6.13 - 20210707
+-----------------
+    * Fixes for appdata.xml (Github #131, Bugzilla #1819344)
+
 6.12 - 20210705
 ---------------
     * Fixes for appdata.xml (Github #128, Bugzilla #1819344)
