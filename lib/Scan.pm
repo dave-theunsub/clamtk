@@ -169,7 +169,7 @@ sub filter {
     $bottombar->add_button( $use_image, HATE_GNOME_SHELL );
     if ( $show ) {
         # $use_image = ClamTk::Icons->get_image( 'preferences-system' );
-        $use_image = ClamTk::Icons->get_image( 'document-properties' );
+        $use_image = ClamTk::Icons->get_image( 'gtk-preferences' );
         $bottombar->add_button( $use_image, DESTROY_GNOME_SHELL );
     }
     $bottombar->signal_connect(

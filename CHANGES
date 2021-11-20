@@ -1,7 +1,13 @@
 CHANGELOG for ClamTk:
 
+6.14 - 20211120
+---------------
+    * Hopefully a fix for context-menu scanning image issues
+    * Update README.md links
+    * Update LICENSE text
+
 6.13 - 20210707
------------------
+---------------
     * Fixes for appdata.xml (Github #131, Bugzilla #1819344)
 
 6.12 - 20210705

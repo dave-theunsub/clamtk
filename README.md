@@ -1,4 +1,4 @@
-This README was last updated on 5 July 2021.
+This README was last updated on 20 November 2021.
 
 # Readme for ClamTk
 
@@ -14,37 +14,45 @@ This README was last updated on 5 July 2021.
 8. [Thank you](#thank-you)
 9. [Contact](#contact)
 
-
 ## About
 
 ClamTk is a frontend for ClamAV (Clam Antivirus). It is intended to be an easy to use, light-weight, on-demand scanner for Linux systems.
 
 Although its earliest incarnations date to 2003, ClamTk was first uploaded for distribution in 2004 to a rootshell.be account and finally to Sourceforge.net in 2005. At the end of 2013, it was moved to a Google Code page, then to Github, Gitlab, and Bitbucket. It is now 2021 and for some reason development is still going. In fact, February 2021 marks 17 years of activity (of being publicly available, that is).
 
+## How You Can Help
 
-## Plans
+1. Report bugs or suggestions at the following:
 
-Version 7 will likely have a new design, and will almost certainly use a different language.  
+    <https://gitlab.com/dave_m/clamtk/issues>  
+    <https://github.com/dave-theunsub/clamtk/issues>  
+    <https://launchpad.net/clamtk>  
+
+2. Do you speak more than one language? See the [Launchpad page](https://translations.launchpad.net/clamtk).
+
+3. If you feel like it, "star" clamtk or its related projects at one or both of the following:
+
+    <https://gitlab.com/dave_m/clamtk/>  
+    <https://github.com/dave-theunsub/clamtk/>  
 
 ### Important Links
 
 ClamTk:  
-https://gitlab.com/dave_m/clamtk/  
-https://gitlab.com/dave_m/clamtk/wikis/home  
-https://github.com/dave-theunsub/clamtk/  
-https://launchpad.net/clamtk  
-
+<https://gitlab.com/dave_m/clamtk/wikis/home>  
+<https://gitlab.com/dave_m/clamtk/>  
+<https://github.com/dave-theunsub/clamtk/>  
+<https://launchpad.net/clamtk>  
 
 [ClamAV](https://www.clamav.net)  
 [Gtk2-Perl](http://gtk2-perl.sourceforge.net)  
 [Gtk3](https://developer.gnome.org/gtk3/stable/index.html)  
 [Virustotal](https://virustotal.com)  
 
-
 ## Installation  
 
 ### RPMs  
-The easiest way to install ClamTk is to use the rpms. The commands `dnf` and `yum` will pull in requirements.   
+
+The easiest way to install ClamTk is to use the rpms. The commands `dnf` and `yum` will pull in requirements.
 
 First, start with the official repositories.
 
@@ -63,7 +71,8 @@ To remove clamtk:
 `sudo yum erase clamtk` or `sudo dnf erase clamtk`.
 
 ### Source  
-**Warning**: Don't do this. It's much easier to just double click a .deb or .rpm. Really, put down the source. 
+
+**Warning**: Don't do this. It's much easier to just double click a .deb or .rpm. Really, put down the source.
 
 The tarball contains all the sources. One way to do this, as tested on Fedora, is to run the following commands:  
 
@@ -77,12 +86,12 @@ sudo cp clamtk /usr/local/bin (or /usr/bin)
 
 Examples:
 
-    $ perl clamtk
+    perl clamtk
 
 or
 
-    $ chmod +x /path/to/clamtk
-    $ /path/to/clamtk
+    chmod +x /path/to/clamtk
+    /path/to/clamtk
 
 * Note: If you have installed this program as an rpm or .deb, you do not need to take these steps.
 * Note: Did you get errors with this? Check the TROUBLESHOOTING section at the end.
@@ -140,16 +149,16 @@ First, you will need my public minisign key:
 
 Then, you will need the minisig file for the program you are verifying.  
 
-A link to it will be with the rest of the downloads. 
+A link to it will be with the rest of the downloads.
 
 For this example:  
-https://github.com/dave-theunsub/clamtk/releases/download/v6.12/clamtk-6.12.tar.xz.minisig
+<https://github.com/dave-theunsub/clamtk/releases/download/v6.12/clamtk-6.12.tar.xz.minisig>
 
 Now, you verify like so:  
+
 ```
 minisign -V -x clamtk-6.12.tar.xz.minisig -p davemminisign.pub -m clamtk-6.12.tar.xz
 ```
-
 
 ## Usage
 
@@ -162,7 +171,7 @@ minisign -V -x clamtk-6.12.tar.xz.minisig -p davemminisign.pub -m clamtk-6.12.ta
 * The "Scan for PUAs" option enables the ability to scan for Potentially Unwanted Applications as well as broken executables.  Note that this can result in what may be false positives.  
 * By default, ClamTk will avoid scanning files larger than 20MB. To force scanning of these files, check the "Scan files larger than 20 MB" box.  
 * You can also check for updates upon startup.  This requires an active Internet connection.  
-* Information on items quarantined is available under the "Quarantine" option.  If you believe there is a false positive contained, you can easily move it back to your home directory. You may also delete this file(s). *Note that there is no recycle bin - once deleted, they are gone forever.*    
+* Information on items quarantined is available under the "Quarantine" option.  If you believe there is a false positive contained, you can easily move it back to your home directory. You may also delete this file(s). *Note that there is no recycle bin - once deleted, they are gone forever.*
 * Scan a file or directory by right-clicking on it within the file manager (e.g., Nautilus).  This functionality requires an extra package (clamtk-gnome).
 * You can STOP the scan by clicking the Cancel button. Note that due to the speed of the scanning, it may not stop immediately; it will continue scanning and displaying files it has already "read" until the stop catches up.  
 * View previous scans by selecting "History".  
@@ -174,10 +183,13 @@ minisign -V -x clamtk-6.12.tar.xz.minisig -p davemminisign.pub -m clamtk-6.12.ta
 ### Commandline
 
 ClamTk can run from the commandline, too:  
+
 ```  
 clamtk file_to_be_scanned  
 ```
+
 or  
+
 ```
 clamtk directory_to_be_scanned  
 ```
@@ -198,27 +210,29 @@ You also have a few options with the files displayed. Click on the file scanned 
 
 If you've quarantined files for later examination, you have the option to restore them to their previous location (if known), or delete them.
 
-
 ## Plugins
 
 To add a right-click, context menu ability to send files and directories to the scanner, install the appropriate plugin. Links to the latest versions are available here:  
 
-https://gitlab.com/dave_m/clamtk/wikis/Downloads  
+<https://gitlab.com/dave_m/clamtk/wikis/Downloads>  
 
-Here are the specific pages. Note that these are usually mirrored on Github as wel.  
+Here are the specific pages. Note that these are mirrored on Github as well.  
 
 For Gnome (Files file manager):  
-https://gitlab.com/dave_m/clamtk-gnome  
+<https://gitlab.com/dave_m/clamtk-gnome>  
+<https://github.com/dave-theunsub/clamtk-gnome>  
 
 For KDE (Dolphin file manager):  
-https://gitlab.com/dave_m/clamtk-kde  
+<https://gitlab.com/dave_m/clamtk-kde>  
+<https://github.com/dave-theunsub/clamtk-kde>  
 
 For XFCE (Thunar file manager):  
-https://gitlab.com/dave_m/thunar-sendto-clamtk  
+<https://gitlab.com/dave_m/thunar-sendto-clamtk>  
+<https://github.com/dave-theunsub/thunar-sendto-clamtk>  
 
 For Mate (Nemo file manager):  
-https://gitlab.com/dave_m/nemo-sendto-clamtk  
-
+<https://gitlab.com/dave_m/nemo-sendto-clamtk>  
+<https://github.com/dave-theunsub/nemo-sendto-clamtk>  
 
 ## Troubleshooting
 
@@ -245,16 +259,6 @@ https://gitlab.com/dave_m/nemo-sendto-clamtk
 
 Probably a lot. Let me know, please. Ranting on some bulletin board somewhere on one of dozens of Linux sites will not fix bugs or improve the program. See the section below for contact info.
 
-
-## Contributing
-
-### Locale/Internationalization
-
-ClamTk has supported multiple languages for many years now. Have time on your hands and want to contribute? See the [Launchpad page](https://launchpad.net/clamtk).
-
-Note that some builds do not account for other than English languages because they have not yet updated their build/spec files. A polite email to the respective maintainer may fix this.
-
-
 ## Other
 
 As of version 3.10, ClamTk will not scan standard mail directories, such as .evolution, .mozilla or .thunderbird. This is due to parsing problems. If a smart way of doing that comes up, it will be added.
@@ -273,26 +277,17 @@ Version 7.xx will likely have a new design, and may be written in a different la
 
 And there's also a Gtk4 in the works...
 
-
 ## Thank you
 
 Many people have contributed their time, energy, opinions, recommendations, and expertise to this software. I cannot thank them enough. Their names are listed in the credits file.
 
 Also a big thank you to:
+
 * Everyone who has contributed in one way or another to ClamTk - including language files, bug notifications, and feature requests
 * Dag, without whom rpms would likely not exist
 * All the gtk2-perl and gtk3-perl folks for their time and effort
 * [Perlmonks](https://perlmonks.org)
 
-
 ## Contact
-
-For feature requests or bugs, it is best to use one of the following:  
-
-[https://gitlab.com/dave_m/clamtk/issues](https://gitlab.com/dave_m/clamtk/issues)  
-https://github.com/dave-theunsub/clamtk  
-https://launchpad.net/clamtk  
-
-While we recommend opening an official bug on the appropriate page, we will also accept email.   
 
 * Dave M, dave.nerd @gmail.com [0xF51D19546ADA59DE](https://pgp.circl.lu/pks/lookup?op=get&search=0xF51D19546ADA59DE)  
