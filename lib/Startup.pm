@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2021 Dave M
+# ClamTk, copyright (C) 2004-2022 Dave M
 #
 # This file is part of ClamTk
 # (https://gitlab.com/dave_m/clamtk/).
@@ -13,6 +13,7 @@
 package ClamTk::Startup;
 
 use Glib 'FALSE';
+use Proc::ProcessTable;
 
 use Time::Piece;
 
@@ -24,7 +25,7 @@ sub startup_check {
     my ( $sigs_outdated, $gui_outdated );
 
     # If the user wants a GUI update check on startup:
-    if ( ClamTk::Prefs->get_preference( 'GUICheck' ) ) {
+    if ( ClamTk::Prefs->get_preference('GUICheck') ) {
         if ( check_gui() ) {
             $gui_outdated++;
         }
@@ -32,7 +33,7 @@ sub startup_check {
 
     # Check AV date - 4 days and sound the alarm
     my $t        = localtime;
-    my $today    = $t->dmy( " " );
+    my $today    = $t->dmy(" ");
     my $sig_date = check_sigs();
 
     my $date_format = '%d %m %Y';
@@ -46,17 +47,20 @@ sub startup_check {
 
     if ( $sigs_outdated && $gui_outdated ) {
         return 'both';
-    } elsif ( $sigs_outdated ) {
+    }
+    elsif ($sigs_outdated) {
         return 'sigs';
-    } elsif ( $gui_outdated ) {
+    }
+    elsif ($gui_outdated) {
         return 'gui';
-    } else {
+    }
+    else {
         return 0;
     }
 }
 
 sub check_sigs {
-    my $av_date = ClamTk::App->get_sigtool_info( 'date' );
+    my $av_date = ClamTk::App->get_sigtool_info('date');
     return $av_date;
 }
 
@@ -73,6 +77,13 @@ sub check_gui {
         return 1 if ( $remote_chopped > $local_chopped );
     }
     return 0;
+}
+
+sub is_clamd_running {
+    my $p = Proc::ProcessTable->new( 'cache_ttys' => 1 );
+
+    my $is_running = grep { $_->{cmndline} =~ /clamd/ } @{ $p->table };
+    return $is_running;
 }
 
 1;

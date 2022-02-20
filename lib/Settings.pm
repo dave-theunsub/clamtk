@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2021 Dave M
+# ClamTk, copyright (C) 2004-2022 Dave M
 #
 # This file is part of ClamTk
 # (https://gitlab.com/dave_m/clamtk/).
@@ -122,6 +122,22 @@ sub show_window {
         toggled => sub {
             my $btn = shift;
             ClamTk::Prefs->set_preference( 'GUICheck', $btn->get_active
+                ? 1
+                : 0 );
+        }
+    );
+
+    $option = Gtk3::CheckButton->new_with_label(
+        _( 'Use clamdscan' ) );
+    $option->set_tooltip_text(
+        _( 'Use clamdscan instead of the default clamscan to scan files' ) );
+    $option->set_active( TRUE )
+        if ( $prefs{ clamdscan } && ClamTk::Startup::is_clamd_running );
+    $grid->attach( $option, 0, 6, 1, 1 );
+    $option->signal_connect(
+        toggled => sub {
+            my $btn = shift;
+            ClamTk::Prefs->set_preference( 'clamdscan', $btn->get_active
                 ? 1
                 : 0 );
         }

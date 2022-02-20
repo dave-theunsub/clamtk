@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2021 Dave M
+# ClamTk, copyright (C) 2004-2022 Dave M
 #
 # This file is part of ClamTk
 # (https://gitlab.com/dave_m/clamtk/).
@@ -25,7 +25,7 @@ use Encode 'decode';
 
 sub get_TK_version {
     # Stick with %.2f format - 4.50 vice 4.5
-    return '6.14';
+    return '6.15';
 }
 
 sub get_path {
@@ -123,6 +123,17 @@ sub get_path {
         :                                    '';
 
     $path->{ clamscan } = $path->{ clampath };
+
+    # Most times clamscan is under /usr/bin
+    # We'll use clampath as the actual path
+    # and clamscan as clampath + scan options
+    $path->{ clamdpath }
+        = ( -e '/usr/bin/clamdscan' )       ? '/usr/bin/clamdscan'
+        : ( -e '/usr/local/bin/clamdscan' ) ? '/usr/local/bin/clamdscan'
+        : ( -e '/opt/local/bin/clamdscan' ) ? '/opt/local/bin/clamdscan'
+        :                                    '';
+
+    $path->{ clamdscan } = $path->{ clamdpath };
 
     # The default ClamAV options:
     # leave out the summary and warn on encrypted
