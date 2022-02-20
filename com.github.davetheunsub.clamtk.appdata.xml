@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2021 Dave M <dave.nerd@gmail.com> -->
+<!-- Copyright 2022 Dave M <dave.nerd@gmail.com> -->
 <component type="desktop-application">
  <id>com.github.davetheunsub.clamtk</id>
  <launchable type="desktop-id">clamtk.desktop</launchable>
@@ -88,7 +88,7 @@
  </screenshots>
 
  <releases>
-    <release version="6.12" date="2021-06-05">
+    <release version="6.15" date="2022-01-xx">
       <description>
         <p>Bug fixes</p>
       </description>

@@ -1,5 +1,11 @@
 CHANGELOG for ClamTk:
 
+6.15 - 2022xxxx
+---------------
+    * Updated language files: Indonesian (id), Swedish (sv), German (de)
+    * Update DISCLAIMER to use markdown (DISCLAIMER.md)
+    * Update year from 2021 -> 2022
+
 6.14 - 20211120
 ---------------
     * Hopefully a fix for context-menu scanning image issues
