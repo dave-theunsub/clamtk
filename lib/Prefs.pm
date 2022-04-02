@@ -23,7 +23,7 @@ use Locale::gettext;
 use POSIX 'locale_h';
 
 sub structure {
-    my $paths = ClamTk::App->get_path('all');
+    my $paths = ClamTk::App->get_path( 'all' );
 
     # Ensure default paths/files exist.
     # If they do, ensure they have the proper permissions.
@@ -35,101 +35,95 @@ sub structure {
 
     # This is /home/user/.clamtk/viruses,
     # used for the quarantine directory
-    if ( !-d $paths->{viruses} ) {
-        eval { mkpath( $paths->{viruses}, { mode => oct($mask) } ) };
-        warn $@  if ($@);
-        return 0 if ($@);
-    }
-    else {
+    if ( !-d $paths->{ viruses } ) {
+        eval { mkpath( $paths->{ viruses }, { mode => oct( $mask ) } ) };
+        warn $@  if ( $@ );
+        return 0 if ( $@ );
+    } else {
         # Ensure the permissions are correct
-        chmod oct($mask), $paths->{viruses};
+        chmod oct( $mask ), $paths->{ viruses };
     }
 
     # This is /home/user/.clamtk/history,
     # which holds records of scans
-    if ( !-d $paths->{history} ) {
-        eval { mkpath( $paths->{history}, { mode => oct($mask) } ) };
-        warn $@  if ($@);
-        return 0 if ($@);
-    }
-    else {
+    if ( !-d $paths->{ history } ) {
+        eval { mkpath( $paths->{ history }, { mode => oct( $mask ) } ) };
+        warn $@  if ( $@ );
+        return 0 if ( $@ );
+    } else {
         # Ensure the permissions are correct
-        chmod oct($mask), $paths->{history};
+        chmod oct( $mask ), $paths->{ history };
     }
 
     # The path /home/user/.clamtk/db stores signatures
-    if ( !-d $paths->{db} ) {
-        eval { mkpath( $paths->{db}, { mode => oct($mask) } ) };
-        warn $@  if ($@);
-        return 0 if ($@);
-    }
-    else {
+    if ( !-d $paths->{ db } ) {
+        eval { mkpath( $paths->{ db }, { mode => oct( $mask ) } ) };
+        warn $@  if ( $@ );
+        return 0 if ( $@ );
+    } else {
         # Ensure the permissions are correct
-        chmod oct($mask), $paths->{db};
+        chmod oct( $mask ), $paths->{ db };
     }
 
     # This is /home/user/.clamtk/prefs,
     # a custom INI-style file.
-    if ( !-e $paths->{prefs} ) {
-
+    if ( !-e $paths->{ prefs } ) {
         # warn "note: (re)creating prefs file.\n";
-        open( my $F, '>:encoding(UTF-8)', $paths->{prefs} )
-          or do {
+        open( my $F, '>:encoding(UTF-8)', $paths->{ prefs } )
+            or do {
             warn "Unable to create preferences! $!\n";
             return 0;
-          };
-        close($F);
+            };
+        close( $F );
         eval { custom_prefs() };
-        warn $@  if ($@);
-        return 0 if ($@);
+        warn $@  if ( $@ );
+        return 0 if ( $@ );
     }
 
     # This is /home/user/.clamtk/submit.
     # This was used for submitting to ClamAV;
     # we're reusing the directory structure
-    if ( !-d $paths->{submit} ) {
-        eval { mkpath( $paths->{submit}, { mode => oct($mask) } ) };
+    if ( !-d $paths->{ submit } ) {
+        eval { mkpath( $paths->{ submit }, { mode => oct( $mask ) } ) };
         warn $@  if $@;
-        return 0 if ($@);
-    }
-    else {
+        return 0 if ( $@ );
+    } else {
         # Ensure the permissions are correct
-        chmod oct($mask), $paths->{submit};
+        chmod oct( $mask ), $paths->{ submit };
     }
 
     # This is /home/user/.clamtk/submit/previous_submissions,
     # a csv file.
-    if ( !-e $paths->{previous_submissions} ) {
-        open( my $F, '>:encoding(UTF-8)', $paths->{previous_submissions} )
-          or do {
+    if ( !-e $paths->{ previous_submissions } ) {
+        open( my $F, '>:encoding(UTF-8)', $paths->{ previous_submissions } )
+            or do {
             warn "Unable to create previous_submissions! $!\n";
             return 0;
-          };
-        close($F);
+            };
+        close( $F );
     }
 
     # This is /home/user/.clamtk/submit/virustotal_links,
     # a csv file.
-    if ( !-e $paths->{virustotal_links} ) {
-        open( my $F, '>:encoding(UTF-8)', $paths->{virustotal_links} )
-          or do {
+    if ( !-e $paths->{ virustotal_links } ) {
+        open( my $F, '>:encoding(UTF-8)', $paths->{ virustotal_links } )
+            or do {
             warn "Unable to create virustotal_links! $!\n";
             return 0;
-          };
-        close($F);
+            };
+        close( $F );
     }
 
     # This is /home/user/.clamtk/restore, which holds
     # information for putting back false positives
-    if ( !-e $paths->{restore} ) {
-
+    if ( !-e $paths->{ restore } ) {
         # warn "restore does not exist; re-creating it\n";
-        open( my $F, '>:encoding(UTF-8)', $paths->{restore} )
-          or do {
+        open( my $F, '>:encoding(UTF-8)', $paths->{ restore } )
+            or do {
             warn "Unable to create restore file! $!\n";
             return 0;
-          };
-        close($F);
+            };
+        close( $F );
     }
 
     # Automatically set local freshclam.conf for individual updates
@@ -139,51 +133,47 @@ sub structure {
 }
 
 sub custom_prefs {
-
     # ensure prefs have normalized variables:
     my %pkg;
-
     # Get the user's current prefs
-    my $paths = ClamTk::App->get_path('prefs');
+    my $paths = ClamTk::App->get_path( 'prefs' );
 
     open( my $F, '<:encoding(UTF-8)', $paths )
-      or do {
+        or do {
         warn "Unable to read preferences! $!\n";
         return 0;
-      };
+        };
 
-    while (<$F>) {
-        my ( $k, $v ) = split(/=/);
-        chomp($v);
-        $pkg{$k} = $v;
+    while ( <$F> ) {
+        my ( $k, $v ) = split( /=/ );
+        chomp( $v );
+        $pkg{ $k } = $v;
     }
-    close($F);
+    close( $F );
 
     # If the preferences aren't already set,
     # use 'shared' by default. This makes it work out of the box.
-    if ( !exists $pkg{Update} ) {
-        $pkg{Update} = 'shared';
-    }
-    elsif ( $pkg{Update} !~ /shared|single/ ) {
-
+    if ( !exists $pkg{ Update } ) {
+        $pkg{ Update } = 'shared';
+    } elsif ( $pkg{ Update } !~ /shared|single/ ) {
         # If it's set to 'shared' or 'single', leave it alone.
         # Otherwise, look for system signatures
-        $pkg{Update} = 'shared';
+        $pkg{ Update } = 'shared';
     }
 
     # The proxy is off by default
-    if ( !exists $pkg{HTTPProxy} ) {
-        $pkg{HTTPProxy} = 0;
+    if ( !exists $pkg{ HTTPProxy } ) {
+        $pkg{ HTTPProxy } = 0;
     }
 
     # The whitelist is off by default
-    if ( !exists $pkg{Whitelist} ) {
-        $pkg{Whitelist} = '';
+    if ( !exists $pkg{ Whitelist } ) {
+        $pkg{ Whitelist } = '';
     }
 
     # Date of last infected file
-    if ( !exists $pkg{LastInfection} ) {
-        $pkg{LastInfection} = _('Never');
+    if ( !exists $pkg{ LastInfection } ) {
+        $pkg{ LastInfection } = _( 'Never' );
     }
 
     # ScanHidden: Scan files beginning with a dot
@@ -194,33 +184,22 @@ sub custom_prefs {
     for my $o (
         qw{ScanHidden SizeLimit Heuristic
         Thorough Recursive Mounted}
-      )
+        )
     {
         # off by default
-        if ( !exists $pkg{$o} ) {
-            $pkg{$o} = 0;
+        if ( !exists $pkg{ $o } ) {
+            $pkg{ $o } = 0;
         }
     }
 
     # GUICheck: Check for GUI updates
     # TruncateLog: Shorten freshclam log
     # DupeDB: Delete duplicate signature dbs
-    for my $p (qw{GUICheck TruncateLog DupeDB }) {
-
+    for my $p ( qw{GUICheck TruncateLog DupeDB } ) {
         # on by default
-        if ( !exists $pkg{$p} ) {
-            $pkg{$p} = 1;
+        if ( !exists $pkg{ $p } ) {
+            $pkg{ $p } = 1;
         }
-    }
-
-    # clamdscan is by itself. Need to see if clamd is running
-    # and still make it off by default since clamd is probably
-    # not installed and/or running by default
-    if ( !exists( $pkg{clamdscan} ) ) {
-        $pkg{clamdscan} = 0;
-    }
-    if !ClamTk::Startup::is_clamd_running {
-        $pkg{clamdscan} = 0;
     }
 
     # dtformat - for date-time-format
@@ -228,116 +207,114 @@ sub custom_prefs {
     #     $pkg{ 'dtformat' } = '%m %d %Y';
     # }
 
-    write_all(%pkg);
+    write_all( %pkg );
     return;
 }
 
 sub get_all_prefs {
-
     # Sometimes it's useful to have all
     # the preferences rather than just one.
     my %pkg;
-    my $paths = ClamTk::App->get_path('prefs');
+    my $paths = ClamTk::App->get_path( 'prefs' );
     open( my $F, '<:encoding(UTF-8)', $paths )
-      or do {
+        or do {
         warn "Unable to read preferences! $!\n";
         return 0;
-      };
+        };
 
-    while (<$F>) {
-        my ( $k, $v ) = split(/=/);
-        chomp($v);
-        $pkg{$k} = $v;
+    while ( <$F> ) {
+        my ( $k, $v ) = split( /=/ );
+        chomp( $v );
+        $pkg{ $k } = $v;
     }
-    close($F);
+    close( $F );
     return %pkg if %pkg;
 }
 
 sub legit_key {
-
     # Sanity check the prefs file's keys.
     my @keys = qw(
-      SizeLimit HTTPProxy Heuristic
-      LastInfection GUICheck DupeDB
-      TruncateLog SaveToLog
-      Whitelist Update ScanHidden
-      Thorough Recursive Mounted PreferredScanner
+        SizeLimit HTTPProxy Heuristic
+        LastInfection GUICheck DupeDB
+        TruncateLog SaveToLog
+        Whitelist Update ScanHidden
+        Thorough Recursive Mounted
     );
-    return 1 if ( grep { $_[0] eq $_ } @keys );
+    return 1 if ( grep { $_[ 0 ] eq $_ } @keys );
 }
 
 sub write_all {
     my %loc = @_;
 
-    my $paths = ClamTk::App->get_path('prefs');
+    my $paths = ClamTk::App->get_path( 'prefs' );
     open( my $F, '>:encoding(UTF-8)', $paths )
-      or do {
+        or do {
         warn "Unable to write preferences! $!\n";
         return 0;
-      };
+        };
 
     while ( my ( $k, $v ) = each %loc ) {
-        if ( legit_key($k) ) {
+        if ( legit_key( $k ) ) {
             print $F "$k=$v\n";
         }
     }
-    close($F);
+    close( $F );
 
     return 1;
 }
 
 sub set_preference {
     my ( undef, $wk, $wv ) = @_;    # undef = package name
-    my $paths = ClamTk::App->get_path('prefs');
+    my $paths = ClamTk::App->get_path( 'prefs' );
 
     open( my $F, '<:encoding(UTF-8)', $paths )
-      or do {
+        or do {
         warn "Unable to read preferences! $!\n";
         return 0;
-      };
+        };
 
     my %pkg;
-    while (<$F>) {
-        my ( $k, $v ) = split(/=/);
-        chomp($v);
-        $pkg{$k} = $v;
+    while ( <$F> ) {
+        my ( $k, $v ) = split( /=/ );
+        chomp( $v );
+        $pkg{ $k } = $v;
     }
-    close($F);
+    close( $F );
 
     open( $F, '>:encoding(UTF-8)', $paths )
-      or return -1;
+        or return -1;
 
     while ( my ( $k, $v ) = each %pkg ) {
-        if ( legit_key($k) && ( $k ne $wk ) ) {
+        if ( legit_key( $k ) && ( $k ne $wk ) ) {
             print $F "$k=$v\n";
         }
     }
-    print $F "$wk=$wv\n" if ( legit_key($wk) );
-    close($F)
-      or warn "Couldn't close $paths: $!\n";
+    print $F "$wk=$wv\n" if ( legit_key( $wk ) );
+    close( $F )
+        or warn "Couldn't close $paths: $!\n";
     return 1;
 }
 
 sub get_preference {
     my ( undef, $wanted ) = @_;    # undef = package name
 
-    my $paths = ClamTk::App->get_path('prefs');
+    my $paths = ClamTk::App->get_path( 'prefs' );
     my %pkg;
     open( my $F, '<:encoding(UTF-8)', $paths )
-      or do {
+        or do {
         warn "Unable to read preferences! $!\n";
         return 0;
-      };
+        };
 
-    while (<$F>) {
-        my ( $k, $v ) = split(/=/);
-        chomp($v);
-        $pkg{$k} = $v;
+    while ( <$F> ) {
+        my ( $k, $v ) = split( /=/ );
+        chomp( $v );
+        $pkg{ $k } = $v;
     }
-    close($F);
+    close( $F );
 
     return unless %pkg;
-    return $pkg{$wanted} || '';
+    return $pkg{ $wanted } || '';
 }
 
 sub set_proxy {
@@ -346,40 +323,40 @@ sub set_proxy {
     # If the user doesn't set a port, we'll just jot down port 80.
     $port = $port || '80';
 
-    my $path = ClamTk::App->get_path('localfreshclamconf');
+    my $path = ClamTk::App->get_path( 'localfreshclamconf' );
     warn "Prefs set_proxy: path = >$path<\n";
 
     # This gets clobbered every time.
     open( my $FH, '>:encoding(UTF-8)', $path )
-      or return -1;
+        or return -1;
     print $FH <<"EOF";
 HTTPProxyServer $ip
 HTTPProxyPort $port
 DatabaseMirror db.local.clamav.net
 DatabaseMirror database.clamav.net
 EOF
-    close($FH)
-      or warn "Couldn't close $path/local.conf: $!\n";
+    close( $FH )
+        or warn "Couldn't close $path/local.conf: $!\n";
     return 1;
 }
 
 sub set_local_config {
-    my $path = ClamTk::App->get_path('localfreshclamconf');
+    my $path = ClamTk::App->get_path( 'localfreshclamconf' );
     return if ( -e $path );
 
     # This gets clobbered every time.
     open( my $FH, '>:encoding(UTF-8)', $path )
-      or return -1;
+        or return -1;
     print $FH <<"EOF";
 # Local config
 DatabaseMirror database.clamav.net
 LogSyslog no
 EOF
-    close($FH)
-      or warn "Couldn't close $path: $!\n";
+    close( $FH )
+        or warn "Couldn't close $path: $!\n";
     if ( !-e $path ) {
         warn "Couldn't create local freshclam ($path)!\n"
-          . "You will be unable to do manual updates.\n";
+            . "You will be unable to do manual updates.\n";
     }
     return 1;
 }
