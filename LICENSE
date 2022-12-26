@@ -1,27 +1,27 @@
 COPYRIGHT AND LICENSE
 
-ClamTk, copyright (C) 2004-2022 Dave M
+ClamTk, copyright © 2004-2022 Dave M
 https://gitlab.com/dave_m/clamtk
 https://gitlab.com/dave_m/clamtk/wikis/Home
-https://github.com/dave-theunsub/clamtk/
+https://github.com/dave-theunsub/clamtk
 
 All rights reserved.  This program is free software; you can
 redistribute it and/or modify it under the terms of either:
 
-a) the GNU General Public License as published by the Free
-Software Foundation; either version 1, or (at your option)
+a - the GNU General Public License as published by the Free
+Software Foundation; either version 1, or at your option
 any later version, or
 
-b) the "Artistic License".
+b - the "Artistic License".
 
 The language files are now under BSD licensing.
 See here for more:
 https://help.launchpad.net/Translations/LicensingFAQ
 https://help.launchpad.net/Legal/BSDLicense
 
-[Source: http://www.opensource.org/licenses/bsd-license.php]
+Source: http://www.opensource.org/licenses/bsd-license.php
 
-Copyright (c) 2004-2022, Dave M. All rights reserved.
+Copyright © 2004-2022, Dave M. All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:

@@ -1,7 +1,9 @@
 CHANGELOG for ClamTk:
 
-6.15 - 202211xx
+6.15 - 202212xx
 ---------------
+    * Fix for Unable to delete previous analysis result (Github #150)
+      https://github.com/dave-theunsub/clamtk/issues/150
     * Updated language files: Indonesian (id), Swedish (sv), German (de),
       Chinese (zh_CN), Burmese (my)
     * Fix to German language string in clamtk.desktop (Github PR #144)
@@ -147,32 +149,32 @@ CHANGELOG for ClamTk:
 
 4.00 - 20081013
 ---------------
-        * There are quite a few changes in this release.
-          Among the most notable is the ability of any user
-          to maintain their own sig database and update them.
-          Please see the file "README.4.0" for more
-        * Small fixes to display the correct virus db information
-        * Swedish language file added to Debian and FC3 builds
+	* There are quite a few changes in this release.
+	  Among the most notable is the ability of any user
+	  to maintain their own sig database and update them.
+	  Please see the file "README.4.0" for more
+	* Small fixes to display the correct virus db information
+	* Swedish language file added to Debian and FC3 builds
 
 3.00 - 20070808
 ---------------
-        * Extended the signature updates time - it's usually needed
-        * Fixed the Russian language file, which is now UTF-8.
-          Thanks, Vitaly!
-        * Added a line for internal encoding. Thanks, Vitaly!
-        * Added Swedish language file. Thanks, Petter!
+	* Extended the signature updates time - it's usually needed
+	* Fixed the Russian language file, which is now UTF-8.
+	  Thanks, Vitaly!
+	* Added a line for internal encoding. Thanks, Vitaly!
+	* Added Swedish language file. Thanks, Petter!
 
 2.00 - 20050611
 ---------------
-        * Code change: now using SimpleMenu for menu
-          generation because... well, it's simpler
-        * Source is now in the form of clamtk-$VERSION.tar.gz
-        * Other minor fixes
+	* Code change: now using SimpleMenu for menu
+	  generation because... well, it's simpler
+	* Source is now in the form of clamtk-$VERSION.tar.gz
+	* Other minor fixes
 
 1.0 - xxxxxxxx
 --------------
-        * Certain files containing spaces were not being properly scanned
-        * Re-added quarantine scanning, which was accidentally removed
-        * Removed 'version'-check functionality since I'm moving the
-          project to sourceforge.net. Might be added later
-        * Minor code tweaks
+	* Certain files containing spaces were not being properly scanned
+	* Re-added quarantine scanning, which was accidentally removed
+	* Removed 'version'-check functionality since I'm moving the
+	  project to sourceforge.net. Might be added later
+	* Minor code tweaks
