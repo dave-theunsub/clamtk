@@ -13,7 +13,6 @@
 package ClamTk::Startup;
 
 use Glib 'FALSE';
-use Proc::ProcessTable;
 
 use Time::Piece;
 
@@ -77,13 +76,6 @@ sub check_gui {
         return 1 if ( $remote_chopped > $local_chopped );
     }
     return 0;
-}
-
-sub is_clamd_running {
-    my $p = Proc::ProcessTable->new( 'cache_ttys' => 1 );
-
-    my $is_running = grep { $_->{cmndline} =~ /clamd/ } @{ $p->table };
-    return $is_running;
 }
 
 1;
