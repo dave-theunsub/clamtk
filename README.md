@@ -290,4 +290,5 @@ Also a big thank you to:
 
 ## Contact
 
-* Dave M, dave.nerd @gmail.com [0xF51D19546ADA59DE](https://pgp.circl.lu/pks/lookup?op=get&search=0xF51D19546ADA59DE)  
+Dave M  
+[0x2A703397D65F2FE2](https://keys.openpgp.org/vks/v1/by-fingerprint/FA2B7739CC4C2514F2E58D1A2A703397D65F2FE2)  
