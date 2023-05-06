@@ -1,6 +1,12 @@
 CHANGELOG for ClamTk:
 
-6.15 - 202212xx
+6.16 - 2023xxxx
+---------------
+    * Updated language files: Dutch (nl)
+    * Update README and site links for updated GPG key
+    * Update year from 2022 -> 2023
+
+6.15 - 20221226
 ---------------
     * Fix for Unable to delete previous analysis result (Github #150)
       https://github.com/dave-theunsub/clamtk/issues/150
