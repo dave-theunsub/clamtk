@@ -4,14 +4,14 @@ CHANGELOG for ClamTk:
 ---------------
     * Updated language files: Dutch (nl)
     * Update README and site links for updated GPG key
+    * Minor cleanup of man page
     * Update year from 2022 -> 2023
 
 6.15 - 20221226
 ---------------
     * Fix for Unable to delete previous analysis result (Github #150)
       https://github.com/dave-theunsub/clamtk/issues/150
-    * Updated language files: Indonesian (id), Swedish (sv), German (de),
-      Chinese (zh_CN), Burmese (my)
+    * Updated language files: Indonesian (id), Swedish (sv), German (de), Chinese (zh_CN), Burmese (my)
     * Fix to German language string in clamtk.desktop (Github PR #144)
     * Update DISCLAIMER to use markdown (DISCLAIMER.md)
     * Properly enter copyright symbol in LICENSE
