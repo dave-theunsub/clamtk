@@ -45,7 +45,10 @@ sub get_path {
 
     # Default personal clamtk directory
     $path->{ clamtk } = $path->{ directory } . '/.clamtk';
-
+    if (defined $ENV{XDG_CONFIG_HOME}){
+        $path->{ clamtk } = $ENV{XDG_CONFIG_HOME} . '/clamtk';   
+    }
+    
     # Trash directory - main
     $path->{ trash_dir } = $path->{ directory } . '/.local/share/Trash';
 
