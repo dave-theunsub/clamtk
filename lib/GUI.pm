@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2022 Dave M
+# ClamTk, copyright (C) 2004-2023 Dave M
 #
 # This file is part of ClamTk
 # (https://gitlab.com/dave_m/clamtk/).
@@ -712,7 +712,7 @@ sub about {
     $dialog->set_logo( $pixbuf );
     $dialog->set_translator_credits(
         'Please see the credits.md for full listing' );
-    $dialog->set_copyright( "\x{a9} Dave M 2004 - 2022" );
+    $dialog->set_copyright( "\x{a9} Dave M 2004 - 2023" );
     $dialog->set_program_name( 'ClamTk' );
     $dialog->set_authors( [ 'Dave M', 'dave.nerd@gmail.com' ] );
     $dialog->set_comments(

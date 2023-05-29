@@ -1,7 +1,10 @@
 CHANGELOG for ClamTk:
 
-6.16 - 2023xxxx
+6.16 - 20230529
 ---------------
+    * Fix for Virustotal privacy warning before upload or sending file hash only
+      (Github #155) https://github.com/dave-theunsub/clamtk/issues/155
+    * Remove (hopefully) no longer needed lines; improve a few others (Scan.pm)
     * Updated language files: Dutch (nl)
     * Update README and site links for updated GPG key
     * Minor cleanup of man page

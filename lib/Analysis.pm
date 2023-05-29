@@ -1,4 +1,4 @@
-# ClamTk, copyright (C) 2004-2022 Dave M
+# ClamTk, copyright (C) 2004-2023 Dave M
 #
 # This file is part of ClamTk
 # (https://gitlab.com/dave_m/clamtk/).
@@ -312,17 +312,26 @@ sub analysis_frame_one {
             }
             elsif ( $vt_results == 0 ) {
 
-                # No information exists; offer to submit file
-                my $confirm = popup(
-                    _(
-                            'No information exists for this file.' . ' '
-                          . 'Press OK to submit this file for analysis.'
-                    ),
-                    1
+                my $warn_message = _(
+"Please note you should never submit sensitive files to Virustotal.  Any uploaded file can be viewed by Virustotal customers. Do not submit anything with personal information or passwords."
                 );
-                if ($confirm) {
+
+                # No information exists; offer to submit file
+                my $dialog =
+                  Gtk3::MessageDialog->new( $window,
+                    [qw( modal destroy-with-parent )],
+                    'warning', 'ok-cancel', $warn_message, );
+
+                my $confirm = $dialog->run;
+                $dialog->destroy;
+
+                if ($confirm eq _('ok')) {
                     $submitted++;
                     submit_new();
+                    return;
+                }
+                else {
+                    warn "cancelled submission\n";
                     return;
                 }
             }
