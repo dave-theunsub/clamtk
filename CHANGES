@@ -1,5 +1,10 @@
 CHANGELOG for ClamTk:
 
+6.17 - 20231215
+---------------
+    * Update App.pm to support $XDG_CONFIG_HOME environnement variable (Github #154)
+    * Updated language files: Polish (pl)
+
 6.16 - 20230602
 ---------------
     * Fix for Virustotal privacy warning before upload or sending file hash only
