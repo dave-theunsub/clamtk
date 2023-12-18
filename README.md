@@ -1,4 +1,4 @@
-This README was last checked or updated on 20230529.
+This README was last checked or updated on 20231217.
 
 # Readme for clamtk
 
@@ -121,7 +121,7 @@ It is recommended you install clamtk from official repositories. Check your dist
 While the Debian/Ubuntu .debs used to be digitally signed, they are not anymore; the way I used to do that no longer works. The rpms are digitally signed. Here's how you can verify the rpms:  
 
 1. Get and import the key in one step:  
-`rpm --import https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-26-Dec-2022`  
+`rpm --import https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-20230506`
 2. Verify the list of gpg keys installed in RPM DB:  
 `rpm -q gpg-pubkey --qf '%{name}-%{version}-%{release} --> %{summary}\n'`  
 3. Check the signature of the rpm. For this example, we'll use version 6.16:  
@@ -132,9 +132,9 @@ While the Debian/Ubuntu .debs used to be digitally signed, they are not anymore;
 You can also verify the tarball. Using 6.16 as the example version, ensure you have downloaded the tarball, its detached signature (.asc), and the key in step 1 above.
 
 1. Get the key (skip this step if you already have it):  
-`wget https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-26-Dec-2022`  
+`wget https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-20230506`
 2. Import it (skip this step if you have done it already):  
-`gpg --import RPM-GPG-KEY-DaveM-26-Dec-2022`
+`gpg --import RPM-GPG-KEY-DaveM-20230506`
 3. Verify like so:  
 `gpg2 --verify clamtk-6.16.tar.xz.asc clamtk-6.16.tar.gz` or  
 `gpg --verify clamtk-6.16.tar.xz.asc clamtk-6.16.tar.xz`  
