@@ -19,7 +19,6 @@
 use utf8;
 $| = 1;
 
-use lib '.';
 use ClamTk::Analysis;
 use ClamTk::App;
 use ClamTk::Assistant;
