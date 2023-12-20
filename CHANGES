@@ -1,5 +1,9 @@
 CHANGELOG for ClamTk:
 
+6.18 - 2023xxxx
+---------------
+    * Remove unnecessary line from #154 fix in App.pm.
+
 6.17 - 20231215
 ---------------
     * Update App.pm to support $XDG_CONFIG_HOME environnement variable (Github #154)
