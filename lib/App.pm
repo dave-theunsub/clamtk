@@ -49,7 +49,7 @@ sub get_path {
         ( -d $path->{directory} . '/.clamtk' ) ? $path->{directory} . '/.clamtk'
       : ( defined $ENV{CLAMTK_HOME} )          ? $ENV{CLAMTK_HOME}
       : ( defined $ENV{XDG_CONFIG_HOME} ) ? $ENV{XDG_CONFIG_HOME} . '/clamtk'
-      :                                     $path->{directory} . '/.clamtk';
+      :                                     $path->{directory} . '/.config/clamtk';
 
     # Trash directory - main
     $path->{trash_dir} = $path->{directory} . '/.local/share/Trash';
