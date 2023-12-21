@@ -3,6 +3,7 @@ CHANGELOG for ClamTk:
 6.18 - 2023xxxx
 ---------------
     * Remove unnecessary line from #154 fix in App.pm.
+    * Change default clamtk user directory to .config/clamtk (Github #161)
 
 6.17 - 20231215
 ---------------
