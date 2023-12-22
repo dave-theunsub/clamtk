@@ -285,7 +285,7 @@ sub is_enabled {
         $min_spin_scan->set_value( $scan_minute );
         $scan_apply_btn->set_sensitive( FALSE );
         $scan_remove_btn->set_sensitive( TRUE );
-        $scan_status_label->set_text( _( 'A daily scan is scheduled' ) );
+        $scan_status_label->set_text( _( 'A daily scan is scheduled @ ' . $scan_hour . ':' . $scan_minute) );
     } else {
         $scan_apply_btn->set_sensitive( TRUE );
         $scan_remove_btn->set_sensitive( FALSE );
