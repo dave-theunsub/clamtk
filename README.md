@@ -1,4 +1,4 @@
-This README was last checked or updated on 20231217.
+This README was last checked or updated on 20240106.
 
 # Readme for clamtk
 
@@ -18,29 +18,29 @@ This README was last checked or updated on 20231217.
 
 clamtk is a frontend for ClamAV (Clam Antivirus). It is intended to be an easy to use, light-weight, on-demand scanner for Linux systems.
 
-Although its earliest incarnations date to 2003, clamtk was first uploaded for distribution in 2004 to a rootshell.be account and finally to Sourceforge.net in 2005. At the end of 2013, it was moved to a Google Code page, then to Github, Gitlab, and Bitbucket. It is now 2023 and for some reason development is still going. In fact, February 2023 marks 19 years of activity (of being publicly available, that is).
+Although its earliest incarnations date to 2003, clamtk was first uploaded for distribution in 2004 to a rootshell.be account and finally to Sourceforge.net in 2005. At the end of 2013, it was moved to a Google Code page, then to Github, Gitlab, and Bitbucket. It is now 2024 and for some reason development is still going. In fact, February 2024 marks 20 years of activity (of being publicly available, that is).
 
 ## How You Can Help
 
 1. Report bugs or suggestions at the following:
 
-    <https://gitlab.com/dave_m/clamtk/issues>  
     <https://github.com/dave-theunsub/clamtk/issues>  
+    <https://gitlab.com/dave_m/clamtk/issues>  
     <https://launchpad.net/clamtk>  
 
 2. Do you speak more than one language? See the [Launchpad page](https://translations.launchpad.net/clamtk).
 
 3. If you feel like it, "star" clamtk or its related projects at one or both of the following:
 
-    <https://gitlab.com/dave_m/clamtk/>  
     <https://github.com/dave-theunsub/clamtk/>  
+    <https://gitlab.com/dave_m/clamtk/>  
 
 ### Important Links
 
 clamtk:  
+<https://github.com/dave-theunsub/clamtk/>  
 <https://gitlab.com/dave_m/clamtk/wikis/home>  
 <https://gitlab.com/dave_m/clamtk/>  
-<https://github.com/dave-theunsub/clamtk/>  
 <https://launchpad.net/clamtk>  
 
 [ClamAV](https://www.clamav.net)  
@@ -60,11 +60,11 @@ First, start with the official repositories.
 
 If this does not work, download the file from [the official site](https://gitlab.com/dave_m/clamtk/-/wikis/Home). You should be able to just double click the file for installation or upgrade.
 
-For these examples, we will use version 6.16. The name of the file may differ based on your distribution.
+For these examples, we will use version 6.17. The name of the file may differ based on your distribution.
 
 To install using a terminal window:  
 
-`sudo yum install clamtk-6.16-1.el8.noarch.rpm` or `sudo dnf install clamtk-6.16-1.fc.noarch.rpm`
+`sudo yum install clamtk-6.17-1.el9.noarch.rpm` or `sudo dnf install clamtk-6.17-1.fc39.noarch.rpm`
 
 To remove clamtk:  
 
@@ -77,7 +77,7 @@ To remove clamtk:
 The tarball contains all the sources. One way to do this, as tested on Fedora, is to run the following commands:  
 
 ```
-tar xzf clamtk-6.16.tar.xz  
+tar xzf clamtk-6.17.tar.xz  
 sudo mkdir -p /usr/share/perl5/vendor_perl/ClamTk  
 sudo cp lib/*.pm /usr/share/perl5/vendor_perl/ClamTk  
 sudo chmod +x clamtk  
@@ -106,7 +106,7 @@ From the commandline, you can do this:
 
 If you downloaded the file, then use this:
 
-    sudo apt install clamtk_6.16-1_all.deb
+    sudo apt install clamtk_6.17-1_all.deb
 
 To remove clamtk:  
 
@@ -124,20 +124,20 @@ While the Debian/Ubuntu .debs used to be digitally signed, they are not anymore;
 `rpm --import https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-20230506`
 2. Verify the list of gpg keys installed in RPM DB:  
 `rpm -q gpg-pubkey --qf '%{name}-%{version}-%{release} --> %{summary}\n'`  
-3. Check the signature of the rpm. For this example, we'll use version 6.16:  
-`rpm --checksig clamtk-6.16-1.fc.noarch.rpm`  
+3. Check the signature of the rpm. For this example, we'll use version 6.17:  
+`rpm --checksig clamtk-6.17-1.fc39.noarch.rpm`  
 4. You should see something like this:  
-`/home/you/clamtk-6.16-1.fc.noarch.rpm: rsa sha1 (md5) pgp md5 OK`
+`/home/you/clamtk-6.17-1.fc39.noarch.rpm: rsa sha1 (md5) pgp md5 OK`
 
-You can also verify the tarball. Using 6.16 as the example version, ensure you have downloaded the tarball, its detached signature (.asc), and the key in step 1 above.
+You can also verify the tarball. Using 6.17 as the example version, ensure you have downloaded the tarball, its detached signature (.asc), and the key in step 1 above.
 
 1. Get the key (skip this step if you already have it):  
 `wget https://davem.fedorapeople.org/RPM-GPG-KEY-DaveM-20230506`
 2. Import it (skip this step if you have done it already):  
 `gpg --import RPM-GPG-KEY-DaveM-20230506`
 3. Verify like so:  
-`gpg2 --verify clamtk-6.16.tar.xz.asc clamtk-6.16.tar.gz` or  
-`gpg --verify clamtk-6.16.tar.xz.asc clamtk-6.16.tar.xz`  
+`gpg2 --verify clamtk-6.17.tar.xz.asc clamtk-6.17.tar.gz` or  
+`gpg --verify clamtk-6.17.tar.xz.asc clamtk-6.17.tar.xz`  
 4. You should see something like this:  
 `gpg: Signature made Sun 11 Sep 2016 06:29:41 AM CDT using RSA key ID` (snipped for brevity).  
 
@@ -152,12 +152,12 @@ Then, you will need the minisig file for the program you are verifying.
 A link to it will be with the rest of the downloads.
 
 For this example:  
-<https://github.com/dave-theunsub/clamtk/releases/download/v6.16/clamtk-6.16.tar.xz.minisig>
+<https://github.com/dave-theunsub/clamtk/releases/download/v6.17/clamtk-6.17.tar.xz.minisig>
 
 Now, you verify like so:  
 
 ```
-minisign -V -x clamtk-6.16.tar.xz.minisig -p davemminisign.pub -m clamtk-6.16.tar.xz
+minisign -V -x clamtk-6.17.tar.xz.minisig -p davemminisign.pub -m clamtk-6.17.tar.xz
 ```
 
 ## Usage
@@ -214,6 +214,7 @@ If you've quarantined files for later examination, you have the option to restor
 
 To add a right-click, context menu ability to send files and directories to the scanner, install the appropriate plugin. Links to the latest versions are available here:  
 
+<https://github.com/dave-theunsub/clamtk/>  
 <https://gitlab.com/dave_m/clamtk/wikis/Downloads>  
 
 Here are the specific pages. Note that these are mirrored on Github as well.  

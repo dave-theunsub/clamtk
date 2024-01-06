@@ -1,9 +1,10 @@
 #!/usr/bin/perl
 #
-# ClamTk, copyright (C) 2004-2023 Dave M
+# ClamTk, copyright (C) 2004-2024 Dave M
 #
 # This file is part of ClamTk
-# (https://gitlab.com/dave_m/clamtk/).
+# https://github.com/dave-theunsub/clamtk/
+# https://gitlab.com/dave_m/clamtk/
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:

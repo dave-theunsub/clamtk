@@ -1,14 +1,14 @@
-# ClamTk, copyright (C) 2004-2023 Dave M
+# ClamTk, copyright (C) 2004-2024 Dave M
 #
 # This file is part of ClamTk
-# (https://gitlab.com/dave_m/clamtk/).
+# https://github.com/dave-theunsub/clamtk/
+# https://gitlab.com/dave_m/clamtk/
 #
 # ClamTk is free software; you can redistribute it and/or modify it
 # under the terms of either:
 #
-# a) the GNU General Public License as published by the
-# Free Software Foundation; either version 1, or (at your
-# option) any later version, or
+# a) the GNU General Public License as published by the Free Software
+# Foundation; either version 1, or (at your option) any later version, or
 #
 # b) the "Artistic License".
 package ClamTk::GUI;
@@ -712,7 +712,7 @@ sub about {
     $dialog->set_logo( $pixbuf );
     $dialog->set_translator_credits(
         'Please see the credits.md for full listing' );
-    $dialog->set_copyright( "\x{a9} Dave M 2004 - 2023" );
+    $dialog->set_copyright( "\x{a9} Dave M 2004 - 2024" );
     $dialog->set_program_name( 'ClamTk' );
     $dialog->set_authors( [ 'Dave M', 'dave.nerd@gmail.com' ] );
     $dialog->set_comments(
