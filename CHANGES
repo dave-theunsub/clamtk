@@ -6,6 +6,7 @@ CHANGELOG for ClamTk:
     * Change default clamtk user directory to .config/clamtk (Github #161)
     * Add [af], [ca], [eu], and [lt] to desktop file
     * Fix Punjabi [pa] string in desktop file
+    * Updated language files: Czech (cs), French (fr)
 
 6.17 - 20231215
 ---------------
