@@ -1,6 +1,6 @@
-This README was last checked or updated on 20240106.
-
 # Readme for clamtk
+
+This README was last checked or updated on 20240115.
 
 **Table of contents:**
 
@@ -37,12 +37,13 @@ Although its earliest incarnations date to 2003, clamtk was first uploaded for d
 
 ### Important Links
 
-clamtk:  
+#### Official clamtk links:
 <https://github.com/dave-theunsub/clamtk/>  
 <https://gitlab.com/dave_m/clamtk/wikis/home>  
 <https://gitlab.com/dave_m/clamtk/>  
 <https://launchpad.net/clamtk>  
 
+#### Related links:
 [ClamAV](https://www.clamav.net)  
 [Gtk2-Perl](http://gtk2-perl.sourceforge.net)  
 [Gtk3](https://developer.gnome.org/gtk3/stable/index.html)  
