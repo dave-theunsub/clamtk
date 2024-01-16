@@ -1,15 +1,15 @@
 # Readme for clamtk
 
-This README was last checked or updated on 20240115.
+This README was last checked or updated on 20240116.
 
 **Table of contents:**
 
 1. [About](#about)
-2. [Installation](#installation)
-3. [Usage](#usage)
-4. [Plugins](#plugins)
-5. [Troubleshooting](#troubleshooting)
-6. [Contributing](#contributing)
+2. [Contributing](#contributing)
+3. [Installation](#installation)
+4. [Usage](#usage)
+5. [Plugins](#plugins)
+6. [Troubleshooting](#troubleshooting)
 7. [Other](#other)
 8. [Thank you](#thank-you)
 9. [Contact](#contact)
@@ -20,7 +20,7 @@ clamtk is a frontend for ClamAV (Clam Antivirus). It is intended to be an easy t
 
 Although its earliest incarnations date to 2003, clamtk was first uploaded for distribution in 2004 to a rootshell.be account and finally to Sourceforge.net in 2005. At the end of 2013, it was moved to a Google Code page, then to Github, Gitlab, and Bitbucket. It is now 2024 and for some reason development is still going. In fact, February 2024 marks 20 years of activity (of being publicly available, that is).
 
-## How You Can Help
+## Contributing
 
 1. Report bugs or suggestions at the following:
 
@@ -37,13 +37,15 @@ Although its earliest incarnations date to 2003, clamtk was first uploaded for d
 
 ### Important Links
 
-#### Official clamtk links:
+#### Official clamtk links
+
 <https://github.com/dave-theunsub/clamtk/>  
 <https://gitlab.com/dave_m/clamtk/wikis/home>  
 <https://gitlab.com/dave_m/clamtk/>  
 <https://launchpad.net/clamtk>  
 
-#### Related links:
+#### Related links
+
 [ClamAV](https://www.clamav.net)  
 [Gtk2-Perl](http://gtk2-perl.sourceforge.net)  
 [Gtk3](https://developer.gnome.org/gtk3/stable/index.html)  
@@ -77,7 +79,7 @@ To remove clamtk:
 
 The tarball contains all the sources. One way to do this, as tested on Fedora, is to run the following commands:  
 
-```
+```bash
 tar xzf clamtk-6.17.tar.xz  
 sudo mkdir -p /usr/share/perl5/vendor_perl/ClamTk  
 sudo cp lib/*.pm /usr/share/perl5/vendor_perl/ClamTk  
@@ -87,15 +89,17 @@ sudo cp clamtk /usr/local/bin (or /usr/bin)
 
 Examples:
 
-    perl clamtk
+`perl clamtk`
 
 or
 
-    chmod +x /path/to/clamtk
-    /path/to/clamtk
+```bash
+chmod +x /path/to/clamtk
+/path/to/clamtk
+```
 
-* Note: If you have installed this program as an rpm or .deb, you do not need to take these steps.
-* Note: Did you get errors with this? Check the TROUBLESHOOTING section at the end.
+* If you have installed this program as an rpm or .deb, you do not need to take these steps.
+* Did you get errors with this? Check the TROUBLESHOOTING section at the end.
 
 ### DEBs
 
@@ -103,15 +107,15 @@ You should be able to just double click the .deb file to install it. Your packag
 
 From the commandline, you can do this:  
 
-    sudo apt install clamtk
+`sudo apt install clamtk`
 
 If you downloaded the file, then use this:
 
-    sudo apt install clamtk_6.17-1_all.deb
+`sudo apt install clamtk_6.17-1_all.deb`
 
 To remove clamtk:  
 
-    sudo dpkg --purge clamtk
+`sudo dpkg --purge clamtk`
 
 Note that the Debian/Ubuntu builds are no longer gpg-signed.
 
@@ -148,16 +152,16 @@ You can now use minisign, too!
 First, you will need my public minisign key:  
 [Public minisign key](https://davem.fedorapeople.org/davemminisign.pub)  
 
-Then, you will need the minisig file for the program you are verifying.  
+Then you will need the minisig file for the program you are verifying.  
 
 A link to it will be with the rest of the downloads.
 
 For this example:  
 <https://github.com/dave-theunsub/clamtk/releases/download/v6.17/clamtk-6.17.tar.xz.minisig>
 
-Now, you verify like so:  
+Next, verify like so:  
 
-```
+```bash
 minisign -V -x clamtk-6.17.tar.xz.minisig -p davemminisign.pub -m clamtk-6.17.tar.xz
 ```
 
@@ -172,26 +176,26 @@ minisign -V -x clamtk-6.17.tar.xz.minisig -p davemminisign.pub -m clamtk-6.17.ta
 * The "Scan for PUAs" option enables the ability to scan for Potentially Unwanted Applications as well as broken executables. Note that this can result in what may be false positives.  
 * By default, clamtk will avoid scanning files larger than 20MB. To force scanning of these files, check the "Scan files larger than 20 MB" box.  
 * You can also check for updates upon startup. This requires an active Internet connection.  
-* Information on items quarantined is available under the "Quarantine" option. If you believe there is a false positive contained, you can easily move it back to your home directory. You may also delete this file(s). *Note that there is no recycle bin - once deleted, they are gone forever.*
+* Information on items quarantined is available under the "Quarantine" option. If you believe there is a false positive contained, you can easily move it back to your home directory. You may also delete this file(s). *There is no recycle bin - once deleted, the files are gone forever.*
 * Scan a file or directory by right-clicking on it within the file manager (e.g., Nautilus).  This functionality requires an extra package (clamtk-gnome).
-* You can STOP the scan by clicking the Cancel button. Note that due to the speed of the scanning, it may not stop immediately; it will continue scanning and displaying files it has already "read" until the stop catches up.  
+* You can STOP the scan by clicking the Cancel button. Due to the speed of the scanning, however, it may not stop immediately; it will continue scanning and displaying files it has already "read" until the stop catches up.  
 * View previous scans by selecting "History".  
 * The Update Assistant is necessary because some systems are set up to do automatic updates, while others must manually update them.  
 * If you require specific proxy settings, select "Network".  
-* As of version 5.xx, you can use the "Analysis" button to see if a particular file is considered malicious by other antivirus products. This uses results from Virustotal. If you desire, you can submit a file for further review. Please do *not* submit personal files.  
+* As of version 5.xx, you can use the "Analysis" button to see if a particular file is considered malicious by other antivirus products. This uses results from Virustotal. If you desire, you can submit a file for further review. Please do *not* submit files with personal, financial, or security information.  
 * The "Whitelist" option provides the ability to skip specific directories during scan time. For example, you may wish to skip directories containing music or videos.  
 
 ### Commandline
 
 clamtk can run from the commandline, too:  
 
-```  
+```bash  
 clamtk file_to_be_scanned  
 ```
 
 or  
 
-```
+```bash
 clamtk directory_to_be_scanned  
 ```
 
@@ -220,19 +224,19 @@ To add a right-click, context menu ability to send files and directories to the 
 
 Here are the specific pages. Note that these are mirrored on Github as well.  
 
-For Gnome (Files file manager):  
+Gnome (Files file manager):  
 <https://github.com/dave-theunsub/clamtk-gnome>  
 <https://gitlab.com/dave_m/clamtk-gnome>  
 
-For KDE (Dolphin file manager):  
+KDE (Dolphin file manager):  
 <https://github.com/dave-theunsub/clamtk-kde>  
 <https://gitlab.com/dave_m/clamtk-kde>  
 
-For XFCE (Thunar file manager):  
+XFCE (Thunar file manager):  
 <https://github.com/dave-theunsub/thunar-sendto-clamtk>  
 <https://gitlab.com/dave_m/thunar-sendto-clamtk>  
 
-For Mate (Nemo file manager):  
+Mate (Nemo file manager):  
 <https://github.com/dave-theunsub/nemo-sendto-clamtk>  
 <https://gitlab.com/dave_m/nemo-sendto-clamtk>  
 
