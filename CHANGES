@@ -1,13 +1,13 @@
 CHANGELOG for ClamTk:
 
-6.18 - 20240115
+6.18 - 20240120
 ---------------
     * Remove unnecessary line from #154 fix in App.pm
     * Change default clamtk user directory to .config/clamtk (Github #161)
     * Add top-level heading to README.md
     * Add [af], [ca], [eu], and [lt] to desktop file
     * Fix Punjabi [pa] string in desktop file
-    * Updated language files: Czech (cs), French (fr)
+    * Updated language files: Bulgarian (bg), Czech (cs), French (fr)
 
 6.17 - 20231215
 ---------------
