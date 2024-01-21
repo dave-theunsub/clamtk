@@ -25,7 +25,7 @@ sub startup_check {
     my ( $sigs_outdated, $gui_outdated );
 
     # If the user wants a GUI update check on startup:
-    if ( ClamTk::Prefs->get_preference('GUICheck') ) {
+    if ( ClamTk::Prefs->get_preference( 'GUICheck' ) ) {
         if ( check_gui() ) {
             $gui_outdated++;
         }
@@ -33,7 +33,7 @@ sub startup_check {
 
     # Check AV date - 4 days and sound the alarm
     my $t        = localtime;
-    my $today    = $t->dmy(" ");
+    my $today    = $t->dmy( " " );
     my $sig_date = check_sigs();
 
     my $date_format = '%d %m %Y';
@@ -47,20 +47,17 @@ sub startup_check {
 
     if ( $sigs_outdated && $gui_outdated ) {
         return 'both';
-    }
-    elsif ($sigs_outdated) {
+    } elsif ( $sigs_outdated ) {
         return 'sigs';
-    }
-    elsif ($gui_outdated) {
+    } elsif ( $gui_outdated ) {
         return 'gui';
-    }
-    else {
+    } else {
         return 0;
     }
 }
 
 sub check_sigs {
-    my $av_date = ClamTk::App->get_sigtool_info('date');
+    my $av_date = ClamTk::App->get_sigtool_info( 'date' );
     return $av_date;
 }
 

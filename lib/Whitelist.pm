@@ -113,9 +113,9 @@ sub add {
         }
 
         # See if it's already included...
-        if ( !grep {/^$dir$/}
-            split /;/,
-            $user_whitelist . $system_whitelist )
+        if (!grep {/^$dir$/}
+            split /;/, $user_whitelist . $system_whitelist
+            )
         {
             # If not, add to GUI...
             my $iter = $store->append;
