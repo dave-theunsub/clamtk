@@ -1,9 +1,10 @@
 CHANGELOG for ClamTk:
 
-6.18 - 20240120
+6.18 - 20240126
 ---------------
     * Remove unnecessary line from #154 fix in App.pm
     * Change default clamtk user directory to .config/clamtk (Github #161)
+    * Fix for scanned directories not showing in logs
     * Add top-level heading to README.md
     * Add af, ca, eu, and lt to desktop file
     * Fix Punjabi (pa) string in desktop file

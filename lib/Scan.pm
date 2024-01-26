@@ -37,7 +37,7 @@ my $found;    # Holds information of bad stuff found
 
 my $found_count = 0;    # Scalar number of bad stuff found
 my $num_scanned = 0;    # Overall number of files scanned
-my %dirs_scanned;       # Directories scanned
+my $dirs_scanned;       # Directories scanned
 
 my $hb;                     # HeaderBar
 my $pb;                     # ProgressBar
@@ -367,6 +367,10 @@ sub scan {
     #>>>
     # binmode( $SCAN, ':utf8:bytes' );
 
+    # This is a placeholder for use in keeping track of
+    # directories scanned
+    my $dirname;
+
     Gtk3::main_iteration while Gtk3::events_pending;
     while ( <$SCAN> ) {
         chomp;
@@ -379,11 +383,15 @@ sub scan {
 
         if ( /^Scanning (.*?)$/ ) {
             my $base = decode( 'UTF-8', basename( $1 ) );
+            $dirname = decode( 'UTF-8', dirname( $1) );
+
+            # Lots of temporary things under /tmp/clamav;
+            # we'll just ignore them.
+            $dirs_scanned->{ $dirname } = 1;
 
             # Display stuff in popup infobar
             set_infobar_text(
                 $topbar,
-
                 # sprintf( _( 'Scanning %s...' ), $dirname )
                 sprintf( _( 'Scanning %s...' ), $base )
             );
@@ -424,7 +432,6 @@ sub scan {
         chomp( $file )   if ( defined $file );
         chomp( $status ) if ( defined $status );
 
-        my $dirname   = decode( 'UTF-8', dirname( $file ) );
         my $fileparse = decode( 'UTF-8', fileparse( $file ) );
 
         my $hidden = ClamTk::Prefs->get_preference( 'ScanHidden' );
@@ -436,12 +443,6 @@ sub scan {
         } else {
             $dirparse = $dirname;
         }
-
-        # Lots of temporary things under /tmp/clamav;
-        # we'll just ignore them.
-        $dirs_scanned{ $dirname } = 1
-            unless ( dirname( $file ) =~ /\/tmp\/clamav/
-            || dirname( $file ) eq '.' );
 
         # Do not show files in archives - we just want the end-result.
         # It still scans and we still show the result.
@@ -473,7 +474,7 @@ sub scan {
     }
 
     Gtk3::main_iteration while Gtk3::events_pending;
-
+    
     # Done scanning - close filehandle and return to
     # filter() and then to clean-up
     close( $SCAN );    # or warn "Unable to close scanner! $!\n";
@@ -536,7 +537,8 @@ sub reset_stats {
     $found_count     = 0;
     $pb_file_counter = 0;
     $pb_step         = 0;
-    %dirs_scanned    = ();
+    $dirs_scanned    = ();
+    $found           = ();
     $stopped         = 1;
     $directive       = '';
     $root_scan       = FALSE;
@@ -577,7 +579,7 @@ sub logit {
 
     #<<<
     # sort the directories scanned for display
-    my @sorted = sort { $a cmp $b } keys %dirs_scanned;
+    my @sorted = sort { $a cmp $b } keys %$dirs_scanned;
     if ( open $REPORT, '>>:encoding(UTF-8)', $virus_log ) {
         print $REPORT "\nClamTk, v",
             ClamTk::App->get_TK_version(), "\n",

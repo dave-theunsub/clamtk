@@ -116,7 +116,6 @@ sub show_window {
     #<<<
     my $i = 0;
     while ( $i <= scalar keys %$hash ) {
-        # print 'name = ', $hash->{ $i }->{ name }, "\n";
         my $iter = $liststore->append;
         $liststore->set(
                 $iter,
