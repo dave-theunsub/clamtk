@@ -1,6 +1,8 @@
 # Readme for clamtk
 
-This README was last checked or updated on 20240116.
+Note: This program is no longer maintained.
+
+This README was last checked or updated on 20240330.
 
 **Table of contents:**
 
