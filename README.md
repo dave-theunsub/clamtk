@@ -1,6 +1,7 @@
 # Readme for clamtk
 
 Note: This program is no longer maintained.
+https://github.com/dave-theunsub/clamtk/issues/163
 
 This README was last checked or updated on 20240330.
 
