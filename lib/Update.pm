@@ -291,6 +291,13 @@ sub update_signatures {
     $pb->hide;
     destroy_button();
 
+    # the infobar shrinks when its button goes away: redraw the whole window,
+    # or the old buttons stay painted over the new layout
+    my $top = $infobar->get_toplevel;
+    $top->queue_resize;
+    $top->queue_draw;
+    Gtk3::main_iteration while Gtk3::events_pending;
+
     return TRUE;
 }
 
