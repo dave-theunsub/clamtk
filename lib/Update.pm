@@ -180,6 +180,7 @@ sub update_signatures {
         if ( -e $dbpath ) {
             $freshclam .= " --config-file=$dbpath";
         }
+        reset_cooldown();
     }
 
     # The mirrors can be slow sometimes and may return/die
@@ -292,6 +293,26 @@ sub update_signatures {
     destroy_button();
 
     return TRUE;
+}
+
+# freshclam.dat remembers the cool-down (HTTP 429/403) received from the
+# official ClamAV CDN. It does not apply to a private mirror, but freshclam
+# still refuses to update from it until the cool-down ends, so the file is
+# removed before an update when local.conf names a PrivateMirror.
+sub reset_cooldown {
+    my $paths = ClamTk::App->get_path( 'all' );
+    my $conf  = $paths->{ localfreshclamconf };
+    open( my $F, '<', $conf ) or return 0;
+    my $mirror = grep { /^\s*PrivateMirror\s/ } <$F>;
+    close( $F );
+    return 0 unless $mirror;
+    my $dat = "$paths->{ db }/freshclam.dat";
+    return 0 unless -e $dat;
+    unlink( $dat ) or do {
+        warn "Unable to delete $dat: $!\n";
+        return 0;
+    };
+    return 1;
 }
 
 sub get_freshclam_path {
