@@ -207,6 +207,17 @@ sub add_config_panels {
             }
         }
     );
+
+    # Every section is a separate icon view with its own selection:
+    # unselect on leaving, or a fast move across the sections leaves
+    # several items highlighted
+    $view->signal_connect(
+        'leave-notify-event' => sub {
+            $view->unselect_all();
+            undef $path;
+            return FALSE;
+        }
+    );
     $view->signal_connect(
         'button-press-event' => sub {
             press( $path, $liststore );
@@ -285,6 +296,17 @@ sub add_update_panels {
             }
         }
     );
+
+    # Every section is a separate icon view with its own selection:
+    # unselect on leaving, or a fast move across the sections leaves
+    # several items highlighted
+    $view->signal_connect(
+        'leave-notify-event' => sub {
+            $view->unselect_all();
+            undef $path;
+            return FALSE;
+        }
+    );
     $view->signal_connect(
         'button-press-event' => sub {
             press( $path, $liststore );
@@ -353,6 +375,17 @@ sub add_history_panels {
             }
         }
     );
+
+    # Every section is a separate icon view with its own selection:
+    # unselect on leaving, or a fast move across the sections leaves
+    # several items highlighted
+    $view->signal_connect(
+        'leave-notify-event' => sub {
+            $view->unselect_all();
+            undef $path;
+            return FALSE;
+        }
+    );
     $view->signal_connect(
         'button-press-event' => sub {
             press( $path, $liststore );
@@ -417,6 +450,17 @@ sub add_analysis_panels {
             } else {
                 $view->unselect_all();
             }
+        }
+    );
+
+    # Every section is a separate icon view with its own selection:
+    # unselect on leaving, or a fast move across the sections leaves
+    # several items highlighted
+    $view->signal_connect(
+        'leave-notify-event' => sub {
+            $view->unselect_all();
+            undef $path;
+            return FALSE;
         }
     );
     $view->signal_connect(
